@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 5：凸五边形中的三线共点证明 — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14.5px; color: #475569; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; }
+  .panel {
+    flex: 1 1 380px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 600px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .formula-box {
+    background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 12px;
+    margin: 6px 0; border-radius: 4px; font-size: 13px; font-family: "Times New Roman", serif;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\(', right: '\)', display: false},
+            {left: '\[', right: '\]', display: true}
+          ],
+          macros: {
+            '\parallel': '\mathbin{/\\!/}',
+            '\bigtriangleup': '\triangle',
+            '\triangle': '\triangle',
+            '\odot': '\odot',
+            '\ang': '\angle',
+            '\angmsd': '\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 5：凸五边形中的三线共点证明</h1>
+    <p>已知凸五边形 $ABCDE$ 满足 $AB = BC = CD, \\angle EAB = \\angle BCD, \\angle EDC = \\angle CBA$。求证：过点 $E$ 作 $BC$ 的垂线与 $AC, BD$ 三线共点。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何与向量辅助函数 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* ============ 精确几何坐标 ============ */
+const A = { x: 97.37, y: 230.62 };
+const B = { x: 150.16, y: 530.0 };
+const C = { x: 454.16, y: 530.0 };
+const D = { x: 582.63, y: 254.48 };
+const E = { x: 322.96, y: 72.66 };
+
+// I: 中垂线交点 (也是凸五边形内切圆心)
+const I = { x: 322.96, y: 324.06 };
+// H: 对角线 AC 与 BD 的交点 (同时为 △BIC 的垂心)
+const H = { x: 322.96, y: 419.91 };
+// K: 垂线在底边 BC 上的垂足
+const K = { x: 322.96, y: 530.0 };
+
+// AC 与 BD 的中点 (即垂直平分线交点与垂足)
+const M_AC = mid(A, C); // { x: 275.765, y: 380.31 }
+const M_BD = mid(B, D); // { x: 366.395, y: 392.24 }
+
+// 内切圆半径
+const r_in = 205.94;
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '400'}, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=20, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id:'gBase'}, stage);
+const gStep = el('g', {id:'gStep'}, stage);
+const gPts  = el('g', {id:'gPts'}, stage);
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 基础凸五边形 ABCDE
+  polygon([A, B, C, D, E], {stroke: '#334155', 'stroke-width': 2.4, fill: '#f8fafc', 'stroke-linejoin':'round'}, gBase);
+}
+
+function drawPoints(s){
+  gPts.innerHTML = '';
+  // 凸五边形五大顶点
+  dot(A, '#1e293b', 4.5, gPts); label(A, 'A', -20, -10, '#0f172a', gPts);
+  dot(B, '#1e293b', 4.5, gPts); label(B, 'B', -18, 22, '#0f172a', gPts);
+  dot(C, '#1e293b', 4.5, gPts); label(C, 'C', 18, 22, '#0f172a', gPts);
+  dot(D, '#1e293b', 4.5, gPts); label(D, 'D', 20, -10, '#0f172a', gPts);
+  dot(E, '#1e293b', 4.5, gPts); label(E, 'E', 0, -22, '#0f172a', gPts);
+
+  // 关键派生点按步骤显隐
+  if (s >= 1){
+    dot(I, GREEN, 5, gPts);
+    label(I, 'I', 20, -4, GREEN, gPts);
+    dot(H, BLUE, 5, gPts);
+    label(H, 'H', -24, 0, BLUE, gPts);
+  }
+  if (s === 2 || s === 5){
+    dot(K, RED, 4.5, gPts);
+    label(K, 'K', 0, 22, RED, gPts);
+  }
+}
+
+/* ============ 各步骤渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0:
+      // 等长边刻度标记 (AB = BC = CD)
+      tickMark(A, B, RED, gStep, -4); tickMark(A, B, RED, gStep, 4);
+      tickMark(B, C, RED, gStep, -4); tickMark(B, C, RED, gStep, 4);
+      tickMark(C, D, RED, gStep, -4); tickMark(C, D, RED, gStep, 4);
+
+      // ∠EAB = ∠BCD (紫色双弧)
+      angleArc(A, B, E, 26, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      angleArc(A, B, E, 32, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      angleArc(C, D, B, 26, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      angleArc(C, D, B, 32, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+
+      // ∠EDC = ∠CBA (橙色单弧)
+      angleArc(B, A, C, 28, {stroke: ORANGE, 'stroke-width': 2}, gStep);
+      angleArc(D, C, E, 28, {stroke: ORANGE, 'stroke-width': 2}, gStep);
+      break;
+
+    case 1:
+      // 对角线 AC, BD
+      line(A, C, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      line(B, D, {stroke: BLUE, 'stroke-width': 2}, gStep);
+
+      // 中垂线 BI (过 B 且垂直平分 AC)
+      line(B, I, {stroke: GREEN, 'stroke-width': 2, 'stroke-dasharray': '6 4'}, gStep);
+      // 中垂线 CI (过 C 且垂直平分 BD)
+      line(C, I, {stroke: GREEN, 'stroke-width': 2, 'stroke-dasharray': '6 4'}, gStep);
+
+      // 垂足 M_AC 与 M_BD 处的直角标记
+      rightAngleMark(M_AC, C, I, 13, GREEN, gStep);
+      rightAngleMark(M_BD, D, I, 13, GREEN, gStep);
+      break;
+
+    case 2:
+      // 底色高亮 △BIC
+      polygon([B, I, C], {fill: 'rgba(5, 150, 105, 0.1)', stroke: GREEN, 'stroke-width': 2}, gStep);
+
+      // 对角线 AC 与 BD 作为高线
+      line(A, C, {stroke: BLUE, 'stroke-width': 1.8, opacity: 0.6}, gStep);
+      line(B, D, {stroke: BLUE, 'stroke-width': 1.8, opacity: 0.6}, gStep);
+      highlightSeg(C, M_AC, BLUE, gStep, 3);
+      highlightSeg(B, M_BD, BLUE, gStep, 3);
+      rightAngleMark(M_AC, C, I, 12, GREEN, gStep);
+      rightAngleMark(M_BD, D, I, 12, GREEN, gStep);
+
+      // 第三条高线 IH 垂直 BC 于 K
+      highlightSeg(I, K, RED, gStep, 3.5);
+      rightAngleMark(K, I, C, 14, RED, gStep);
+
+      // 强调垂心 H
+      circle(H, 10, {stroke: RED, 'stroke-width': 2, 'stroke-dasharray': '3 3'}, gStep);
+      break;
+
+    case 3:
+      // 连结 IA, IB, IC, ID
+      segDashed(I, A, PURPLE, 1.8, gStep);
+      line(I, B, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      line(I, C, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      segDashed(I, D, PURPLE, 1.8, gStep);
+
+      // 三个全等三角形半透明填充
+      polygon([I, A, B], {fill: 'rgba(37, 99, 235, 0.14)', stroke: BLUE, 'stroke-width': 1.5}, gStep);
+      polygon([I, C, B], {fill: 'rgba(5, 150, 105, 0.14)', stroke: GREEN, 'stroke-width': 1.5}, gStep);
+      polygon([I, C, D], {fill: 'rgba(124, 58, 237, 0.14)', stroke: PURPLE, 'stroke-width': 1.5}, gStep);
+
+      // 顶点 A 处的角平分线标记 (∠IAB = ∠IAE)
+      angleArc(A, B, I, 24, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      angleArc(A, I, E, 24, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+
+      // 顶点 D 处的角平分线标记 (∠IDC = ∠IDE)
+      angleArc(D, C, I, 24, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      angleArc(D, I, E, 24, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      break;
+
+    case 4:
+      // 内切圆 ⊙I
+      circle(I, r_in, {stroke: ORANGE, 'stroke-width': 2.2, 'stroke-dasharray': '6 4', fill: 'rgba(234, 88, 12, 0.05)'}, gStep);
+
+      // 连线 IE 与 IB
+      line(I, E, {stroke: ORANGE, 'stroke-width': 2.4}, gStep);
+      line(I, B, {stroke: GREEN, 'stroke-width': 2}, gStep);
+
+      // 高亮四边形 ABIE
+      polygon([A, B, I, E], {fill: 'rgba(234, 88, 12, 0.12)', stroke: ORANGE, 'stroke-width': 1.8}, gStep);
+
+      // 标出钝角 ∠BIE 与底角 ∠IBC
+      angleArc(I, B, E, 34, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(B, C, I, 30, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      break;
+
+    case 5:
+      // 弱化内切圆底色
+      circle(I, r_in, {stroke: '#cbd5e1', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 对角线 AC 与 BD
+      highlightSeg(A, C, BLUE, gStep, 2.8);
+      highlightSeg(B, D, BLUE, gStep, 2.8);
+
+      // 贯穿垂线 E-I-H-K (下延 15px)
+      highlightSeg(E, {x: K.x, y: K.y + 15}, RED, gStep, 3.5);
+      rightAngleMark(K, E, C, 14, RED, gStep);
+
+      // 强调三线共点 H
+      circle(H, 12, {stroke: RED, 'stroke-width': 2.4, fill: 'none'}, gStep);
+      circle(H, 18, {stroke: RED, 'stroke-width': 1.2, 'stroke-dasharray': '3 3', fill: 'none'}, gStep);
+      dot(H, '#b91c1c', 6, gStep);
+      break;
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '题设条件与凸五边形',
+    body: `已知凸五边形 $ABCDE$ 满足三边相等：<br>
+           <span class="formula-box">$AB = BC = CD$</span>
+           且对应内角分别相等：<br>
+           <span class="formula-box">$\\angle EAB = \\angle BCD$，$\\angle EDC = \\angle CBA$</span>
+           <b>求证：</b>过点 $E$ 作 $BC$ 的垂线与对角线 $AC, BD$ 三线共点。`
+  },
+  {
+    title: '作中垂线定点 I 与对角线交点 H',
+    body: `连结对角线 $AC$ 与 $BD$，相交于点 $H$。<br>
+           因为 $BA = BC$，点 $B$ 在 $AC$ 的中垂线上；<br>
+           同理 $CB = CD$，点 $C$ 在 $BD$ 的中垂线上。<br>
+           设 $AC, BD$ 的中垂线交于点 <span style="color:${GREEN};">$I$</span>，则：
+           <div class="formula-box">$BI \\perp AC$ 且 $CI \\perp BD$</div>`
+  },
+  {
+    title: 'H 为 △BIC 的垂心 ⟹ IH ⊥ BC',
+    body: `考察 $\\triangle BIC$：<br>
+           直线 $AC$ 过顶点 $C$ 且 $AC \\perp BI$，故 $AC$ 为边 $BI$ 上的高；<br>
+           直线 $BD$ 过顶点 $B$ 且 $BD \\perp CI$，故 $BD$ 为边 $CI$ 上的高。<br>
+           两高线交点 <span style="color:${BLUE};">$H$</span> 即为 <b>$\\triangle BIC$ 的垂心</b>！<br>
+           由垂心性质，第三条高线必过点 $I$ 且垂直于底边：
+           <div class="formula-box"><b>$IH \\perp BC$</b>（垂足为 $K$）</div>`
+  },
+  {
+    title: '全等三角形 ⟹ AI, DI 为角平分线',
+    body: `连结 $IA, ID$。由中垂线性质，$IA = IC, IB = ID$。<br>
+           又 $AB = BC = CD$ 且有公共边，由三边对应相等（SSS）：
+           <div class="formula-box">$\\triangle IAB \\cong \\triangle ICB \\cong \\triangle ICD$</div>
+           由此可得对应角相等：<br>
+           $\\angle IAB = \\angle ICB = \\frac{1}{2}\\angle BCD = \\frac{1}{2}\\angle EAB$ ⟹ <b>$AI$ 平分 $\\angle EAB$</b>；<br>
+           $\\angle IDC = \\angle IBC = \\frac{1}{2}\\angle CBA = \\frac{1}{2}\\angle EDC$ ⟹ <b>$DI$ 平分 $\\angle EDC$</b>。`
+  },
+  {
+    title: '点 I 为内切圆心与 ∠BIE 角度推导',
+    body: `点 $I$ 到五边形各边距离相等，故 <b>圆 $I$ 为凸五边形 $ABCDE$ 的内切圆</b>，$IE$ 平分 $\\angle AED$。<br>
+           在四边形 $ABIE$ 中，内角和为 360°：<br>
+           <div class="formula-box">
+             $\\angle BIE = 360^\\circ - \\angle EAB - \\frac{1}{2}\\angle ABC - \\frac{1}{2}\\angle AED$
+           </div>
+           由五边形内角和 540° 得 $\\frac{1}{2}\\angle AED = 270^\\circ - \\angle EAB - \\angle ABC$，代入化简得：
+           <div class="formula-box">
+             <b>$\\angle BIE = 90^\\circ + \\frac{1}{2}\\angle ABC = 90^\\circ + \\angle IBC$</b>
+           </div>`
+  },
+  {
+    title: '垂线共线 ⟹ 三线共点于 H',
+    body: `在直角 $\\triangle IBK$ 中（$IK \\perp BC$），$\\angle BIK = 90^\\circ - \\angle IBC$。<br>
+           由于 $\\angle BIE = 90^\\circ + \\angle IBC$，故两角互补：
+           <div class="formula-box">
+             $\\angle BIE + \\angle BIK = 180^\\circ$ ⟹ <b>点 $E, I, K$ 三点共线（$EI \\perp BC$）</b>
+           </div>
+           结合 Step 2 已证的 $IH \\perp BC$（点 $I, H, K$ 共线），可知点 $E, I, H, K$ <b>四点共线</b>。<br>
+           因此，过点 $E$ 作 $BC$ 的垂线即为直线 $EIHK$，必然经过对角线交点 $H$。<br>
+           <b>结论：过点 $E$ 作 $BC$ 的垂线与 $AC, BD$ 三线共点于点 $H$！</b>`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (typeof window.renderMath === 'function') window.renderMath(listEl);
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

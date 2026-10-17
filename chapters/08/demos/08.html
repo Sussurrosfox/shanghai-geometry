@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 7：外切四边形的反演与对角线中点距离之比 — 几何证明交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .container { max-width: 1240px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  header { background: #fff; padding: 18px 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .subtitle { font-size: 14px; color: #64748b; line-height: 1.5; }
+  .main-content { display: grid; grid-template-columns: 420px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .main-content { grid-template-columns: 1fr; } }
+  .panel-left { display: flex; flex-direction: column; gap: 12px; max-height: 700px; }
+  .steps-container {
+    display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px;
+    max-height: 560px;
+  }
+  .step-card {
+    background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .step-card:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+  .step-card.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.1); }
+  .step-badge { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 4px; }
+  .step-title { font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
+  .step-body { font-size: 13px; color: #475569; line-height: 1.6; }
+  .panel-right {
+    background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column; gap: 12px; align-items: center;
+  }
+  .svg-wrap {
+    width: 100%; max-width: 680px; height: 560px; background: #ffffff; border: 1px solid #e2e8f0;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: 100%; }
+  .controls {
+    display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%;
+    padding-top: 4px; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; background: #2563eb; color: #fff; transition: background 0.15s ease;
+  }
+  .btn:hover { background: #1d4ed8; }
+  .btn.secondary { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .btn.secondary:hover { background: #e2e8f0; }
+  .step-info { font-size: 13px; font-weight: 600; color: #64748b; margin: 0 8px; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 7：外切四边形的反演与对角线中点距离之比</h1>
+    <div class="subtitle">反演后转化为平行四边形，利用相似三角形中线比求出比值 35/48</div>
+  </header>
+  <div class="main-content">
+    <div class="panel-left">
+      <div class="steps-container">
+        
+        <div class="step-card active" id="card-0" onclick="setStep(0)">
+          <div class="step-badge">步骤 0</div>
+          <div class="step-title">已知构型与核心待求线段</div>
+          <div class="step-body">设凸四边形 $ABCD$ 外切于圆 $O$，$OA=5, OB=6, OC=7, OD=8$。对角线 $AC, BD$ 的中点分别为 $M, N$。求 $\frac{OM}{ON}$ 的值。</div>
+        </div>
+        
+        <div class="step-card" id="card-1" onclick="setStep(1)">
+          <div class="step-badge">步骤 1</div>
+          <div class="step-title">① 建立以 $O$ 为中心、半径 $r$ 的反演变换</div>
+          <div class="step-body">以 $O$ 为反演中心、圆 $O$ 为基圆（反演幂 $r^2$）作反演变换。各顶点反演像 $A', B', C', D'$ 落在射线 $OA, OB, OC, OD$ 上，满足 $OA \cdot OA' = OB \cdot OB' = OC \cdot OC' = OD \cdot OD' = r^2$。</div>
+        </div>
+        
+        <div class="step-card" id="card-2" onclick="setStep(2)">
+          <div class="step-badge">步骤 2</div>
+          <div class="step-title">② 证明 $A'B'C'D'$ 为切点中位线平行四边形</div>
+          <div class="step-body">由切线直角射影性质，$A', B', C', D'$ 分别为切点弦的中点。由三角形中位线定理，$A'B' \parallel C'D'$ 且 $A'B' = C'D' = \frac{1}{2}HF$。因此 $A'B'C'D'$ 严格为一个平行四边形！其对角线互相平分于公共中点 $S$。</div>
+        </div>
+        
+        <div class="step-card" id="card-3" onclick="setStep(3)">
+          <div class="step-badge">步骤 3</div>
+          <div class="step-title">③ 相似三角形中线比：表达 $OM$</div>
+          <div class="step-body">由反演性质知 $\bigtriangleup A'OC' \sim \bigtriangleup COA$（反向相似）。线段 $OS$ 与 $OM$ 分别是两相似三角形对应的中线，故对应中线比等于对应边长比：$\frac{OS}{OM} = \frac{OA'}{OC} = \frac{r^2}{OA \cdot OC}$，解得 $OM = \frac{OS \cdot OA \cdot OC}{r^2}$。</div>
+        </div>
+        
+        <div class="step-card" id="card-4" onclick="setStep(4)">
+          <div class="step-badge">步骤 4</div>
+          <div class="step-title">④ 相似三角形中线比：表达 $ON$</div>
+          <div class="step-body">同理，在另一对对角线构成的三角形中，$\bigtriangleup B'OD' \sim \bigtriangleup DOB$。$OS$ 与 $ON$ 为对应中线，满足：$\frac{OS}{ON} = \frac{OB'}{OD} = \frac{r^2}{OB \cdot OD}$，解得 $ON = \frac{OS \cdot OB \cdot OD}{r^2}$。</div>
+        </div>
+        
+        <div class="step-card" id="card-5" onclick="setStep(5)">
+          <div class="step-badge">步骤 5</div>
+          <div class="step-title">⑤ 比值消元，得出最终精确值 $\frac{35}{48}$</div>
+          <div class="step-body">将两式相除，公共未知量 $OS$ 与反演基圆幂 $r^2$ 完全对消：
+$$\frac{OM}{ON} = \frac{\frac{OS \cdot OA \cdot OC}{r^2}}{\frac{OS \cdot OB \cdot OD}{r^2}} = \frac{OA \cdot OC}{OB \cdot OD} = \frac{5 \times 7}{6 \times 8} = \frac{35}{48}$$
+最终得解：$\frac{OM}{ON} = \frac{35}{48}$！</div>
+        </div>
+        
+      </div>
+    </div>
+    <div class="panel-right">
+      <div class="svg-wrap">
+        <svg id="geoSvg" viewBox="80 40 480 460">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb"/>
+            </marker>
+          </defs>
+          <g id="gBase">
+      <circle cx="320.00" cy="270.00" r="91.20" stroke="#64748b" fill="none" stroke-width="1.4" opacity="1.0" stroke-dasharray="4,4"/>
+      <polygon points="400.30,180.82 223.65,162.99 195.15,382.41 448.47,412.68" stroke="#1e293b" fill="none" stroke-width="1.8" opacity="1.0"/>
+      <line x1="400.30" y1="180.82" x2="195.15" y2="382.41" stroke="#cbd5e1" stroke-width="1.2" opacity="1.0" stroke-dasharray="3,3"/>
+      <line x1="223.65" y1="162.99" x2="448.47" y2="412.68" stroke="#cbd5e1" stroke-width="1.2" opacity="1.0" stroke-dasharray="3,3"/>
+      <line x1="320.00" y1="270.00" x2="297.72" y2="281.62" stroke="#dc2626" stroke-width="2.2" opacity="1.0"/>
+      <line x1="320.00" y1="270.00" x2="336.06" y2="287.84" stroke="#2563eb" stroke-width="2.2" opacity="1.0"/>
+    </g>
+          <g id="gStep"></g>
+          <g id="gPts">
+      <circle cx="320.00" cy="270.00" r="4" fill="#64748b"/> <text x="326.00" y="264.00" fill="#64748b" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">O</text>
+      <circle cx="400.30" cy="180.82" r="4" fill="#0f172a"/> <text x="408.30" y="174.82" fill="#0f172a" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">A (5)</text>
+      <circle cx="223.65" cy="162.99" r="4" fill="#0f172a"/> <text x="207.65" y="156.99" fill="#0f172a" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">B (6)</text>
+      <circle cx="195.15" cy="382.41" r="4" fill="#0f172a"/> <text x="179.15" y="394.41" fill="#0f172a" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">C (7)</text>
+      <circle cx="448.47" cy="412.68" r="4" fill="#0f172a"/> <text x="456.47" y="424.68" fill="#0f172a" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">D (8)</text>
+      <circle cx="297.72" cy="281.62" r="4.5" fill="#dc2626"/> <text x="303.72" y="275.62" fill="#dc2626" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">M</text>
+      <circle cx="336.06" cy="287.84" r="4.5" fill="#2563eb"/> <text x="322.06" y="281.84" fill="#2563eb" font-size="13" font-weight="600" stroke="#ffffff" stroke-width="4px" paint-order="stroke fill">N</text>
+    </g>
+        </svg>
+      </div>
+      <div class="controls">
+        <button class="btn secondary" onclick="prevStep()">上一步</button>
+        <span class="step-info" id="stepIndicator">步骤 0 / 5</span>
+        <button class="btn" onclick="nextStep()">下一步</button>
+        <button class="btn secondary" id="autoBtn" onclick="toggleAuto()">自动播放</button>
+        <button class="btn secondary" onclick="setStep(0)">重置</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+const STEPS = [{"step": 0, "title": "已知构型与核心待求线段", "text": "设凸四边形 $ABCD$ 外切于圆 $O$，$OA=5, OB=6, OC=7, OD=8$。对角线 $AC, BD$ 的中点分别为 $M, N$。求 $\\frac{OM}{ON}$ 的值。", "svg": ""}, {"step": 1, "title": "① 建立以 $O$ 为中心、半径 $r$ 的反演变换", "text": "以 $O$ 为反演中心、圆 $O$ 为基圆（反演幂 $r^2$）作反演变换。各顶点反演像 $A', B', C', D'$ 落在射线 $OA, OB, OC, OD$ 上，满足 $OA \\cdot OA' = OB \\cdot OB' = OC \\cdot OC' = OD \\cdot OD' = r^2$。", "svg": "\n              <circle cx=\"366.38\" cy=\"218.49\" r=\"4\" fill=\"#7c3aed\"/> <text x=\"374.38\" y=\"214.49\" fill=\"#7c3aed\" font-size=\"13\" font-weight=\"600\" stroke=\"#ffffff\" stroke-width=\"4px\" paint-order=\"stroke fill\">A'</text>\n              <circle cx=\"281.35\" cy=\"227.08\" r=\"4\" fill=\"#7c3aed\"/> <text x=\"267.35\" y=\"223.08\" fill=\"#7c3aed\" font-size=\"13\" font-weight=\"600\" stroke=\"#ffffff\" stroke-width=\"4px\" paint-order=\"stroke fill\">B'</text>\n              <circle cx=\"283.21\" cy=\"303.13\" r=\"4\" fill=\"#7c3aed\"/> <text x=\"269.21\" y=\"311.13\" fill=\"#7c3aed\" font-size=\"13\" font-weight=\"600\" stroke=\"#ffffff\" stroke-width=\"4px\" paint-order=\"stroke fill\">C'</text>\n              <circle cx=\"348.99\" cy=\"302.19\" r=\"4\" fill=\"#7c3aed\"/> <text x=\"356.99\" y=\"310.19\" fill=\"#7c3aed\" font-size=\"13\" font-weight=\"600\" stroke=\"#ffffff\" stroke-width=\"4px\" paint-order=\"stroke fill\">D'</text>\n            "}, {"step": 2, "title": "② 证明 $A'B'C'D'$ 为切点中位线平行四边形", "text": "由切线直角射影性质，$A', B', C', D'$ 分别为切点弦的中点。由三角形中位线定理，$A'B' \\parallel C'D'$ 且 $A'B' = C'D' = \\frac{1}{2}HF$。因此 $A'B'C'D'$ 严格为一个平行四边形！其对角线互相平分于公共中点 $S$。", "svg": "\n              <polygon points=\"366.38,218.49 281.35,227.08 283.21,303.13 348.99,302.19\" stroke=\"#7c3aed\" fill=\"rgba(124,58,237,0.08)\" stroke-width=\"2.0\" opacity=\"1.0\"/>\n              <line x1=\"366.38\" y1=\"218.49\" x2=\"283.21\" y2=\"303.13\" stroke=\"#7c3aed\" stroke-width=\"1.2\" opacity=\"1.0\" stroke-dasharray=\"3,3\"/>\n              <line x1=\"281.35\" y1=\"227.08\" x2=\"348.99\" y2=\"302.19\" stroke=\"#7c3aed\" stroke-width=\"1.2\" opacity=\"1.0\" stroke-dasharray=\"3,3\"/>\n              <circle cx=\"324.79\" cy=\"260.81\" r=\"5\" fill=\"#d946ef\"/> <text x=\"332.79\" y=\"256.81\" fill=\"#d946ef\" font-size=\"13\" font-weight=\"600\" stroke=\"#ffffff\" stroke-width=\"4px\" paint-order=\"stroke fill\">S</text>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"324.79\" y2=\"260.81\" stroke=\"#7c3aed\" stroke-width=\"1.8\" opacity=\"1.0\"/>\n            "}, {"step": 3, "title": "③ 相似三角形中线比：表达 $OM$", "text": "由反演性质知 $\\bigtriangleup A'OC' \\sim \\bigtriangleup COA$（反向相似）。线段 $OS$ 与 $OM$ 分别是两相似三角形对应的中线，故对应中线比等于对应边长比：$\\frac{OS}{OM} = \\frac{OA'}{OC} = \\frac{r^2}{OA \\cdot OC}$，解得 $OM = \\frac{OS \\cdot OA \\cdot OC}{r^2}$。", "svg": "\n              <polygon points=\"366.38,218.49 320.00,270.00 283.21,303.13\" stroke=\"#059669\" fill=\"rgba(5,150,105,0.12)\" stroke-width=\"1.8\" opacity=\"1.0\"/>\n              <polygon points=\"195.15,382.41 320.00,270.00 400.30,180.82\" stroke=\"#059669\" fill=\"rgba(5,150,105,0.08)\" stroke-width=\"1.8\" opacity=\"1.0\"/>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"297.72\" y2=\"281.62\" stroke=\"#dc2626\" stroke-width=\"2.8\" opacity=\"1.0\"/>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"324.79\" y2=\"260.81\" stroke=\"#7c3aed\" stroke-width=\"2.2\" opacity=\"1.0\"/>\n            "}, {"step": 4, "title": "④ 相似三角形中线比：表达 $ON$", "text": "同理，在另一对对角线构成的三角形中，$\\bigtriangleup B'OD' \\sim \\bigtriangleup DOB$。$OS$ 与 $ON$ 为对应中线，满足：$\\frac{OS}{ON} = \\frac{OB'}{OD} = \\frac{r^2}{OB \\cdot OD}$，解得 $ON = \\frac{OS \\cdot OB \\cdot OD}{r^2}$。", "svg": "\n              <polygon points=\"281.35,227.08 320.00,270.00 348.99,302.19\" stroke=\"#d97706\" fill=\"rgba(217,119,6,0.12)\" stroke-width=\"1.8\" opacity=\"1.0\"/>\n              <polygon points=\"448.47,412.68 320.00,270.00 223.65,162.99\" stroke=\"#d97706\" fill=\"rgba(217,119,6,0.08)\" stroke-width=\"1.8\" opacity=\"1.0\"/>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"336.06\" y2=\"287.84\" stroke=\"#2563eb\" stroke-width=\"2.8\" opacity=\"1.0\"/>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"324.79\" y2=\"260.81\" stroke=\"#7c3aed\" stroke-width=\"2.2\" opacity=\"1.0\"/>\n            "}, {"step": 5, "title": "⑤ 比值消元，得出最终精确值 $\\frac{35}{48}$", "text": "将两式相除，公共未知量 $OS$ 与反演基圆幂 $r^2$ 完全对消：\n$$\\frac{OM}{ON} = \\frac{\\frac{OS \\cdot OA \\cdot OC}{r^2}}{\\frac{OS \\cdot OB \\cdot OD}{r^2}} = \\frac{OA \\cdot OC}{OB \\cdot OD} = \\frac{5 \\times 7}{6 \\times 8} = \\frac{35}{48}$$\n最终得解：$\\frac{OM}{ON} = \\frac{35}{48}$！", "svg": "\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"297.72\" y2=\"281.62\" stroke=\"#dc2626\" stroke-width=\"3.0\" opacity=\"1.0\"/>\n              <line x1=\"320.00\" y1=\"270.00\" x2=\"336.06\" y2=\"287.84\" stroke=\"#2563eb\" stroke-width=\"3.0\" opacity=\"1.0\"/>\n            "}];
+let curStep = 0;
+let autoTimer = null;
+
+function setStep(idx) {
+  if (idx < 0) idx = 0;
+  if (idx >= STEPS.length) idx = STEPS.length - 1;
+  curStep = idx;
+
+  document.querySelectorAll('.step-card').forEach((c, i) => {
+    c.classList.toggle('active', i === curStep);
+    if (i === curStep) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  document.getElementById('stepIndicator').innerText = `步骤 ${curStep} / ${STEPS.length - 1}`;
+  const gStep = document.getElementById('gStep');
+  gStep.innerHTML = STEPS[curStep].svg || '';
+
+  // 绑定 URL
+  const url = new URL(window.location);
+  url.searchParams.set('step', curStep);
+  window.history.replaceState({}, '', url);
+
+  if (window.onStepChanged) window.onStepChanged(curStep);
+  if (window.renderMath) window.renderMath();
+}
+
+function nextStep() { setStep(curStep + 1); }
+function prevStep() { setStep(curStep - 1); }
+
+function toggleAuto() {
+  const btn = document.getElementById('autoBtn');
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btn.innerText = '自动播放';
+  } else {
+    btn.innerText = '暂停播放';
+    autoTimer = setInterval(() => {
+      if (curStep >= STEPS.length - 1) {
+        setStep(0);
+      } else {
+        nextStep();
+      }
+    }, 2600);
+  }
+}
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { nextStep(); }
+  else if (e.key === 'ArrowLeft') { prevStep(); }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const p = new URLSearchParams(window.location.search);
+  const s = parseInt(p.get('step') || '0', 10);
+  setStep(isNaN(s) ? 0 : s);
+});
+
+
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

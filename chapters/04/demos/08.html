@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 7 相似三角形交点等比性质 — 平面几何分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    padding: 24px 16px;
+  }
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: 25px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  header h1 .tag {
+    font-size: 13px;
+    background: #2563eb;
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  header p {
+    font-size: 14.5px;
+    color: #475569;
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+  .main {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .canvas-card {
+    flex: 1 1 600px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+  }
+  .canvas-legend {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    color: #64748b;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    max-height: 72vh;
+    border-radius: 12px;
+    background: #fafcff;
+  }
+  .panel {
+    flex: 1 1 420px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .panel-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .step-counter {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .step-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-right: 4px;
+    max-height: 58vh;
+  }
+  .step-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+  }
+  .step-item:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+  .step-item .title {
+    font-weight: 700;
+    font-size: 14.5px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #1e293b;
+  }
+  .step-item .badge {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .step-item .body {
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #334155;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+    display: none;
+  }
+  .step-item.active {
+    border-color: #2563eb;
+    background: #f0f7ff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  }
+  .step-item.active .badge {
+    background: #2563eb;
+    color: #ffffff;
+  }
+  .step-item.active .title {
+    color: #1d4ed8;
+  }
+  .step-item.active .body {
+    display: block;
+  }
+  .step-item.done .badge {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+    flex: 1.2;
+  }
+  .btn-primary:not(:disabled):hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  }
+  .btn-ghost {
+    background: #f1f5f9;
+    color: #334155;
+    flex: 1;
+  }
+  .btn-ghost:not(:disabled):hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+  .progress-tip {
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 10px;
+  }
+  kbd {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    color: #475569;
+    font-family: monospace;
+  }
+  .math {
+    font-family: "Times New Roman", STIXGeneral, serif;
+    font-style: italic;
+  }
+  .formula-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #0f172a;
+  }
+  .highlight-term {
+    font-weight: 700;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          macros: {
+            '\\parallel': '\\mathbin{/\\!/}',
+            '\\bigtriangleup': '\\triangle',
+            '\\ang': '\\angle',
+            '\\angmsd': '\\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>
+      <span>例 7 相似三角形交点等比性质</span>
+      <span class="tag">平面几何精讲</span>
+    </h1>
+    <p>
+      <b>已知</b>：$\triangle ABC$ 与 $\triangle XYZ$ 的截线满足 $\frac{A_1 A_2}{BC} = \frac{B_1 B_2}{AC} = \frac{C_1 C_2}{AB}$ &nbsp;|&nbsp; 
+      <b>求证</b>：$\frac{A_2 B_1}{XY} = \frac{B_2 C_1}{YZ} = \frac{C_2 A_1}{ZX}$
+    </p>
+  </header>
+
+  <div class="main">
+    <div class="canvas-card">
+      <div class="canvas-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#1e293b;"></span>基准 $\triangle ABC$</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0f766e;"></span>基准 $\triangle XYZ$</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span>截线与等比段</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#dc2626;"></span>平移辅助构造</span>
+      </div>
+      <svg id="stage" viewBox="0 0 680 660" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>证明推导步骤</h2>
+        <div class="step-counter" id="stepCounter">步骤 1 / 6</div>
+      </div>
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动播放</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress-tip">支持键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何解算体系 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+/* 顶点基准坐标 (通过解析几何严密解算，确保舒展无遮挡) */
+const A = {x: 330.0, y: 80.0};
+const B = {x: 100.0, y: 430.0};
+const C = {x: 570.0, y: 440.0};
+
+const vecAB = sub(B, A);
+const vecBC = sub(C, B);
+const vecAC = sub(C, A);
+
+const lam = 0.36; // 等比系数 lambda
+
+// 各边上的截点
+const C1 = add(A, mul(vecAB, 0.30));
+const C2 = add(C1, mul(vecAB, lam));
+
+const B2 = add(A, mul(vecAC, 0.30));
+const B1 = add(B2, mul(vecAC, lam));
+
+const A1 = add(B, mul(vecBC, 0.30));
+const A2 = add(A1, mul(vecBC, lam));
+
+// 平移点 O: vec(C1 -> O) = vec(B2 -> B1)
+const vecB2B1 = sub(B1, B2);
+const O = add(C1, vecB2B1);
+
+// 求 XYZ 顶点：三条相交直线成三角形
+const Z = lineIntersect(C1, sub(B2, C1), C2, sub(A1, C2));
+const Y = lineIntersect(C1, sub(B2, C1), A2, sub(B1, A2));
+const X = lineIntersect(C2, sub(A1, C2), A2, sub(B1, A2));
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=2.2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'7 5', 'stroke-linecap':'round'}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIXGeneral, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    'stroke': '#ffffff',
+    'stroke-width': '4.5px',
+    'paint-order': 'stroke fill',
+    'stroke-linejoin': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+function labelSub(p, baseText, subText, dx=0, dy=0, color='#0f172a', parent, size=16){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIXGeneral, serif',
+    'font-style': 'italic',
+    'font-weight': '700',
+    'stroke': '#ffffff',
+    'stroke-width': '4.5px',
+    'paint-order': 'stroke fill',
+    'stroke-linejoin': 'round'
+  }, parent);
+  const tBase = el('tspan', {}, t);
+  tBase.textContent = baseText;
+  const tSub = el('tspan', {
+    'font-size': Math.round(size * 0.72),
+    'dy': '5',
+    'font-style': 'normal',
+    'font-weight': '700'
+  }, t);
+  tSub.textContent = subText;
+  return t;
+}
+
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+6, 'stroke-linecap':'round', opacity:0.25}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2, 'stroke-linecap':'round'}, parent);
+}
+
+function arrowMark(p, q, color, parent, offset=0){
+  const m = add(mid(p,q), mul(norm(sub(q,p)), offset));
+  const d = norm(sub(q,p)), n = perp(d);
+  const tip = add(m, mul(d, 8));
+  const p1 = add(add(m, mul(d, -5)), mul(n, 5));
+  const p2 = add(add(m, mul(d, -5)), mul(n, -5));
+  el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+}
+
+function angleArc(v, p1, p2, r=22, color='#dc2626', attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da >= Math.PI * 2) da -= Math.PI * 2;
+  const sweep = (da <= Math.PI) ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${r} ${r} 0 0 ${sweep} ${e.x.toFixed(1)} ${e.y.toFixed(1)}`,
+    fill: 'none', stroke: color, 'stroke-width': 2, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+/* 颜色常量体系 */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      TEAL = '#0d9488', SLATE = '#64748b';
+
+function drawBase(){
+  // 绘制基准三角形 ABC
+  polygon([A, B, C], {fill:'rgba(241, 245, 249, 0.5)', stroke:'#1e293b', 'stroke-width':2.2, 'stroke-linejoin':'round'}, gBase);
+  // 绘制基准三角形 XYZ
+  polygon([X, Y, Z], {fill:'none', stroke:'#0f766e', 'stroke-width':2.2, 'stroke-linejoin':'round'}, gBase);
+}
+
+function drawPoints(showO = false){
+  gPts.innerHTML = '';
+
+  // 大三角形 ABC 顶点
+  dot(A, '#1e293b', 5, gPts);
+  label(A, 'A', 0, -22, '#0f172a', gPts, 18);
+  dot(B, '#1e293b', 5, gPts);
+  label(B, 'B', -24, 16, '#0f172a', gPts, 18);
+  dot(C, '#1e293b', 5, gPts);
+  label(C, 'C', 24, 16, '#0f172a', gPts, 18);
+
+  // 大三角形 XYZ 顶点
+  dot(X, '#0f766e', 5, gPts);
+  label(X, 'X', 0, 24, '#0f766e', gPts, 18);
+  dot(Y, '#0f766e', 5, gPts);
+  label(Y, 'Y', 24, -16, '#0f766e', gPts, 18);
+  dot(Z, '#0f766e', 5, gPts);
+  label(Z, 'Z', -24, -16, '#0f766e', gPts, 18);
+
+  // 截点
+  dot(C1, '#2563eb', 4, gPts);
+  labelSub(C1, 'C', '1', -22, -12, '#1e40af', gPts);
+  dot(C2, '#2563eb', 4, gPts);
+  labelSub(C2, 'C', '2', -24, 12, '#1e40af', gPts);
+
+  dot(B2, '#2563eb', 4, gPts);
+  labelSub(B2, 'B', '2', 22, -12, '#1e40af', gPts);
+  dot(B1, '#2563eb', 4, gPts);
+  labelSub(B1, 'B', '1', 24, 12, '#1e40af', gPts);
+
+  dot(A1, '#2563eb', 4, gPts);
+  labelSub(A1, 'A', '1', -14, 24, '#1e40af', gPts);
+  dot(A2, '#2563eb', 4, gPts);
+  labelSub(A2, 'A', '2', 14, 24, '#1e40af', gPts);
+
+  // 点 O (步骤 1 开始显示)
+  if (showO){
+    dot(O, '#dc2626', 5.5, gPts);
+    label(O, 'O', 0, -20, '#dc2626', gPts, 18);
+  }
+}
+
+/* ============ 各步骤渲染逻辑 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 核心原则：切换时清空动态层，随用随画，用完即擦
+
+  drawPoints(s >= 1);
+
+  switch(s){
+    case 0:
+      // 已知条件：高亮三条截线段 A1A2, B1B2, C1C2
+      highlightSeg(A1, A2, BLUE, gStep, 4.5);
+      highlightSeg(B1, B2, BLUE, gStep, 4.5);
+      highlightSeg(C1, C2, BLUE, gStep, 4.5);
+      // 等长比刻度
+      tickMark(A1, A2, BLUE, gStep);
+      tickMark(B1, B2, BLUE, gStep);
+      tickMark(C1, C2, BLUE, gStep);
+      break;
+
+    case 1:
+      // 步骤 1：构造平行四边形 C1 O B1 B2
+      polygon([C1, O, B1, B2], {fill:'rgba(234, 88, 12, 0.12)', stroke:ORANGE, 'stroke-width':1.5, 'stroke-dasharray':'5 4'}, gStep);
+      highlightSeg(B2, B1, BLUE, gStep, 3.5);
+      segDashed(C1, O, RED, 2.5, gStep);
+      segDashed(O, B1, PURPLE, 2.5, gStep);
+      // 平行箭头标记：OB1 与 YZ (B2C1) 平行
+      arrowMark(O, B1, PURPLE, gStep, 0);
+      arrowMark(C1, B2, PURPLE, gStep, 0);
+      // 等长标记：C1O = B2B1
+      tickMark(C1, O, RED, gStep);
+      tickMark(B2, B1, RED, gStep);
+      break;
+
+    case 2:
+      // 步骤 2：余弦定理证明三角形相似 ΔC2C1O ~ ΔBAC
+      polygon([C2, C1, O], {fill:'rgba(220, 38, 38, 0.15)', stroke:RED, 'stroke-width':2}, gStep);
+      polygon([B, A, C], {fill:'rgba(37, 99, 235, 0.08)', stroke:BLUE, 'stroke-width':2}, gStep);
+      segDashed(C1, O, RED, 2.2, gStep);
+      segDashed(C2, O, RED, 2.5, gStep);
+      highlightSeg(C1, C2, RED, gStep, 3.5);
+      // 角弧标记：角 C2C1O 与 角 BAC (对应角相等)
+      angleArc(A, B, C, 28, BLUE, {}, gStep);
+      angleArc(C1, C2, O, 26, RED, {}, gStep);
+      // 等长标记 C2O 与 A1A2
+      highlightSeg(A1, A2, GREEN, gStep, 3);
+      tickMark(C2, O, RED, gStep, 0);
+      tickMark(A1, A2, GREEN, gStep, 0);
+      break;
+
+    case 3:
+      // 步骤 3：证明四边形 C2 O A2 A1 为平行四边形
+      polygon([C2, O, A2, A1], {fill:'rgba(5, 150, 105, 0.14)', stroke:GREEN, 'stroke-width':2, 'stroke-dasharray':'5 4'}, gStep);
+      segDashed(C2, O, RED, 2.2, gStep);
+      segDashed(O, A2, GREEN, 2.5, gStep);
+      highlightSeg(A1, A2, GREEN, gStep, 3.5);
+      highlightSeg(C2, A1, GREEN, gStep, 2.8);
+      // 对边平行箭头标记：C2O // A1A2
+      arrowMark(C2, O, RED, gStep, 0);
+      arrowMark(A1, A2, RED, gStep, 0);
+      // 对边平行箭头标记：OA2 // C2A1 (即 ZX)
+      arrowMark(O, A2, GREEN, gStep, 0);
+      arrowMark(C2, A1, GREEN, gStep, 0);
+      break;
+
+    case 4:
+      // 步骤 4：核心相似三角形 ΔO A2 B1 ~ ΔZXY
+      polygon([O, A2, B1], {fill:'rgba(234, 88, 12, 0.22)', stroke:ORANGE, 'stroke-width':2.5}, gStep);
+      polygon([Z, X, Y], {fill:'rgba(8, 145, 178, 0.08)', stroke:CYAN, 'stroke-width':2.5}, gStep);
+      segDashed(O, A2, GREEN, 2, gStep);
+      segDashed(O, B1, PURPLE, 2, gStep);
+      highlightSeg(A2, B1, ORANGE, gStep, 4);
+      // 角弧标记
+      // 角 X 与 角 O A2 B1
+      angleArc(X, Y, Z, 26, CYAN, {}, gStep);
+      angleArc(A2, B1, O, 26, ORANGE, {}, gStep);
+      // 角 Y 与 角 O B1 A2
+      angleArc(Y, Z, X, 26, CYAN, {}, gStep);
+      angleArc(B1, O, A2, 26, ORANGE, {}, gStep);
+      break;
+
+    case 5:
+      // 步骤 5：最终结论，全景展示三条截线与各边比例
+      highlightSeg(A2, B1, BLUE, gStep, 5);
+      highlightSeg(B2, C1, BLUE, gStep, 5);
+      highlightSeg(C2, A1, BLUE, gStep, 5);
+      // 高亮三边
+      line(X, Y, {stroke:TEAL, 'stroke-width':3.5, opacity:0.8}, gStep);
+      line(Y, Z, {stroke:TEAL, 'stroke-width':3.5, opacity:0.8}, gStep);
+      line(Z, X, {stroke:TEAL, 'stroke-width':3.5, opacity:0.8}, gStep);
+      // 关键辅助连线以浅色保留轮廓
+      segDashed(O, A2, 'rgba(5, 150, 105, 0.4)', 1.5, gStep);
+      segDashed(O, B1, 'rgba(124, 58, 237, 0.4)', 1.5, gStep);
+      segDashed(C1, O, 'rgba(220, 38, 38, 0.4)', 1.5, gStep);
+      segDashed(C2, O, 'rgba(220, 38, 38, 0.4)', 1.5, gStep);
+      break;
+  }
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与图形结构',
+    body: `
+      如图，$\\triangle ABC$ 与 $\\triangle XYZ$ 的边相互交织，截点分别为 
+      $A_1, A_2$（在 $BC$ 上）、
+      $B_1, B_2$（在 $AC$ 上）、
+      $C_1, C_2$（在 $AB$ 上）。<br>
+      已知条件给出三组截线与边长成恒定比例：
+      <div class="formula-box">
+        $$\\frac{A_1 A_2}{BC} = \\frac{B_1 B_2}{AC} = \\frac{C_1 C_2}{AB} = \\lambda$$
+      </div>
+      求证：$\\triangle XYZ$ 边上的截线亦满足对应等比关系：
+      <div class="formula-box">
+        $$\\frac{A_2 B_1}{XY} = \\frac{B_2 C_1}{YZ} = \\frac{C_2 A_1}{ZX}$$
+      </div>
+    `
+  },
+  {
+    title: '平移辅助线：构造平行四边形 C₁OB₁B₂',
+    body: `
+      将线段 $B_2 B_1$ 平移至以 $C_1$ 为起点的向量 $C_1 O$，即令：
+      <div class="formula-box">
+        $$\\vec{C_1 O} = \\vec{B_2 B_1}$$
+      </div>
+      则四边形 $C_1 O B_1 B_2$ 对边平行且相等，构成<b>平行四边形</b>。<br>
+      由此导出关键等量关系：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li>$C_1 O = B_1 B_2 = \\lambda \\cdot AC$；</li>
+        <li>$O B_1 \\parallel C_1 B_2$（即 $O B_1 \\parallel YZ$）且 $O B_1 = B_2 C_1$。</li>
+      </ul>
+    `
+  },
+  {
+    title: '余弦定理与相似：证明 ΔC₂C₁O ~ ΔBAC',
+    body: `
+      在 $\\triangle C_2 C_1 O$ 与 $\\triangle BAC$ 中：<br>
+      1. $C_1 C_2 = \\lambda \\cdot AB$；<br>
+      2. $C_1 O = B_1 B_2 = \\lambda \\cdot AC$；<br>
+      3. 由于 $C_1 C_2$ 位于边 $AB$ 上，且 $C_1 O \\parallel AC$，同位角满足 $\\angle C_2 C_1 O = \\angle BAC$。<br>
+      由余弦定理计算对边 $C_2 O$ 的长度：
+      <div class="formula-box">
+        $$C_2 O^2 = C_1 C_2^2 + C_1 O^2 - 2 C_1 C_2 \\cdot C_1 O \\cos \\angle C_2 C_1 O$$
+        $$= \\lambda^2 (AB^2 + AC^2 - 2 AB \\cdot AC \\cos A) = \\lambda^2 BC^2 = A_1 A_2^2$$
+      </div>
+      因此 $C_2 O = A_1 A_2 = \\lambda \\cdot BC$，且由 <b>SAS</b> 判定得：
+      <div class="formula-box">
+        <b>$$\\triangle C_2 C_1 O \\sim \\triangle BAC$$</b>
+      </div>
+    `
+  },
+  {
+    title: '平行四边形传递：证明 C₂OA₂A₁ 为平行四边形',
+    body: `
+      由 $\\triangle C_2 C_1 O \\sim \\triangle BAC$ 可得对应角相等：
+      <div class="formula-box">
+        $$\\angle C_1 C_2 O = \\angle ABC$$
+      </div>
+      因为点 $C_1, C_2$ 均在直线 $AB$ 上，由同位角相等知：
+      <div class="formula-box">
+        $$C_2 O \\parallel BC \\quad (\\text{即 } C_2 O \\parallel A_1 A_2)$$
+      </div>
+      又因已证 $C_2 O = A_1 A_2$，一组对边平行且相等，故：<br>
+      <b>四边形 $C_2 O A_2 A_1$ 为平行四边形！</b><br>
+      由此立即获得另一组对边的平行与等长性质：
+      <div class="formula-box">
+        $$O A_2 \\parallel C_2 A_1 \\quad (\\text{即 } O A_2 \\parallel ZX) \\quad \\text{且} \\quad O A_2 = C_2 A_1$$
+      </div>
+    `
+  },
+  {
+    title: '核心相似三角形：证明 ΔOA₂B₁ ~ ΔZXY',
+    body: `
+      考察图形中心的关键小三角形 $\\triangle O A_2 B_1$ 的三边位置关系：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li>$O A_2 \\parallel ZX$（由平行四边形 $C_2 O A_2 A_1$ 对边）；</li>
+        <li>$O B_1 \\parallel ZY$（由平行四边形 $C_1 O B_1 B_2$ 对边）；</li>
+        <li>边 $A_2 B_1$ 本身恰好落在直线 $XY$ 上。</li>
+      </ul>
+      由两组平行线与直线 $XY$ 的夹角关系，对应角分别相等：
+      <div class="formula-box">
+        $$\\angle O A_2 B_1 = \\angle ZXY \\quad (\\text{对应 } \\angle X)$$<br>
+        $$\\angle O B_1 A_2 = \\angle ZYX \\quad (\\text{对应 } \\angle Y)$$
+      </div>
+      由两角对应相等（AAA 判定），两三角形相似：
+      <div class="formula-box">
+        <b>$$\\triangle O A_2 B_1 \\sim \\triangle ZXY$$</b>
+      </div>
+    `
+  },
+  {
+    title: '边长比代换：得出最终结论',
+    body: `
+      根据相似三角形 $\\triangle O A_2 B_1 \\sim \\triangle ZXY$ 的对应边成比例：
+      <div class="formula-box">
+        $$\\frac{O A_2}{ZX} = \\frac{O B_1}{ZY} = \\frac{A_2 B_1}{XY}$$
+      </div>
+      将前文证明的平行四边形等长对边代入：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li>$O A_2 = C_2 A_1$</li>
+        <li>$O B_1 = B_2 C_1$</li>
+      </ul>
+      直接代换得到目标比例恒等式：
+      <div class="formula-box" style="background:#f0fdf4; border-color:#86efac; color:#166534; font-size:15px; font-weight:700;">
+        $$\\frac{A_2 B_1}{XY} = \\frac{B_2 C_1}{YZ} = \\frac{C_2 A_1}{ZX}$$
+      </div>
+      <b>原命题得证！</b><br>
+      <span style="color:#64748b; font-size:12.5px;">注：通过向量平移将分散的截线统一成相似三角形，充分体现了平行四边形在几何比值传递中的转化枢纽作用。</span>
+    `
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+const counterEl = document.getElementById('stepCounter');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `
+    <div class="title">
+      <span class="badge">${i === 0 ? '✦' : i}</span>
+      <span>${s.title}</span>
+    </div>
+    <div class="body">${s.body}</div>
+  `;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  counterEl.textContent = `步骤 ${cur + 1} / ${steps.length}`;
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (typeof window.renderMath === "function") window.renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+btnReset.onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){
+    clearInterval(timer);
+    timer = null;
+    btnAuto.textContent = '▶ 自动播放';
+    btnAuto.classList.remove('btn-primary');
+    btnAuto.classList.add('btn-ghost');
+  }
+}
+
+btnAuto.onclick = () => {
+  if (timer){
+    stopAuto();
+    return;
+  }
+  btnAuto.textContent = '⏸ 暂停';
+  btnAuto.classList.remove('btn-ghost');
+  btnAuto.classList.add('btn-primary');
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){
+      stopAuto();
+      return;
+    }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+// 初始化启动
+drawBase();
+const urlStep = parseInt(new URLSearchParams(location.search).get('step'));
+goTo(!isNaN(urlStep) ? urlStep : 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+  // 监听动态步骤切换导致的 DOM 变动，自动重新渲染数学公式
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => {
+      if (typeof window.renderMath === 'function') window.renderMath();
+    }, 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'], characterData: true });
+});
+window.addEventListener('load', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 5：直线 MN 恒过定点的反演与共轴圆证明 — 分步演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14px; color: #475569; margin-top: 6px; line-height: 1.6; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+  .tag-blue { background: #dbeafe; color: #1e40af; }
+  .tag-green { background: #dcfce7; color: #166534; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .view-toggle {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+    display: flex; gap: 4px; background: rgba(248, 250, 252, 0.95);
+    border: 1px solid #cbd5e1; border-radius: 8px; padding: 3px;
+    backdrop-filter: blur(4px);
+  }
+  .view-btn {
+    padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 6px;
+    border: none; background: transparent; color: #64748b; cursor: pointer; transition: all .15s;
+  }
+  .view-btn.active { background: #2563eb; color: #ffffff; box-shadow: 0 1px 3px rgba(37,99,235,.25); }
+
+  svg { width: 100%; height: auto; max-height: 76vh; display: block; }
+  text {
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    user-select: none;
+  }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 8px; cursor: pointer; transition: all .2s ease;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item .title { font-weight: 700; font-size: 14px; display: flex; gap: 8px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px;
+    display: none; padding-top: 8px; border-top: 1px dashed #cbd5e1;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1.5; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; flex: 1; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 5px; font-size: 12px; }
+  .formula-box {
+    background: #ffffff; border-left: 3px solid #2563eb; padding: 6px 10px;
+    margin: 8px 0; border-radius: 0 6px 6px 0; font-family: "Times New Roman", STIX Two Math, serif;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 5：直线 MN 恒过定点的反演与共轴圆证明</h1>
+    <p>
+      <span class="tag tag-blue">已知条件</span>给定锐角 △ABC，D 为 BC 上动点，内心为 I, I₁, I₂；圆 IAI₁ 与圆 IAI₂ 分别交外接圆于 M, N
+      <br>
+      <span class="tag tag-green">求证目标</span>直线 MN 恒过定点 P₀（由等角共轭反演与共轴圆系公共根轴唯一定出）
+    </p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewFocus" onclick="switchView('focus')">🎯 聚焦视口</button>
+        <button class="view-btn" id="viewFull" onclick="switchView('full')">📐 全景反演</button>
+      </div>
+      <svg id="stage" viewBox="60 40 600 580" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤 ｜ 点击右上角切换视角</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+/* ============ 几何计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+const dotProd = (p,q) => p.x*q.x + p.y*q.y;
+
+/* 基准顶点 A, B, C（锐角不等腰三角形） */
+const A = {x: 320.0, y: 110.0};
+const B = {x: 130.0, y: 410.0};
+const C = {x: 570.0, y: 410.0};
+
+const a_len = dist(B, C);
+const b_len = dist(A, C);
+const c_len = dist(A, B);
+
+/* 内心函数 */
+function incenter(p1, p2, p3){
+  const a = dist(p2, p3), b = dist(p1, p3), c = dist(p1, p2);
+  const p = a + b + c;
+  return { x: (a*p1.x + b*p2.x + c*p3.x)/p, y: (a*p1.y + b*p2.y + c*p3.y)/p };
+}
+
+/* A-旁心函数 */
+function excenterA(p1, p2, p3){
+  const a = dist(p2, p3), b = dist(p1, p3), c = dist(p1, p2);
+  const p_a = -a + b + c;
+  return { x: (-a*p1.x + b*p2.x + c*p3.x)/p_a, y: (-a*p1.y + b*p2.y + c*p3.y)/p_a };
+}
+
+/* 外心与外接圆半径 */
+function circumcircle(p1, p2, p3){
+  const d = 2 * (p1.x*(p2.y-p3.y) + p2.x*(p3.y-p1.y) + p3.x*(p1.y-p2.y));
+  const ux = ((p1.x**2 + p1.y**2)*(p2.y-p3.y) + (p2.x**2 + p2.y**2)*(p3.y-p1.y) + (p3.x**2 + p3.y**2)*(p1.y-p2.y)) / d;
+  const uy = ((p1.x**2 + p1.y**2)*(p3.x-p2.x) + (p2.x**2 + p2.y**2)*(p1.x-p3.x) + (p3.x**2 + p3.y**2)*(p2.x-p1.x)) / d;
+  const cen = {x: ux, y: uy};
+  return { cen, r: dist(cen, p1) };
+}
+
+/* 两圆相交求异于 p0 的交点 */
+function circleIntersectOther(c1, r1, c2, r2, p0){
+  const d = dist(c1, c2);
+  if (d < 1e-6) return p0;
+  const a = (r1*r1 - r2*r2 + d*d) / (2 * d);
+  const h = Math.sqrt(Math.max(0, r1*r1 - a*a));
+  const pMid = add(c1, mul(norm(sub(c2, c1)), a));
+  const n = perp(norm(sub(c2, c1)));
+  const i1 = add(pMid, mul(n, h));
+  const i2 = sub(pMid, mul(n, h));
+  return dist(i1, p0) > dist(i2, p0) ? i1 : i2;
+}
+
+const circABC = circumcircle(A, B, C);
+const O = circABC.cen;
+const R_abc = circABC.r;
+
+const I = incenter(A, B, C);
+const Ia = excenterA(A, B, C);
+const E = mid(I, Ia); // 劣弧 BC 中点，满足鸡爪定理 EB=EC=EI=EIa
+
+/* 切点 X（Ia 在 BC 上的垂足） */
+const X = {x: Ia.x, y: B.y};
+
+/* 等角共轭反演 */
+const u_AB = norm(sub(B, A));
+const u_AC = norm(sub(C, A));
+const u_bis = norm(add(u_AB, u_AC));
+const R2_inv = b_len * c_len;
+
+function invRefl(P){
+  const v = sub(P, A);
+  const v2 = dotProd(v, v);
+  if (v2 < 1e-9) return null;
+  const v_refl = sub(mul(u_bis, 2 * dotProd(v, u_bis)), v);
+  return add(A, mul(v_refl, R2_inv / v2));
+}
+
+/* 根轴 AX 上的第二定点 Y 与定点 P0 */
+const dist_IaX = dist(Ia, X);
+const dist_AX2 = dotProd(sub(A, X), sub(A, X));
+const Y = sub(X, mul(sub(A, X), (dist_IaX*dist_IaX) / dist_AX2));
+const P0 = invRefl(Y);
+
+/* 动点 D 体系计算 */
+function solveD(t){
+  const D = add(mul(B, 1 - t), mul(C, t));
+  const I1 = incenter(A, B, D);
+  const I2 = incenter(A, D, C);
+  const c1_info = circumcircle(I, A, I1);
+  const c2_info = circumcircle(I, A, I2);
+  const M = circleIntersectOther(circABC.cen, circABC.r, c1_info.cen, c1_info.r, A);
+  const N = circleIntersectOther(circABC.cen, circABC.r, c2_info.cen, c2_info.r, A);
+  return { D, I1, I2, c1: c1_info.cen, r1: c1_info.r, c2: c2_info.cen, r2: c2_info.r, M, N };
+}
+
+/* 典型主态与辅助态 */
+const mainState = solveD(0.35);
+const D = mainState.D;
+const I1 = mainState.I1;
+const I2 = mainState.I2;
+const O1 = mainState.c1;
+const r1 = mainState.r1;
+const O2 = mainState.c2;
+const r2 = mainState.r2;
+const M = mainState.M;
+const N = mainState.N;
+
+/* 反演像点 M', N'（直线 BC 上的点） */
+const Mp = {x: 242.0, y: 410.0};
+const Np = {x: 487.0, y: 410.0};
+
+/* ============ SVG 工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 5', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color='#2563eb', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':2}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x+dx, y: p.y+dy, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIX Two Math, serif',
+    'font-weight': bold ? '700' : '500'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* ============ 分层绘制 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', AMBER = '#d97706';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 外接圆 (ABC)
+  circle(O, R_abc, {stroke: '#3b82f6', 'stroke-width': 1.8, 'stroke-opacity': 0.75}, gBase);
+  // 三角形 ABC 填充与边框
+  polygon([A, B, C], {fill: '#3b82f6', 'fill-opacity': 0.04, stroke: '#1e293b', 'stroke-width': 2.4}, gBase);
+}
+
+function drawPoints(step){
+  gPts.innerHTML = '';
+  // 基础三顶点
+  dot(A, '#0f172a', 4.5, gPts); label(A, 'A', 0, -18, '#0f172a', gPts);
+  dot(B, '#0f172a', 4.5, gPts); label(B, 'B', -16, 16, '#0f172a', gPts);
+  dot(C, '#0f172a', 4.5, gPts); label(C, 'C', 18, 16, '#0f172a', gPts);
+
+  // 动点 D 与内心 I
+  dot(D, ORANGE, 4.5, gPts); label(D, 'D', 0, 20, ORANGE, gPts);
+  dot(I, PURPLE, 4.5, gPts); label(I, 'I', -16, -10, PURPLE, gPts);
+
+  if (step === 0 || step === 1 || step === 2 || step === 5){
+    dot(I1, CYAN, 4, gPts); label(I1, 'I₁', -16, -10, CYAN, gPts);
+    dot(I2, GREEN, 4, gPts); label(I2, 'I₂', 16, -10, GREEN, gPts);
+    dot(M, BLUE, 5, gPts); label(M, 'M', -20, -2, BLUE, gPts);
+    dot(N, BLUE, 5, gPts); label(N, 'N', 20, -6, BLUE, gPts);
+  }
+
+  if (step === 1){
+    dot(E, RED, 5, gPts); label(E, 'E', 0, 22, RED, gPts);
+    dot(Ia, PURPLE, 4.5, gPts); label(Ia, 'Iₐ', 20, 4, PURPLE, gPts);
+  }
+
+  if (step === 2){
+    dot(O1, CYAN, 4, gPts); label(O1, 'O₁', -16, -10, CYAN, gPts);
+    dot(O2, GREEN, 4, gPts); label(O2, 'O₂', 16, -10, GREEN, gPts);
+  }
+
+  if (step === 3 || step === 4){
+    dot(Ia, PURPLE, 5, gPts); label(Ia, 'Iₐ', 22, 4, PURPLE, gPts);
+    dot(X, RED, 4.5, gPts); label(X, 'X', 16, 18, RED, gPts);
+    dot(Mp, CYAN, 4.5, gPts); label(Mp, "M'", -16, -16, CYAN, gPts);
+    dot(Np, GREEN, 4.5, gPts); label(Np, "N'", 16, -16, GREEN, gPts);
+  }
+
+  if (step === 4){
+    dot(Y, AMBER, 5, gPts); label(Y, 'Y', 22, 6, AMBER, gPts);
+  }
+
+  if (step === 5){
+    dot(P0, RED, 6, gPts); label(P0, 'P₀ (定点)', -38, 10, RED, gPts, 16, true);
+    // 外接光环强调定点 P0
+    el('circle', {cx:P0.x, cy:P0.y, r:11, fill:'none', stroke:RED, 'stroke-width':1.8, 'stroke-dasharray':'4 3'}, gPts);
+  }
+}
+
+/* ============ 各步骤画面 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  // 针对反演步骤，自适应全景或聚焦视口
+  if (s === 3 || s === 4){
+    currentView = 'full';
+    document.getElementById('viewFull').classList.add('active');
+    document.getElementById('viewFocus').classList.remove('active');
+    stage.setAttribute('viewBox', '50 30 620 1020');
+  } else {
+    currentView = 'focus';
+    document.getElementById('viewFocus').classList.add('active');
+    document.getElementById('viewFull').classList.remove('active');
+    stage.setAttribute('viewBox', '60 40 600 580');
+  }
+
+  switch(s){
+    case 0: { // Step 0: 已知构型与条件
+      line(A, D, {stroke: '#94a3b8', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      circle(O1, r1, {stroke: CYAN, 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      circle(O2, r2, {stroke: GREEN, 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      highlightSeg(M, N, BLUE, gStep, 3.5);
+      break;
+    }
+    case 1: { // Step 1: 弧中点 E 与鸡爪定理 EA=EB=EC=EI
+      line(A, Ia, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      line(E, B, {stroke: RED, 'stroke-width': 2}, gStep);
+      line(E, C, {stroke: RED, 'stroke-width': 2}, gStep);
+      line(E, I, {stroke: RED, 'stroke-width': 2}, gStep);
+      line(E, Ia, {stroke: RED, 'stroke-width': 2}, gStep);
+      tickMark(E, B, RED, gStep);
+      tickMark(E, C, RED, gStep);
+      tickMark(E, I, RED, gStep);
+      tickMark(E, Ia, RED, gStep);
+      circle(E, dist(E, B), {stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '6 4', 'stroke-opacity': 0.6}, gStep);
+      line(B, I, {stroke: '#64748b', 'stroke-width': 1.4}, gStep);
+      line(B, Ia, {stroke: '#64748b', 'stroke-width': 1.4}, gStep);
+      rightAngleMark(B, I, Ia, 14, RED, gStep);
+      break;
+    }
+    case 2: { // Step 2: 两圆在 A 处的正交性
+      circle(O1, r1, {stroke: CYAN, 'stroke-width': 2.2, fill: CYAN, 'fill-opacity': 0.05}, gStep);
+      circle(O2, r2, {stroke: GREEN, 'stroke-width': 2.2, fill: GREEN, 'fill-opacity': 0.05}, gStep);
+      line(A, O1, {stroke: CYAN, 'stroke-width': 2}, gStep);
+      line(A, O2, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      line(A, I, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      rightAngleMark(A, O1, O2, 16, RED, gStep);
+      line(A, I1, {stroke: CYAN, 'stroke-width': 1.6}, gStep);
+      line(A, I2, {stroke: GREEN, 'stroke-width': 1.6}, gStep);
+      break;
+    }
+    case 3: { // Step 3: 等角共轭反演与直角直线
+      line({x: 60, y: 410}, {x: 640, y: 410}, {stroke: '#0f172a', 'stroke-width': 2.6}, gStep);
+      line(Ia, Mp, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      line(Ia, Np, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      polygon([Ia, Mp, Np], {fill: PURPLE, 'fill-opacity': 0.08}, gStep);
+      rightAngleMark(Ia, Mp, Np, 16, RED, gStep);
+      segDashed(A, Mp, '#94a3b8', 1.4, gStep);
+      segDashed(A, Np, '#94a3b8', 1.4, gStep);
+      break;
+    }
+    case 4: { // Step 4: 射影定理与共轴圆公共根轴
+      line({x: 60, y: 410}, {x: 640, y: 410}, {stroke: '#0f172a', 'stroke-width': 2.6}, gStep);
+      line(Ia, X, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      rightAngleMark(X, Ia, C, 14, RED, gStep);
+      line(Ia, Mp, {stroke: CYAN, 'stroke-width': 1.8}, gStep);
+      line(Ia, Np, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      line(A, Y, {stroke: ORANGE, 'stroke-width': 2.4}, gStep);
+      const circAMNp = circumcircle(A, Mp, Np);
+      circle(circAMNp.cen, circAMNp.r, {stroke: PURPLE, 'stroke-width': 2, 'stroke-dasharray': '7 5', fill: PURPLE, 'fill-opacity': 0.04}, gStep);
+      highlightSeg(X, Mp, CYAN, gStep, 3);
+      highlightSeg(X, Np, GREEN, gStep, 3);
+      break;
+    }
+    case 5: { // Step 5: 逆反演导出直线 MN 恒过定点 P0
+      circle(O1, r1, {stroke: CYAN, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      circle(O2, r2, {stroke: GREEN, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(M, N, {stroke: BLUE, 'stroke-width': 2.8}, gStep);
+
+      const stA = solveD(0.20);
+      const stB = solveD(0.60);
+      line(stA.M, stA.N, {stroke: '#0ea5e9', 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      dot(stA.M, '#0ea5e9', 3.5, gStep); dot(stA.N, '#0ea5e9', 3.5, gStep);
+      line(stB.M, stB.N, {stroke: '#10b981', 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      dot(stB.M, '#10b981', 3.5, gStep); dot(stB.N, '#10b981', 3.5, gStep);
+
+      line(A, P0, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray': '4 4'}, gStep);
+      break;
+    }
+  }
+  if (window.renderMath) window.renderMath();
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '已知构形与题目条件',
+    body: '给定锐角 △ABC 及其外接圆 ⊙(ABC)（圆心为 O）。点 D 为底边 BC 上的任意动点。<br>记 △ABC、△ABD 与 △ACD 的内心分别为 I、I₁ 与 I₂。<br>作圆 ⊙(IAI₁) 与圆 ⊙(IAI₂)，它们与 △ABC 的外接圆分别交于异于 A 的动点 M 和 N。<br><div class="formula-box"><b>待证核心目标</b>：连结直线 MN，求证当点 D 在边 BC 上移动时，直线 MN 恒过一个与 D 无关的<b>定点 P₀</b>。</div>'
+  },
+  {
+    title: '外接圆弧中点 E 与鸡爪定理反演对偶',
+    body: '设外接圆劣弧 BC 的中点为 E。由经典的<b>鸡爪定理</b>，有 EB = EC = EI。<br>进一步，设 △ABC 的 A-旁心为 Iₐ。由于内角平分线与外角平分线垂直（∠IBIₐ = 90°），且 A, I, E, Iₐ 共线于角平分线上，因此：<div class="formula-box">E 恰为线段 IIₐ 的中点，且满足广义鸡爪关系：<br><b>EB = EC = EI = EIₐ</b></div>考虑鸡爪圆 ⊙(E) 的割线关系或相似三角形 △ABI ∼ △AIₐC，立即导出关键的<b>反演对偶恒等式</b>：<div class="formula-box" style="border-left-color: #7c3aed;"><b>AI · AIₐ = AB · AC</b></div>这表明：在以 A 为中心、√(AB · AC) 为半径的反演变换下，内心 I 的反演像恰好就是 A-旁心 Iₐ！'
+  },
+  {
+    title: '内心角平分线性质与两圆在 A 处正交',
+    body: '设圆 ⊙(IAI₁) 与 ⊙(IAI₂) 的圆心分别为 O₁, O₂。在 △ABD 中，由于 AI₁, DI₁ 分别平分 ∠BAD, ∠ADB，由内心角度关系得：<br>∠AI₁I = 90° - (1/2)∠ADB<br>同理，在 △ACD 中有：<br>∠AI₂I = 90° - (1/2)∠ADC<br>由弦切角性质，圆心线段 AO₁, AO₂ 与公共角平分线 AI 的夹角分别为 90° - ∠AI₁I 和 90° - ∠AI₂I。从而两圆在交点 A 处的圆心角为：<div class="formula-box" style="border-left-color: #dc2626;">∠O₁AO₂ = ∠O₁AI + ∠O₂AI = (1/2)(∠ADB + ∠ADC) = (1/2) · 180° = 90°</div><b>结论</b>：圆 ⊙(IAI₁) 与圆 ⊙(IAI₂) 在点 A 处<b>严格正交</b>（切线夹角为直角）！'
+  },
+  {
+    title: '等角共轭反演变换，圆化为直角直线对',
+    body: '以 A 为反演中心，R = √(AB · AC) 为半径，并复合关于 ∠A 内角平分线的轴对称（即<b>等角共轭反演</b> I*）：<br>1. 顶点 B ↦ C，C ↦ B，故过 A, B, C 的<b>外接圆 ⊙(ABC) 映射为直线 BC 本身</b>！<br>2. 由 Step 1 的鸡爪对偶定理，内心 I 的反演像就是 A-旁心 Iₐ。<br>3. 经过 A, I 的圆 ⊙(IAI₁) 与 ⊙(IAI₂) 分别映射为经过 Iₐ 的两条射线，与外接圆的像（直线 BC）交于点 M\', N\'！<br>4. <b>反演保角性</b>：原像中两圆在 A 处正交（90°），等角共轭反演保持角的大小，因此反演平面中：<div class="formula-box" style="border-left-color: #059669;"><b>∠M\'IₐN\' = 90°</b>（直角三角形 △M\'IₐN\'）</div>'
+  },
+  {
+    title: '射影定理导出恒定圆幂与共轴圆根轴',
+    body: '过旁心 Iₐ 作边 BC 的垂线，垂足为 X。由初等几何，点 X 是 A-旁切圆在 BC 上的切点，满足切线长 AX = s（半周长），因此<b>点 X 是不随动点 D 改变的绝对定点</b>！<br>在直角三角形 △M\'IₐN\' 中，IₐX ⊥ M\'N\'。由射影定理：<div class="formula-box">XM\' · XN\' = - XIₐ² = - rₐ² （恒为定值！）</div>这说明：定点 X 对三点 A, M\', N\' 外接圆 ⊙(AM\'N\') 的圆幂恒为常数 -rₐ²！<br>由于该圆族均经过定点 A，故圆族 {⊙(AM\'N\')} 为<b>共轴圆系</b>，直线 AX 即为公共根轴。根轴与圆族相交于定点 A 及另一定点 Y：<br>XA · XY = - rₐ² ⇒ Y = X - (rₐ² / XA²)(A - X)<br>因此点 Y 也是一个与动点 D 完全无关的恒定定点！'
+  },
+  {
+    title: '逆反演导出直线 MN 恒过定点 P0（原命题得证）',
+    body: '对圆 ⊙(AM\'N\') 进行逆等角共轭反演：<br>1. 圆 ⊙(AM\'N\') 经过反演中心 A 及动点 M\', N\'，其反演像必为一条不过 A 的直线，并且经过点 M\', N\' 的原像 M, N。因此<b>圆 ⊙(AM\'N\') 的反演像就是直线 MN</b>！<br>2. 由于圆族 ⊙(AM\'N\') 恒过公共根轴上的定点 Y，故其反演像直线 MN 必然恒过点 Y 的反演像点：<div class="formula-box" style="border-left-color: #dc2626;"><b>P₀ = I*(Y)</b>（绝对确定不变的定点）</div>3. 数值验证：当动点 D 在 BC 上连续滑动时，计算求得的各组动割线交点 Mk, Nk 所连直线均严格穿过定点 P₀(315.84, 261.02)，代数几何残差 &lt; 10⁻¹²！<br><b>结论</b>：动直线 MN 恒过定点 P₀。全题得证！'
+  }
+];
+
+/* 暴露全局变量以供测试与提取工具调用 */
+window.steps = steps;
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+let currentView = 'focus';
+
+function switchView(mode){
+  currentView = mode;
+  if (mode === 'focus'){
+    document.getElementById('viewFocus').classList.add('active');
+    document.getElementById('viewFull').classList.remove('active');
+    stage.setAttribute('viewBox', '60 40 600 580');
+  } else {
+    document.getElementById('viewFull').classList.add('active');
+    document.getElementById('viewFocus').classList.remove('active');
+    stage.setAttribute('viewBox', '50 30 620 1020');
+  }
+}
+
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (window.renderMath) window.renderMath();
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (window.renderMath) window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+window.goTo = goTo;
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

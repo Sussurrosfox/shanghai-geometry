@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 5 凸四边形内角平分线与平行四边形轨迹 — 分步交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 13.5px; color: #475569; margin-top: 6px; line-height: 1.6; }
+  header .theorem-tag {
+    display: inline-block; background: #dbeafe; color: #1e40af; font-size: 12px;
+    font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px;
+  }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 75vh; }
+  .legend {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    font-size: 12px; color: #475569; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9; width: 100%;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .panel {
+    flex: 1 1 400px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 520px; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 11px 14px;
+    margin-bottom: 9px; cursor: pointer; transition: all .2s;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item .title { font-weight: 700; font-size: 14.5px; display: flex; gap: 8px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #cbd5e1; color: #334155; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 8px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 10px rgba(37,99,235,.08); }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #1e3a8a; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 5px; font-size:11px; }
+  .math { font-family: "Times New Roman", STIX Two Math, serif; font-style: italic; }
+  .formula-box {
+    background: #f8fafc; border-left: 3px solid #2563eb; padding: 7px 12px;
+    margin: 7px 0; border-radius: 0 6px 6px 0; font-family: "Times New Roman", serif; font-size: 13.5px;
+  }
+  .frac {
+    display: inline-flex; flex-direction: column; vertical-align: middle;
+    text-align: center; padding: 0 2px; font-size: 0.92em; line-height: 1.05;
+  }
+  .frac > .num { border-bottom: 1.2px solid currentColor; padding-bottom: 1px; }
+  .frac > .den { padding-top: 1px; }
+  .tag {
+    display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;
+  }
+  .tag-green { background: #dcfce7; color: #166534; }
+  .tag-purple { background: #f3e8ff; color: #6b21a8; }
+  .tag-red { background: #fee2e2; color: #991b1b; }
+  .tag-blue { background: #dbeafe; color: #1e40af; }
+  .tag-orange { background: #ffedd5; color: #9a3412; }
+  @keyframes pulseGlow {
+    0% { r: 6px; opacity: 0.9; }
+    50% { r: 16px; opacity: 0.25; stroke-width: 3px; }
+    100% { r: 6px; opacity: 0.9; }
+  }
+  .pulse-ring {
+    animation: pulseGlow 1.8s infinite ease-in-out;
+  }
+  text.halo-label {
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="theorem-tag">高精度交互几何 · 竞赛几何专题</div>
+    <h1>例 5 凸四边形内角平分线与平行四边形轨迹</h1>
+    <p><b>已知</b>：凸四边形 $ABCD$ 与平面内一点 $P$，$\angle APB, \angle BPC, \angle CPD, \angle DPA$ 的平分线交四边于 $K, L, M, N$。<br><b>求证与求解</b>：(1) 寻找使 $KLMN$ 为平行四边形的点 $P$；(2) 求所有满足条件的点 $P$ 的轨迹。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="80 70 480 430" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#0f172a;"></span>凸四边形 ABCD</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#dc2626;"></span>动点 / 轨迹点 P</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#059669;"></span>角平分线与四边形 KLMN</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#7c3aed;"></span>对角线中垂线</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0891b2;"></span>对角线 AC, BD</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">支持键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何数据与高精度坐标解算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 
+ * 坐标设计（严格保证非退化一般凸四边形，且对角线不共线不过 P）：
+ * 取 P 为坐标原点 (320, 290)。
+ * 取 PA = PC = r1 = 210, PB = PD = r2 = 160。
+ * 设定四个顶点相对于 P 的非退化几何方位角：
+ * A: 132° (第二象限，左上方)
+ * B: 46°  (第一象限，右上方)
+ * C: -34° (第四象限，右下方)
+ * D: -138°(第三象限，左下方)
+ */
+const P = { x: 320.00, y: 290.00 };
+const A = { x: 179.48, y: 133.94 };
+const B = { x: 431.15, y: 174.91 };
+const C = { x: 494.10, y: 407.43 };
+const D = { x: 201.10, y: 397.06 };
+
+const r1 = 210.0, r2 = 160.0;
+
+// 角平分线在边上的分点 K, L, M, N (由角平分线定理严格分比定点)
+// AK/KB = PA/PB = r1/r2  =>  K = (r2*A + r1*B)/(r1+r2)
+const K = { x: 322.32, y: 157.19 };
+// BL/LC = PB/PC = r2/r1  =>  L = (r1*B + r2*C)/(r1+r2)
+const L = { x: 458.37, y: 275.46 };
+// CM/MD = PC/PD = r1/r2  =>  M = (r2*C + r1*D)/(r1+r2)
+const M = { x: 327.80, y: 401.54 };
+// DN/NA = PD/PA = r2/r1  =>  N = (r1*D + r2*A)/(r1+r2)
+const N = { x: 191.75, y: 283.28 };
+
+// 对角线中点
+const midAC = { x: 336.79, y: 270.69 };
+const midBD = { x: 316.12, y: 285.99 };
+
+// 反证法 Step 3 中假设 KN 与 BD 的交点 Q (位于 BD 延长线上)
+const Q = { x: 136.69, y: 459.26 };
+
+/* ============ SVG 绘图核心函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIX Two Math, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    class: 'halo-label'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 直角标记：顶点 v，两边分别指向 p1, p2 */
+function rightAngleMark(v, p1, p2, s=11, color='#7c3aed', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {
+    points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8
+  }, parent);
+}
+
+/* 等长刻度线：在 pq 中点处画一道横杠；offset 用于双杠 */
+function tickMark(p, q, color, parent, offset=0, lenTick=5.5){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  return line(add(c, mul(n,lenTick)), add(c, mul(n,-lenTick)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+
+/* 平行单箭头与双箭头标记 */
+function arrowMark(p, q, color, parent, doubleArrow=false){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const drawOne = (center) => {
+    const tip = add(center, mul(d, 6.5));
+    const p1 = add(add(center, mul(d, -4.5)), mul(n, 4.2));
+    const p2 = add(add(center, mul(d, -4.5)), mul(n, -4.2));
+    el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+  };
+  if (!doubleArrow){
+    drawOne(m);
+  } else {
+    drawOne(add(m, mul(d, -6)));
+    drawOne(add(m, mul(d, 6)));
+  }
+}
+
+/* 高亮线段 (带光晕底层与清晰核心) */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 严格优弧/劣弧两点定向角弧 (顶点 v，两边分别指向 p1, p2) */
+function angleArc(v, p1, p2, r=20, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da > Math.PI) da -= 2 * Math.PI;
+  while (da < -Math.PI) da += 2 * Math.PI;
+  const sweep = da > 0 ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a1 + da), y: v.y + r * Math.sin(a1 + da) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.6, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+/* 常用色彩规范 */
+const BLUE   = '#2563eb', // 对角线/高亮
+      GREEN  = '#059669', // 平行四边形/角平分线
+      RED    = '#dc2626', // 动点P/角弧/矛盾警示
+      PURPLE = '#7c3aed', // 垂直平分线
+      CYAN   = '#0891b2', // 对角线 AC
+      ORANGE = '#ea580c', // 连线 PA, PB 等
+      SLATE  = '#0f172a'; // 凸四边形边框
+
+/* 全程保留的基础图形 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 凸四边形 ABCD 主轮廓
+  polygon([A, B, C, D], {
+    fill: '#f8fafc',
+    stroke: SLATE,
+    'stroke-width': 2.4,
+    'stroke-linejoin': 'round'
+  }, gBase);
+}
+
+/* 顶点与标签绘制 */
+function drawPoints(showQ = false){
+  gPts.innerHTML = '';
+  
+  // 顶点 ABCD
+  [A, B, C, D].forEach(p => dot(p, SLATE, 4.5, gPts));
+  label(A, 'A', -16, -14, SLATE, gPts);
+  label(B, 'B', 16, -14, SLATE, gPts);
+  label(C, 'C', 16, 16, SLATE, gPts);
+  label(D, 'D', -16, 16, SLATE, gPts);
+
+  // 四边分点 K, L, M, N
+  [K, L, M, N].forEach(p => dot(p, GREEN, 4.2, gPts));
+  label(K, 'K', 0, -16, GREEN, gPts);
+  label(L, 'L', 18, 0, GREEN, gPts);
+  label(M, 'M', 0, 18, GREEN, gPts);
+  label(N, 'N', -18, 0, GREEN, gPts);
+
+  // 动点/轨迹点 P
+  dot(P, RED, 5.2, gPts);
+  label(P, 'P', 14, 16, RED, gPts, 17, true);
+
+  // 反证假设点 Q (仅在 Step 3 需要时出现)
+  if (showQ){
+    dot(Q, RED, 4.8, gPts);
+    label(Q, 'Q', -16, 14, RED, gPts, 16, true);
+  }
+}
+
+/* ============ 动态分步渲染核心 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 清空动态步骤层
+
+  switch(s){
+    case 0: { // 构型与四条角平分线
+      drawPoints(false);
+
+      // P 到四顶点连线
+      line(P, A, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      line(P, B, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      line(P, C, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      line(P, D, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+
+      // 四条角平分线 PK, PL, PM, PN
+      line(P, K, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      line(P, L, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      line(P, M, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      line(P, N, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+
+      // 角平分线等角圆弧标记
+      // ∠APB 由 PK 平分
+      angleArc(P, A, K, 22, {stroke: RED}, gStep);
+      angleArc(P, K, B, 26, {stroke: RED}, gStep);
+      // ∠BPC 由 PL 平分
+      angleArc(P, B, L, 22, {stroke: RED}, gStep);
+      angleArc(P, L, C, 26, {stroke: RED}, gStep);
+      // ∠CPD 由 PM 平分
+      angleArc(P, C, M, 22, {stroke: RED}, gStep);
+      angleArc(P, M, D, 26, {stroke: RED}, gStep);
+      // ∠DPA 由 PN 平分
+      angleArc(P, D, N, 22, {stroke: RED}, gStep);
+      angleArc(P, N, A, 26, {stroke: RED}, gStep);
+
+      // 四边形 KLMN 初步虚线框
+      polygon([K, L, M, N], {
+        fill: '#0596690a', stroke: GREEN, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'
+      }, gStep);
+      break;
+    }
+
+    case 1: { // 充分性构造：取中垂线交点 P
+      drawPoints(false);
+
+      // 对角线 AC 和 BD
+      segDashed(A, C, CYAN, 1.8, gStep);
+      segDashed(B, D, BLUE, 1.8, gStep);
+
+      // AC 的垂直平分线 (经过 P 和 midAC)
+      const uAC = norm(sub(midAC, P));
+      const pbisAC_start = sub(P, mul(uAC, 120));
+      const pbisAC_end = add(midAC, mul(uAC, 140));
+      line(pbisAC_start, pbisAC_end, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+
+      // BD 的垂直平分线 (经过 P 和 midBD)
+      const uBD = norm(sub(midBD, P));
+      const pbisBD_start = sub(P, mul(uBD, 110));
+      const pbisBD_end = add(midBD, mul(uBD, 140));
+      line(pbisBD_start, pbisBD_end, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+
+      // 垂足中点及直角标记
+      dot(midAC, PURPLE, 3.5, gStep);
+      dot(midBD, PURPLE, 3.5, gStep);
+      rightAngleMark(midAC, C, P, 11, PURPLE, gStep);
+      rightAngleMark(midBD, B, P, 11, PURPLE, gStep);
+
+      // 等长刻度标记：AC 中点两侧双杠，BD 中点两侧单杠
+      tickMark(A, midAC, CYAN, gStep, -3, 5);
+      tickMark(A, midAC, CYAN, gStep, 3, 5);
+      tickMark(midAC, C, CYAN, gStep, -3, 5);
+      tickMark(midAC, C, CYAN, gStep, 3, 5);
+
+      tickMark(B, midBD, BLUE, gStep, 0, 5.5);
+      tickMark(midBD, D, BLUE, gStep, 0, 5.5);
+
+      // 高亮 PA, PC 连线相等 (青色) 与 PB, PD 连线相等 (橙色)
+      highlightSeg(P, A, CYAN, gStep, 2.5);
+      highlightSeg(P, C, CYAN, gStep, 2.5);
+      highlightSeg(P, B, ORANGE, gStep, 2.5);
+      highlightSeg(P, D, ORANGE, gStep, 2.5);
+
+      // 线段等长刻度
+      tickMark(P, A, CYAN, gStep, -3, 6);
+      tickMark(P, A, CYAN, gStep, 3, 6);
+      tickMark(P, C, CYAN, gStep, -3, 6);
+      tickMark(P, C, CYAN, gStep, 3, 6);
+
+      tickMark(P, B, ORANGE, gStep, 0, 6.5);
+      tickMark(P, D, ORANGE, gStep, 0, 6.5);
+      break;
+    }
+
+    case 2: { // 充分性验证：KLMN 必为平行四边形
+      drawPoints(false);
+
+      // 对角线 AC 与 BD 作为基准平行线
+      highlightSeg(A, C, CYAN, gStep, 2.0);
+      highlightSeg(B, D, BLUE, gStep, 2.0);
+
+      // 高亮展示完整平行四边形 KLMN (翡翠绿实体填充)
+      polygon([K, L, M, N], {
+        fill: '#0596691c', stroke: GREEN, 'stroke-width': 2.8, 'stroke-linejoin': 'round'
+      }, gStep);
+
+      // 4 条角平分线辅助骨架
+      segDashed(P, K, GREEN, 1.2, gStep);
+      segDashed(P, L, GREEN, 1.2, gStep);
+      segDashed(P, M, GREEN, 1.2, gStep);
+      segDashed(P, N, GREEN, 1.2, gStep);
+
+      // 平行标记：KL // AC // MN (双箭头)
+      arrowMark(K, L, GREEN, gStep, true);
+      arrowMark(A, C, CYAN, gStep, true);
+      arrowMark(N, M, GREEN, gStep, true);
+
+      // 平行标记：KN // BD // LM (单箭头)
+      arrowMark(K, N, GREEN, gStep, false);
+      arrowMark(B, D, BLUE, gStep, false);
+      arrowMark(L, M, GREEN, gStep, false);
+      break;
+    }
+
+    case 3: { // 必要性反证：梅涅劳斯定理与对角线平行
+      drawPoints(true); // 展现假设交点 Q
+
+      // 高亮 △ABD (底色柔和琥珀蓝)
+      polygon([A, B, D], {
+        fill: '#38bdf815', stroke: '#0284c7', 'stroke-width': 1.8, 'stroke-linejoin':'round'
+      }, gStep);
+
+      // 延长 BD 至假设交点 Q (深红虚线)
+      segDashed(D, Q, RED, 2.0, gStep);
+      line(B, D, {stroke: '#0284c7', 'stroke-width': 2.0}, gStep);
+
+      // 假设截线 K-N-Q 穿过 △ABD 外部
+      highlightSeg(K, N, RED, gStep, 2.4);
+      segDashed(N, Q, RED, 2.0, gStep);
+
+      // △BCD 及推导出的共线直线 Q-M-L
+      polygon([B, C, D], {
+        fill: '#7c3aed0a', stroke: '#94a3b8', 'stroke-width': 1.2, 'stroke-dasharray':'4 3'
+      }, gStep);
+      segDashed(Q, M, RED, 2.0, gStep);
+      highlightSeg(M, L, RED, gStep, 2.4);
+
+      // 矛盾警示标签（置于右上开阔区，完全避开所有顶点和几何线）
+      const alertBox = el('g', {}, gStep);
+      el('rect', {
+        x: 345, y: 78, width: 170, height: 44, rx: 8,
+        fill: '#fee2e2', stroke: RED, 'stroke-width': 1.5, opacity: 0.96
+      }, alertBox);
+      const alertText = el('text', {
+        x: 430, y: 94, fill: '#991b1b', 'font-size': 12, 'font-weight': '700',
+        'text-anchor': 'middle', 'dominant-baseline': 'central'
+      }, alertBox);
+      alertText.textContent = '⚡ 矛盾点：';
+      const alertSub = el('text', {
+        x: 430, y: 109, fill: '#b91c1c', 'font-size': 11,
+        'text-anchor': 'middle', 'dominant-baseline': 'central'
+      }, alertBox);
+      alertSub.textContent = 'KN 与 LM 相交于 Q！';
+      break;
+    }
+
+    case 4: { // 导出 PA=PC 且 PB=PD
+      drawPoints(false);
+
+      // 矛盾消除，恢复严格平行关系
+      highlightSeg(K, N, GREEN, gStep, 2.4);
+      highlightSeg(B, D, BLUE, gStep, 2.2);
+      highlightSeg(L, M, GREEN, gStep, 2.4);
+
+      highlightSeg(K, L, GREEN, gStep, 2.4);
+      highlightSeg(A, C, CYAN, gStep, 2.2);
+      highlightSeg(N, M, GREEN, gStep, 2.4);
+
+      polygon([K, L, M, N], {
+        fill: '#05966914', stroke: GREEN, 'stroke-width': 1.8
+      }, gStep);
+
+      // 高亮 PB = PD (橙色连线及等长刻度)
+      highlightSeg(P, B, ORANGE, gStep, 2.6);
+      highlightSeg(P, D, ORANGE, gStep, 2.6);
+      tickMark(P, B, ORANGE, gStep, 0, 6.5);
+      tickMark(P, D, ORANGE, gStep, 0, 6.5);
+
+      // 高亮 PA = PC (青色连线及等长双杠刻度)
+      highlightSeg(P, A, CYAN, gStep, 2.6);
+      highlightSeg(P, C, CYAN, gStep, 2.6);
+      tickMark(P, A, CYAN, gStep, -3, 6);
+      tickMark(P, A, CYAN, gStep, 3, 6);
+      tickMark(P, C, CYAN, gStep, -3, 6);
+      tickMark(P, C, CYAN, gStep, 3, 6);
+      break;
+    }
+
+    case 5: { // 最终结论：点 P 的唯一轨迹
+      drawPoints(false);
+
+      // 完整呈现对角线与垂直平分线系统
+      segDashed(A, C, CYAN, 1.8, gStep);
+      segDashed(B, D, BLUE, 1.8, gStep);
+
+      // 两条垂直平分线精准交于 P
+      const uAC = norm(sub(midAC, P));
+      line(sub(P, mul(uAC, 125)), add(midAC, mul(uAC, 140)), {
+        stroke: PURPLE, 'stroke-width': 2.0, 'stroke-dasharray': '6 4'
+      }, gStep);
+
+      const uBD = norm(sub(midBD, P));
+      line(sub(P, mul(uBD, 115)), add(midBD, mul(uBD, 140)), {
+        stroke: PURPLE, 'stroke-width': 2.0, 'stroke-dasharray': '6 4'
+      }, gStep);
+
+      rightAngleMark(midAC, C, P, 11, PURPLE, gStep);
+      rightAngleMark(midBD, B, P, 11, PURPLE, gStep);
+
+      // 平行四边形 KLMN 完满呈现
+      polygon([K, L, M, N], {
+        fill: '#05966922', stroke: GREEN, 'stroke-width': 2.8, 'stroke-linejoin':'round'
+      }, gStep);
+
+      // 轨迹点 P 呼吸发光波纹
+      el('circle', {
+        cx: P.x, cy: P.y, r: 8,
+        fill: 'none', stroke: RED, 'stroke-width': 2,
+        class: 'pulse-ring'
+      }, gStep);
+      el('circle', {
+        cx: P.x, cy: P.y, r: 15,
+        fill: 'none', stroke: '#f43f5e', 'stroke-width': 1.5,
+        class: 'pulse-ring'
+      }, gStep);
+      break;
+    }
+  }
+}
+
+/* ============ 步骤结构化文本与推理讲解 ============ */
+const steps = [
+  {
+    title: '0️⃣ 构型与四条角平分线',
+    body: `给定凸四边形 $ABCD$ 及其平面内任意点 $P$。<br>
+    连结 $PA, PB, PC, PD$，分别作 $\\angle APB, \\angle BPC, \\angle CPD, \\angle DPA$ 的角平分线，交各边于分点 $K, L, M, N$。<br>
+    由<b>三角形角平分线分对边成比例定理</b>，各边分比恒等于点 $P$ 到相邻两顶点的距离之比：
+    <div class="formula-box">
+      $$\\frac{AK}{KB} = \\frac{PA}{PB}, \\quad \\frac{BL}{LC} = \\frac{PB}{PC}, \\quad \\frac{CM}{MD} = \\frac{PC}{PD}, \\quad \\frac{DN}{NA} = \\frac{PD}{PA}$$
+    </div>
+    内接四边形 $KLMN$ 何时能成为平行四边形？这取决于点 $P$ 的空间位置约束。`
+  },
+  {
+    title: '1️⃣ 充分性构造：取中垂线交点 P',
+    body: `<b>(1) 寻找满足条件的特殊点 P</b>：<br>
+    作四边形对角线 $AC$ 与 $BD$ 的<b>垂直平分线</b>（<span class="tag tag-purple">紫色虚线</span>），设它们的交点为 $P$。<br>
+    由垂直平分线的性质，点 $P$ 到对角线两端点的距离严格相等：
+    <div class="formula-box">
+      $$PA = PC \\quad \\text{且} \\quad PB = PD$$
+    </div>
+    代入 Step 0 的角平分线比例式中：
+    <div class="formula-box">
+      $$\\frac{AK}{KB} = \\frac{PA}{PB} = \\frac{PC}{PB} = \\frac{CL}{LB}$$
+    </div>
+    对应边分线段之比完全一致！`
+  },
+  {
+    title: '2️⃣ 充分性验证：KLMN 必为平行四边形',
+    body: `在 $\\triangle ABC$ 中，由 $\\frac{AK}{KB} = \\frac{CL}{LB} \\iff \\frac{BK}{KA} = \\frac{BL}{LC}$，根据<b>平行线分线段成比例定理之逆定理</b>：
+    <div class="formula-box">
+      $$KL \\parallel AC$$
+    </div>
+    同理在 $\\triangle ADC$ 中，由 $\\frac{MD}{CM} = \\frac{PD}{PC} = \\frac{PB}{PA} = \\frac{ND}{AN}$，得 $MN \\parallel AC$。<br>
+    因此两组边均平行于对角线 $AC$：
+    <div class="formula-box">
+      $$KL \\parallel MN$$
+    </div>
+    完全同理可推得：
+    <div class="formula-box">
+      $$LM \\parallel BD \\parallel NK$$
+    </div>
+    两组对边分别平行，故 <b>$KLMN$ 必为平行四边形</b>！充分性获证。`
+  },
+  {
+    title: '3️⃣ 必要性反证：梅氏定理导出平行',
+    body: `<b>(2) 探求点 P 的全部轨迹（必要性证明）</b>：<br>
+    反之，设 $KLMN$ 是平行四边形。将四个角平分线比例式依次连乘，各项首尾相消：
+    <div class="formula-box">
+      $$\\frac{AK}{KB} \\cdot \\frac{BL}{LC} \\cdot \\frac{CM}{MD} \\cdot \\frac{DN}{NA} = \\frac{PA}{PB} \\cdot \\frac{PB}{PC} \\cdot \\frac{PC}{PD} \\cdot \\frac{PD}{PA} = 1 \\quad \\cdots\\cdots (1)$$
+    </div>
+    <b>用反证法</b>证明 $KN \\parallel BD$：<br>
+    假设 $KN$ 与 $BD$ 不平行，延长必交于点 $Q$。对 $\\triangle ABD$ 及截线 $KNQ$，应用<b>梅涅劳斯定理</b>：
+    <div class="formula-box">
+      $$\\frac{DN}{NA} \\cdot \\frac{AK}{KB} \\cdot \\frac{BQ}{QD} = 1$$
+    </div>
+    结合 (1) 式相比消去对应项，立得：$$\\frac{BL}{LC} \\cdot \\frac{CM}{MD} \\cdot \\frac{DQ}{QB} = 1$$。`
+  },
+  {
+    title: '4️⃣ 导出 PA=PC 且 PB=PD',
+    body: `在 $\\triangle BCD$ 中应用<b>梅涅劳斯定理的逆定理</b>：<br>
+    点 $Q, M, L$ 必须<b>三点共线</b>！<br>
+    这意味着直线 $KN$ 与直线 $LM$ 将在点 $Q$ 处相交。<br>
+    但这与已知条件“$KLMN$ 是平行四边形”（$KN \\parallel LM$，永不相交）<span class="tag tag-red">产生致命矛盾</span>！<br>
+    故反证假设不成立，必有：
+    <div class="formula-box">
+      $$KN \\parallel BD \\parallel LM \\quad \\text{且} \\quad KL \\parallel AC \\parallel MN$$
+    </div>
+    由 $KN \\parallel BD$ 得 $\\frac{PA}{PB} = \\frac{AK}{KB} = \\frac{AN}{ND} = \\frac{PA}{PD} \\implies PB = PD$！<br>
+    同理由 $KL \\parallel AC$ 得 $PA = PC$！`
+  },
+  {
+    title: '5️⃣ 最终结论：点 P 的唯一轨迹',
+    body: `综上所述，充要条件完全闭环：<br>
+    1. <b>充分性</b>：若 $P$ 为 $AC$ 与 $BD$ 的垂直平分线交点，则 $PA=PC, PB=PD$，直接导出 $KLMN$ 为平行四边形；<br>
+    2. <b>必要性</b>：若 $KLMN$ 为平行四边形，则必有 $PA=PC$ 且 $PB=PD$，故点 $P$ 必须同时落在对角线 $AC$ 和 $BD$ 的垂直平分线上。<br><br>
+    对于任意一般凸四边形，两对角线 $AC$ 与 $BD$ 既不重合也不平行，其垂直平分线相交于唯一确定的交点。<br>
+    <div class="formula-box" style="border-left-color: #059669; background: #ecfdf5;">
+      <b>核心结论</b>：满足条件的点 $P$ 的轨迹是 <b>$AC$ 与 $BD$ 的垂直平分线的交点（唯一的一个点）</b>。
+    </div>`
+  }
+];
+
+/* ============ 交互控制与状态机 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 关键：切换步骤后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>
