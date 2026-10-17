@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 6：圆内接六边形与对称点构成的相似三角形 — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14.5px; color: #64748b; margin-top: 6px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; }
+  .panel {
+    flex: 1 1 420px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 22px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 8px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 10px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 6：圆内接六边形与轴对称点的相似三角形</h1>
+    <p><b>已知：</b>圆内接六边形 $ABCDEF$ 满足 $AB \cdot CD \cdot EF = BC \cdot DE \cdot AF$。点 $B, D, F$ 关于 $AC, CE, EA$ 的对称点为 $B_1, D_1, F_1$。<br><b>求证：</b>$\triangle B_1D_1F_1 \sim \triangle BDF$。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何常量与计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+const rot = (p, rad) => ({x: p.x*Math.cos(rad) - p.y*Math.sin(rad), y: p.x*Math.sin(rad) + p.y*Math.cos(rad)});
+const rotAround = (p, c, rad) => add(c, rot(sub(p,c), rad));
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+function foot(P, P1, P2){   // P 到直线 P1P2 的垂足
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+function reflect(P, P1, P2){ // P 关于直线 P1P2 的对称点
+  const f = foot(P, P1, P2);
+  return {x: 2*f.x - P.x, y: 2*f.y - P.y};
+}
+
+/* ============ 几何基准点与精确求解坐标 ============ */
+const O = { x: 340.00, y: 310.00 };
+const R = 190.00;
+
+// 六边形顶点：严密满足 AD, BE, CF 共点于 P，且 AB·CD·EF = BC·DE·AF
+const A = { x: 529.98, y: 312.89 };
+const B = { x: 477.62, y: 441.00 };
+const C = { x: 361.21, y: 498.81 };
+const D = { x: 152.41, y: 279.85 };
+const E = { x: 263.96, y: 135.88 };
+const F = { x: 393.68, y: 127.74 };
+
+// 三对角线交点 P
+const P = { x: 378.64, y: 299.65 };
+
+// 轴对称点：B 关于 AC -> B1, D 关于 CE -> D1, F 关于 EA -> F1
+const B1 = reflect(B, A, C); // { x: 407.52, y: 377.37 }
+const D1 = reflect(D, C, E); // { x: 432.56, y: 204.79 }
+const F1 = reflect(F, E, A); // { x: 306.55, y: 258.67 }
+
+/* ============ 颜色约定 ============ */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const CYAN   = '#0891b2';
+const ORANGE = '#d97706';
+const GRAY   = '#64748b';
+const LIGHT_GRAY = '#94a3b8';
+
+/* ============ SVG 工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.8}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '400'}, parent);
+  t.textContent = text;
+  return t;
+}
+/* 直角标记 */
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.6}, parent);
+}
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+/* 绘制角弧线：顶点 v，两边分别指向 p1 和 p2 */
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: attrs.stroke || '#dc2626', 'stroke-width': attrs['stroke-width'] || 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层绘制架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：六边形、外接圆（全程保留）
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层（每步清空重画）
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与标签
+
+/* 绘制底层基础图形 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 1. 外接圆 (O, R)
+  circle(O, R, {stroke: '#cbd5e1', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gBase);
+  // 2. 原始六边形 ABCDEF
+  const hexPts = [A, B, C, D, E, F];
+  polygon(hexPts, {fill: 'rgba(241,245,249,0.3)', stroke: '#64748b', 'stroke-width': 1.8, 'stroke-linejoin':'round'}, gBase);
+}
+
+/* 绘制顶层点与标签 */
+function drawPoints(stepIndex){
+  gPts.innerHTML = '';
+  // 六边形基础顶点（始终显示）
+  const baseVertices = [
+    { pt: A, name: 'A', dx: 18, dy: 2 },
+    { pt: B, name: 'B', dx: 16, dy: 16 },
+    { pt: C, name: 'C', dx: 0, dy: 22 },
+    { pt: D, name: 'D', dx: -20, dy: 0 },
+    { pt: E, name: 'E', dx: -18, dy: -14 },
+    { pt: F, name: 'F', dx: 4, dy: -18 },
+  ];
+  baseVertices.forEach(v => {
+    dot(v.pt, '#1e293b', 4.5, gPts);
+    label(v.pt, v.name, v.dx, v.dy, '#0f172a', gPts, 16, true);
+  });
+
+  // 交点 P（Step 1 及以后显示）
+  if (stepIndex >= 1) {
+    dot(P, RED, 5, gPts);
+    label(P, 'P', -14, -14, RED, gPts, 16, true);
+  }
+
+  // 对称点 B1, D1, F1（Step 0, Step 2 及以后显示）
+  if (stepIndex === 0 || stepIndex >= 2) {
+    dot(B1, BLUE, 4.5, gPts);
+    label(B1, 'B₁', 18, -6, BLUE, gPts, 15, true);
+
+    dot(D1, BLUE, 4.5, gPts);
+    label(D1, 'D₁', 18, -10, BLUE, gPts, 15, true);
+
+    dot(F1, BLUE, 4.5, gPts);
+    label(F1, 'F₁', -22, 0, BLUE, gPts, 15, true);
+  }
+}
+
+/* ============ 动态步骤层渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 步骤切换时彻底清空动态层
+
+  switch(s){
+    case 0: {
+      // Step 0: 题意构型与轴对称定义
+      // 1. 虚线三角形 ACE（对称轴）
+      polygon([A, C, E], {fill: 'none', stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      // 2. 轴对称垂直引线 BB1, DD1, FF1 与垂足直角标记
+      segDashed(B, B1, LIGHT_GRAY, 1.4, gStep);
+      segDashed(D, D1, LIGHT_GRAY, 1.4, gStep);
+      segDashed(F, F1, LIGHT_GRAY, 1.4, gStep);
+      rightAngleMark(foot(B, A, C), B, C, 9, LIGHT_GRAY, gStep);
+      rightAngleMark(foot(D, C, E), D, E, 9, LIGHT_GRAY, gStep);
+      rightAngleMark(foot(F, E, A), F, A, 9, LIGHT_GRAY, gStep);
+      // 3. 弱显目标两三角形 BDF 和 B1D1F1
+      polygon([B, D, F], {fill: 'rgba(5,150,105,0.06)', stroke: GREEN, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      polygon([B1, D1, F1], {fill: 'rgba(37,99,235,0.06)', stroke: BLUE, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      break;
+    }
+    case 1: {
+      // Step 1: 角元塞瓦定理 ⇒ 主对角线共点于 P
+      // 1. 参考三角形 ACE
+      polygon([A, C, E], {fill: 'rgba(124,58,237,0.06)', stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      // 2. 高亮三条主对角线 AD, BE, CF 汇聚于 P
+      highlightSeg(A, D, ORANGE, gStep, 3);
+      highlightSeg(B, E, ORANGE, gStep, 3);
+      highlightSeg(C, F, ORANGE, gStep, 3);
+      // 3. 放射标记与角元视觉提示弧
+      angleArc(C, A, F, 28, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      angleArc(C, F, E, 22, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      angleArc(E, C, B, 28, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      angleArc(E, B, A, 22, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      angleArc(A, E, D, 28, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      angleArc(A, D, C, 22, {stroke: PURPLE, 'stroke-width': 1.6}, gStep);
+      break;
+    }
+    case 2: {
+      // Step 2: 轴对称变换与角度等量传递 ∠PCD1 = ∠F1AP
+      // 1. 强调对称轴 CE 与 EA
+      highlightSeg(C, E, PURPLE, gStep, 2.5);
+      highlightSeg(E, A, PURPLE, gStep, 2.5);
+      // 2. 对称辅助虚线
+      segDashed(D, D1, LIGHT_GRAY, 1.4, gStep);
+      segDashed(F, F1, LIGHT_GRAY, 1.4, gStep);
+      // 3. 连接 CD1, CP 与 AF1, AP
+      line(C, D1, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      line(C, P, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      line(A, F1, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      line(A, P, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 4. 等角弧高亮 ∠PCD1 与 ∠F1AP
+      angleArc(C, P, D1, 32, {stroke: RED, 'stroke-width': 2.4}, gStep);
+      angleArc(A, F1, P, 32, {stroke: RED, 'stroke-width': 2.4}, gStep);
+      // 原圆周角辅助线
+      line(C, D, {stroke: LIGHT_GRAY, 'stroke-width': 1.2, 'stroke-dasharray':'3 3'}, gStep);
+      line(A, F, {stroke: LIGHT_GRAY, 'stroke-width': 1.2, 'stroke-dasharray':'3 3'}, gStep);
+      break;
+    }
+    case 3: {
+      // Step 3: 边比与夹角 ⇒ △D1PC ∽ △F1PA
+      // 1. 填充高亮两相似三角形
+      polygon([D1, P, C], {fill: 'rgba(8,145,178,0.22)', stroke: CYAN, 'stroke-width': 2.2, 'stroke-linejoin':'round'}, gStep);
+      polygon([F1, P, A], {fill: 'rgba(217,119,6,0.22)', stroke: ORANGE, 'stroke-width': 2.2, 'stroke-linejoin':'round'}, gStep);
+      // 2. 夹角标记
+      angleArc(C, P, D1, 30, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(A, F1, P, 30, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 3. 辅助圆内接相交弦关联 CD 与 FA
+      segDashed(C, D, LIGHT_GRAY, 1.5, gStep);
+      segDashed(F, A, LIGHT_GRAY, 1.5, gStep);
+      break;
+    }
+    case 4: {
+      // Step 4: 相似传递与顶角对顶 ⇒ △D1PF1 ∽ △DPF
+      // 1. 填充高亮两传递相似三角形
+      polygon([D1, P, F1], {fill: 'rgba(124,58,237,0.22)', stroke: PURPLE, 'stroke-width': 2.4, 'stroke-linejoin':'round'}, gStep);
+      polygon([D, P, F], {fill: 'rgba(5,150,105,0.22)', stroke: GREEN, 'stroke-width': 2.4, 'stroke-linejoin':'round'}, gStep);
+      // 2. 对顶角 ∠D1PF1 与 ∠DPF 弧线标记
+      angleArc(P, D1, F1, 26, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(P, D, F, 26, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 3. 细线体现中间桥梁 △CPA
+      polygon([C, P, A], {fill: 'none', stroke: LIGHT_GRAY, 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      break;
+    }
+    case 5: {
+      // Step 5: 轮换对称与全图相似 ⇒ △B1D1F1 ∽ △BDF
+      // 1. 原三角形 BDF 显著高亮
+      polygon([B, D, F], {fill: 'rgba(5,150,105,0.18)', stroke: GREEN, 'stroke-width': 3, 'stroke-linejoin':'round'}, gStep);
+      // 2. 证明目标三角形 B1D1F1 显著高亮
+      polygon([B1, D1, F1], {fill: 'rgba(37,99,235,0.22)', stroke: BLUE, 'stroke-width': 3, 'stroke-linejoin':'round'}, gStep);
+      // 3. 顶点对应连线（相似放射结构）
+      segDashed(B, B1, LIGHT_GRAY, 1.4, gStep);
+      segDashed(D, D1, LIGHT_GRAY, 1.4, gStep);
+      segDashed(F, F1, LIGHT_GRAY, 1.4, gStep);
+      // 4. 显示相似比标记（λ ≈ 0.48）
+      line(P, B1, {stroke: BLUE, 'stroke-width': 1.6, 'stroke-dasharray':'3 3'}, gStep);
+      line(P, D1, {stroke: BLUE, 'stroke-width': 1.6, 'stroke-dasharray':'3 3'}, gStep);
+      line(P, F1, {stroke: BLUE, 'stroke-width': 1.6, 'stroke-dasharray':'3 3'}, gStep);
+      break;
+    }
+  }
+
+  // 顶层点与标签重画
+  drawPoints(s);
+}
+
+/* ============ 步骤数据 ============ */
+const steps = [
+  {
+    title: "初始构型与轴对称点定义",
+    body: "已知圆内接六边形 $ABCDEF$ 满足 $AB \\cdot CD \\cdot EF = BC \\cdot DE \\cdot AF$。<br>" +
+          "分别作点 $B$ 关于直线 $AC$ 的对称点 $B_1$、" +
+          "点 $D$ 关于直线 $CE$ 的对称点 $D_1$、" +
+          "点 $F$ 关于直线 $EA$ 的对称点 $F_1$。<br>" +
+          "目标：证明新构成的三角形与原三角形相似，即 <b>$\\triangle B_1D_1F_1 \\sim \\triangle BDF$</b>。"
+  },
+  {
+    title: "角元塞瓦定理导出对角线共点于 P",
+    body: "在 $\\triangle ACE$ 中考察三条主对角线 $AD, BE, CF$。由正弦定理与圆周角定理：<br>" +
+          "$$\\frac{\\sin\\angle ACF}{\\sin\\angle ECF} = \\frac{AF}{EF}, \\quad \\frac{\\sin\\angle BEC}{\\sin\\angle BEA} = \\frac{BC}{AB}, \\quad \\frac{\\sin\\angle EAD}{\\sin\\angle CAD} = \\frac{DE}{CD}$$" +
+          "三式相乘，代入题设条件 $AB \\cdot CD \\cdot EF = BC \\cdot DE \\cdot AF$：<br>" +
+          "$$\\frac{AF}{EF} \\cdot \\frac{BC}{AB} \\cdot \\frac{DE}{CD} = 1$$" +
+          "由<b>角元塞瓦定理</b>逆定理，三对角线 $AD, BE, CF$ 必<b>交于一点 $P$</b>！"
+  },
+  {
+    title: "轴对称与圆周角传递：∠PCD₁ = ∠F₁AP",
+    body: "由轴对称变换性质：<br>" +
+          "• $D_1$ 关于 $CE$ 对称于 $D \\implies D_1C = DC, \\; \\angle D_1CE = \\angle DCE$；<br>" +
+          "• $F_1$ 关于 $EA$ 对称于 $F \\implies F_1A = FA, \\; \\angle F_1AE = \\angle FAE$。<br>" +
+          "根据同弧所对圆周角相等：$\\angle ECD = \\angle EAD$，且 $\\angle FCE = \\angle FAE = \\angle F_1AE$。<br>" +
+          "计算顶角得：<br>" +
+          "$$\\angle PCD_1 = \\angle D_1CE - \\angle PCE = \\angle ECD - \\angle FCE = \\angle EAD - \\angle F_1AE = \\angle F_1AP$$"
+  },
+  {
+    title: "相交弦比值导出 △D₁PC ∽ △F₁PA",
+    body: "在圆内接四边形中，相交弦 $AD$ 与 $CF$ 相交于 $P$。<br>" +
+          "易知 $\\triangle PCD \\sim \\triangle PFA$，故对应边成比例：<br>" +
+          "$$\\frac{DC}{CP} = \\frac{FA}{AP}$$" +
+          "代入对称等长条件 $D_1C = DC$ 和 $F_1A = FA$ 得：<br>" +
+          "$$\\frac{D_1C}{CP} = \\frac{F_1A}{AP} \\iff \\frac{D_1C}{F_1A} = \\frac{CP}{AP}$$" +
+          "结合前一步已证夹角相等 $\\angle PCD_1 = \\angle F_1AP$，<br>" +
+          "由两边成比例且夹角相等，判定 <b>$\\triangle D_1PC \\sim \\triangle F_1PA$</b>！"
+  },
+  {
+    title: "相似传递导出 △D₁PF₁ ∽ △DPF",
+    body: "由 $\\triangle D_1PC \\sim \\triangle F_1PA$，对应边成比例 $\\frac{D_1P}{F_1P} = \\frac{PC}{AP}$，且 $\\angle D_1PC = \\angle F_1PA$。<br>" +
+          "考察夹角：<br>" +
+          "$$\\angle D_1PF_1 = \\angle D_1PC + \\angle CPF_1 = \\angle F_1PA + \\angle CPF_1 = \\angle CPA$$" +
+          "由于对顶角相等，$\\angle CPA = \\angle DPF$，故 $\\angle D_1PF_1 = \\angle DPF$！<br>" +
+          "又相交弦有 $\\triangle CPA \\sim \\triangle DPF \\implies \\frac{PC}{AP} = \\frac{PD}{PF}$，<br>" +
+          "从而 $\\frac{D_1P}{F_1P} = \\frac{PD}{PF} \\iff \\frac{D_1P}{PD} = \\frac{F_1P}{PF}$。<br>" +
+          "结合夹角相等，证得 <b>$\\triangle D_1PF_1 \\sim \\triangle CPA \\sim \\triangle DPF$</b>！"
+  },
+  {
+    title: "轮换对称得出最终相似 △B₁D₁F₁ ∽ △BDF",
+    body: "同理，对点 $B, B_1$ 进行完全相同的轮换对称推导，得：<br>" +
+          "• $\\triangle B_1PF_1 \\sim \\triangle BPF \\implies \\frac{B_1F_1}{BF} = \\frac{B_1P}{BP} = \\frac{F_1P}{FP}$；<br>" +
+          "• $\\triangle B_1PD_1 \\sim \\triangle BPD \\implies \\frac{B_1D_1}{BD} = \\frac{B_1P}{BP} = \\frac{D_1P}{DP}$。<br>" +
+          "综合各组对应比值，知三对对应边严格等比例：<br>" +
+          "<div style=\"font-size:15px; font-weight:bold; color:#2563eb; text-align:center; margin:8px 0;\">" +
+          "$$\\frac{B_1D_1}{BD} = \\frac{D_1F_1}{DF} = \\frac{F_1B_1}{FB} = \\lambda$$" +
+          "</div>" +
+          "三边对应成比例，最终证得 <b>$\\triangle B_1D_1F_1 \\sim \\triangle BDF$</b>！命题得证。"
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let curStep = 0;
+let autoTimer = null;
+const stepListEl = document.getElementById('stepList');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+function initList(){
+  stepListEl.innerHTML = '';
+  steps.forEach((st, idx) => {
+    const item = document.createElement('div');
+    item.className = 'step-item' + (idx === 0 ? ' active' : '');
+    item.innerHTML = `
+      <div class="title"><span class="badge">${idx}</span>${st.title}</div>
+      <div class="body">${st.body}</div>
+    `;
+    item.onclick = () => { stopAuto(); goTo(idx); };
+    stepListEl.appendChild(item);
+  });
+}
+
+function updateUI(){
+  const items = stepListEl.querySelectorAll('.step-item');
+  items.forEach((it, idx) => {
+    it.classList.remove('active', 'done');
+    if (idx === curStep) it.classList.add('active');
+    else if (idx < curStep) it.classList.add('done');
+  });
+  btnPrev.disabled = (curStep === 0);
+  btnNext.disabled = (curStep === steps.length - 1);
+  btnNext.textContent = (curStep === steps.length - 1) ? '已完成 ✔' : '下一步 ▶';
+
+  // 保证当前激活项处于视窗内
+  const activeItem = items[curStep];
+  if (activeItem) {
+    activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function goTo(idx){
+  if (idx < 0 || idx >= steps.length) return;
+  curStep = idx;
+  renderStep(curStep);
+  updateUI();
+  // 关键：步骤切换后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  // 同步 URL 参数（便于调试与外部调用）
+  const url = new URL(window.location);
+  url.searchParams.set('step', curStep);
+  window.history.replaceState({}, '', url);
+}
+
+function stopAuto(){
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btnAuto.textContent = '▶ 自动';
+  }
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(curStep - 1); };
+btnNext.onclick = () => {
+  stopAuto();
+  if (curStep < steps.length - 1) goTo(curStep + 1);
+};
+btnReset.onclick = () => { stopAuto(); goTo(0); };
+
+btnAuto.onclick = () => {
+  if (autoTimer) {
+    stopAuto();
+  } else {
+    btnAuto.textContent = '⏸ 暂停';
+    if (curStep === steps.length - 1) goTo(0);
+    autoTimer = setInterval(() => {
+      if (curStep < steps.length - 1) {
+        goTo(curStep + 1);
+      } else {
+        stopAuto();
+      }
+    }, 2800);
+  }
+};
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    stopAuto();
+    if (curStep < steps.length - 1) goTo(curStep + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    stopAuto();
+    if (curStep > 0) goTo(curStep - 1);
+  }
+});
+
+/* 初始化执行 */
+drawBase();
+initList();
+
+// 支持 URL 参数 ?step=N
+const urlParams = new URLSearchParams(window.location.search);
+const initStep = parseInt(urlParams.get('step') || '0', 10);
+goTo(isNaN(initStep) ? 0 : Math.max(0, Math.min(steps.length - 1, initStep)));
+
+// 暴露全局变量便于截图脚本与外部控制调用
+window.__GEO_STATE__ = {
+  goTo,
+  getStep: () => curStep,
+  getTotalSteps: () => steps.length,
+  steps
+};
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

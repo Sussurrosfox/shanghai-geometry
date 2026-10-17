@@ -1,0 +1,34 @@
+---
+title: '练习 31：圆弧中点平行线与内心共线证明'
+chapter: 5
+problem: 31
+source-chapter: '05'
+source-file: '05/31.md'
+id: 'ch05-p31'
+tags:
+- 练习一（综合习题）
+- 中点
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">中点</span>
+:::
+
+## 题目
+
+已知锐角 $\triangle {ABC}$ 的外接圆上, $D$ 为弧 $\overset{\text{ ⏜ }}{BC}$ 的中点, $X$ 在弧 $\overset{\text{ ⏜ }}{BD}$ 上, $E$ 为弧 $\overset{\text{ ⏜ }}{AX}$ 的中点, $S$ 在弧 $\overset{\text{ ⏜ }}{AC}$ 上, ${SD},{BC}$ 交于点 $R,{SE},{AX}$ 交于点 $T$ . 证明: 若 ${RT}//{DE}$ ,则 $\triangle {ABC}$ 的内心在 ${RT}$ 上.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,过 $X$ 作 ${XY}//{DE}$ 与 $\triangle {ABC}$ 的外接圆交于点 $Y$ ,连接 ${SY}$ ,设 ${SY}$ 与 ${AD}$ 交于
+
+I. 对圆内接六边形 ${YXADES}$ 用帕斯卡定理,有 ${SY}$ 与 ${AD}$ 的交点 $I,{SE}$ 与 ${AX}$ 的交点 $T,{XY}$ 与 ${DE}$ 的交点无穷远点 $Z$ ,三点共线,又 ${RT}//{DE}$ ,故 $I$ 在 ${RT}$ 上. 因为 $\overset{\text{ ⏜ }}{DC} = \overset{\text{ ⏜ }}{DB}$ ,所以 $\angle {CSD} = \angle {DCB}$ ,故 $D{C}^2 = {DR} \cdot  {DS}$ . 由 ${XY}//{DE}$ ,知 $\overset{\text{ ⏜ }}{DY} = \overset{\text{ ⏜ }}{XE} = \; \overset{\text{ ⏜ }}{EA}$ ,于是 $\angle {DSY} = \angle {ADE} = \angle {RID}$ ,故 $D{I}^2 = {DR} \cdot  {DS}$ . 所以 ${DC} = {DI} = {DB}$ ,由鸡爪定理,得 $I$ 为 $\triangle {ABC}$ 的内心.
+
+![](../images/166_928_1637_388_367_0.jpg)
+:::
+
+

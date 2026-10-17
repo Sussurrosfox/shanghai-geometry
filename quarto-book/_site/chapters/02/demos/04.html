@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 3：四边形内对角线旋转相似与平行截割角转换 — 分步证明交互演示</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 20px;
+  }
+  .container { max-width: 1260px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 14px; color: #475569; margin-top: 8px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 650px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
+    padding: 16px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid #e2e8f0;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; display: block; }
+  .panel {
+    flex: 1 1 390px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
+    padding: 22px; display: flex; flex-direction: column;
+    border: 1px solid #e2e8f0;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; max-height: 60vh; padding-right: 6px; }
+  .step-list::-webkit-scrollbar { width: 5px; }
+  .step-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 15px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s ease;
+    background: #fafafa;
+  }
+  .step-item:hover { border-color: #94a3b8; background: #f8fafc; }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 9px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 23px; height: 23px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 10px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,0.08); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .title { color: #1d4ed8; font-weight: 700; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #bfdbfe; color: #1e40af; }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s ease; font-family: inherit;
+  }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; box-shadow: 0 2px 6px rgba(37,99,235,0.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 12px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 5px; font-size:11px; font-family: monospace; }
+  .math { font-family: "Times New Roman", STIXGeneral, serif; font-style: italic; }
+  .formula-box {
+    background: #ffffff; border: 1px dashed #93c5fd; border-radius: 8px;
+    padding: 7px 12px; margin: 8px 0; text-align: center; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 3：四边形对角线旋转相似与平行截割角转换</h1>
+    <p><b>已知：</b>四边形 $ABCD$ 中，$K \in BD$，$L \in CK$，满足 $\angle BLK = \angle BDA, \angle BKL = \angle BAD$。$PK \parallel DL$ 交 $CD$ 延长线于 $P$。&nbsp;&nbsp;<b>求证：</b>$\angle APK = \angle LBC$</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何坐标与辅助函数 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 严谨数学解算获得的全局精准几何坐标 */
+const A = { x: 402.4, y: 77.6 };
+const B = { x: 146.4, y: 269.6 };
+const C = { x: 232.8, y: 442.4 };
+const D = { x: 466.4, y: 269.6 };
+const K = { x: 290.4, y: 269.6 };
+const L = { x: 261.6, y: 356.0 };
+const P = { x: 700.0, y: 96.8 };
+const R = { x: 60.0, y: 96.8 };
+
+/* ============ SVG 工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color='#64748b', w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function dot(p, color='#1e293b', r=4.2, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':2}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", Times, STIXGeneral, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '500',
+    'paint-order': 'stroke',
+    'stroke': '#ffffff',
+    'stroke-width': 3.5,
+    'stroke-linejoin': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 箭头标记（用于平行线指示） */
+function arrowMark(p, q, color, parent, offset=0.5, size=9){
+  const d = norm(sub(q, p)), n = perp(d);
+  const m = add(p, mul(sub(q, p), offset));
+  const tip = add(m, mul(d, size));
+  const p1 = add(add(m, mul(d, -size*0.7)), mul(n, size*0.6));
+  const p2 = add(add(m, mul(d, -size*0.7)), mul(n, -size*0.6));
+  el('polygon', {points:`${tip.x.toFixed(1)},${tip.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`, fill:color}, parent);
+}
+
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 绘制角弧与扇形高亮：顶点 v，两边分别指向 p1 和 p2 */
+function angleArc(v, p1, p2, r=22, attrs={}, parent, showSector=false, sectorColor=null){
+  let a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da >= Math.PI * 2) da -= Math.PI * 2;
+  
+  let sAngle = a1, eAngle = a2;
+  if (da > Math.PI) {
+    sAngle = a2; eAngle = a1;
+  }
+  
+  const s = { x: v.x + r * Math.cos(sAngle), y: v.y + r * Math.sin(sAngle) };
+  const e = { x: v.x + r * Math.cos(eAngle), y: v.y + r * Math.sin(eAngle) };
+
+  if (showSector) {
+    const secColor = sectorColor || attrs.stroke || '#2563eb';
+    el('path', {
+      d: `M ${v.x.toFixed(1)} ${v.y.toFixed(1)} L ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${r} ${r} 0 0 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)} Z`,
+      fill: secColor, opacity: 0.16
+    }, parent);
+  }
+
+  return el('path', {
+    d: `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${r} ${r} 0 0 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 2, ...attrs
+  }, parent);
+}
+
+/* ============ 分层绘制架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：原始基础图形
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层（每步擦除重画）
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与标签
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      SLATE = '#64748b', DARK = '#0f172a';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 原始四边形 ABCD
+  polygon([A, B, C, D], {stroke: '#334155', 'stroke-width': 2, fill: '#f8fafc', 'fill-opacity': 0.6}, gBase);
+  // 对角线 BD
+  line(B, D, {stroke: '#64748b', 'stroke-width': 1.6}, gBase);
+  // 线段 CK
+  line(C, K, {stroke: '#64748b', 'stroke-width': 1.6}, gBase);
+  // 线段 BL, DL
+  line(B, L, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gBase);
+  line(D, L, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gBase);
+}
+
+function drawPoints(showR=false, showP=true){
+  gPts.innerHTML = '';
+  // 基础点 A, B, C, D, K, L
+  dot(A, DARK, 4.5, gPts); label(A, 'A', 0, -18, DARK, gPts);
+  dot(B, DARK, 4.5, gPts); label(B, 'B', -16, 6, DARK, gPts);
+  dot(C, DARK, 4.5, gPts); label(C, 'C', 0, 18, DARK, gPts);
+  dot(D, DARK, 4.5, gPts); label(D, 'D', 16, 6, DARK, gPts);
+  dot(K, DARK, 4.2, gPts); label(K, 'K', 8, -14, DARK, gPts);
+  dot(L, DARK, 4.2, gPts); label(L, 'L', -16, 4, DARK, gPts);
+
+  if (showP) {
+    dot(P, PURPLE, 4.5, gPts);
+    label(P, 'P', 16, -8, PURPLE, gPts);
+  }
+  if (showR) {
+    dot(R, GREEN, 4.5, gPts);
+    label(R, 'R', -16, -8, GREEN, gPts);
+  }
+}
+
+/* ============ 各步骤动态图元渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 动态清空重画
+
+  switch(s){
+    case 0: // 已知条件与几何构型
+      drawPoints(false, true);
+      // CD 延长线与线段 PK
+      line(D, P, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      line(P, K, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+      line(D, L, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+      line(B, L, {stroke: SLATE, 'stroke-width': 1.8}, gStep);
+
+      // 平行标记 PK // DL
+      arrowMark(K, P, PURPLE, gStep, 0.52, 9);
+      arrowMark(L, D, PURPLE, gStep, 0.52, 9);
+
+      // 已知角弧：∠BLK = ∠BDA (橙色)
+      angleArc(L, B, K, 24, {stroke: ORANGE, 'stroke-width': 2.2}, gStep, true, ORANGE);
+      angleArc(D, B, A, 28, {stroke: ORANGE, 'stroke-width': 2.2}, gStep, true, ORANGE);
+
+      // 已知角弧：∠BKL = ∠BAD (绿色)
+      angleArc(K, B, L, 24, {stroke: GREEN, 'stroke-width': 2.2}, gStep, true, GREEN);
+      angleArc(A, B, D, 28, {stroke: GREEN, 'stroke-width': 2.2}, gStep, true, GREEN);
+
+      // 目标待求证角虚影提示
+      angleArc(P, A, K, 36, {stroke: RED, 'stroke-width': 1.5, 'stroke-dasharray': '3 2'}, gStep);
+      angleArc(B, L, C, 26, {stroke: RED, 'stroke-width': 1.5, 'stroke-dasharray': '3 2'}, gStep);
+      segDashed(A, P, '#f87171', 1.5, gStep);
+      break;
+
+    case 1: // △BLK ∽ △BDA 与成对旋转相似 △ABK ∽ △DBL
+      drawPoints(false, true);
+      // 高亮 △ABK (蓝色)
+      polygon([A, B, K], {fill: BLUE, opacity: 0.16, stroke: BLUE, 'stroke-width': 2}, gStep);
+      // 高亮 △DBL (青色)
+      polygon([D, B, L], {fill: CYAN, opacity: 0.16, stroke: CYAN, 'stroke-width': 2}, gStep);
+
+      // 加粗关键线段 AK, KB, DL, LB
+      highlightSeg(A, K, BLUE, gStep, 3.2);
+      highlightSeg(K, B, BLUE, gStep, 3.2);
+      highlightSeg(D, L, CYAN, gStep, 3.2);
+      highlightSeg(L, B, CYAN, gStep, 3.2);
+
+      // 旋转相似顶角：∠ABK 与 ∠DBL
+      angleArc(B, A, K, 34, {stroke: BLUE, 'stroke-width': 2.2}, gStep, true, BLUE);
+      angleArc(B, D, L, 42, {stroke: CYAN, 'stroke-width': 2.2}, gStep, true, CYAN);
+      break;
+
+    case 2: // 作辅助平行线 KR // BL 建立比例链
+      drawPoints(true, true);
+      // CB 延长线至点 R
+      line(B, R, {stroke: GREEN, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      // 辅助平行线 KR
+      line(K, R, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      line(B, L, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      // 平行标记 KR // BL (绿色双箭头)
+      arrowMark(R, K, GREEN, gStep, 0.46, 8);
+      arrowMark(R, K, GREEN, gStep, 0.58, 8);
+      arrowMark(B, L, GREEN, gStep, 0.46, 8);
+      arrowMark(B, L, GREEN, gStep, 0.58, 8);
+
+      // CD 延长线与 PK // DL (紫色)
+      line(D, P, {stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(P, K, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(D, L, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      arrowMark(K, P, PURPLE, gStep, 0.52, 9);
+      arrowMark(L, D, PURPLE, gStep, 0.52, 9);
+
+      // 中间截线 CK 强化
+      highlightSeg(C, K, '#eab308', gStep, 2.5);
+      break;
+
+    case 3: // 平行与相似推得夹角相等 ∠RKB = ∠PKA
+      drawPoints(true, true);
+      // 保持线条 KR, BR, DP, PK
+      line(B, R, {stroke: SLATE, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      line(K, R, {stroke: SLATE, 'stroke-width': 1.8}, gStep);
+      line(D, P, {stroke: SLATE, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      line(P, K, {stroke: SLATE, 'stroke-width': 1.8}, gStep);
+      segDashed(A, P, SLATE, 1.6, gStep);
+      line(A, K, {stroke: SLATE, 'stroke-width': 1.6}, gStep);
+
+      // 展示 ∠PKR 与 ∠DLB (紫色弧)
+      angleArc(K, P, R, 28, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+      angleArc(L, D, B, 26, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+
+      // 展示 ∠AKB 与 ∠DLB 相等 (青色弧)
+      angleArc(K, A, B, 34, {stroke: CYAN, 'stroke-width': 2}, gStep);
+
+      // 核心等角：∠RKB 与 ∠PKA (亮橙色加粗弧与扇形)
+      angleArc(K, R, B, 44, {stroke: ORANGE, 'stroke-width': 2.8}, gStep, true, ORANGE);
+      angleArc(K, P, A, 44, {stroke: ORANGE, 'stroke-width': 2.8}, gStep, true, ORANGE);
+      break;
+
+    case 4: // SAS 判定 △RKB ∽ △PKA
+      drawPoints(true, true);
+      // 高亮 △RKB (橙黄色)
+      polygon([R, K, B], {fill: ORANGE, opacity: 0.18, stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      // 高亮 △PKA (红色/珊瑚色)
+      polygon([P, K, A], {fill: RED, opacity: 0.16, stroke: RED, 'stroke-width': 2.2}, gStep);
+
+      // 加粗对应夹边 PK, KA 与 KR, KB
+      highlightSeg(P, K, RED, gStep, 3.2);
+      highlightSeg(A, K, RED, gStep, 3.2);
+      highlightSeg(K, R, ORANGE, gStep, 3.2);
+      highlightSeg(K, B, ORANGE, gStep, 3.2);
+
+      // 夹角对应相等：∠PKA = ∠RKB
+      angleArc(K, P, A, 40, {stroke: RED, 'stroke-width': 2.5}, gStep, true, RED);
+      angleArc(K, R, B, 40, {stroke: ORANGE, 'stroke-width': 2.5}, gStep, true, ORANGE);
+      break;
+
+    case 5: // 得出最终结论 ∠APK = ∠LBC
+      drawPoints(true, true);
+      // 保持关键辅助线
+      line(B, R, {stroke: SLATE, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      line(K, R, {stroke: SLATE, 'stroke-width': 1.6}, gStep);
+      line(P, K, {stroke: SLATE, 'stroke-width': 1.8}, gStep);
+      line(A, P, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      line(B, L, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      line(B, C, {stroke: RED, 'stroke-width': 2.2}, gStep);
+
+      // 目标角 1: ∠APK (红色扇形与加粗弧)
+      angleArc(P, A, K, 38, {stroke: RED, 'stroke-width': 3}, gStep, true, RED);
+
+      // 桥梁角: ∠KRB (橙色弧，由相似得到 ∠KRB = ∠APK)
+      angleArc(R, K, B, 36, {stroke: ORANGE, 'stroke-width': 2.2}, gStep, true, ORANGE);
+
+      // 目标角 2: ∠LBC (红色扇形与加粗弧，由同位角 ∠KRB = ∠LBC)
+      angleArc(B, L, C, 34, {stroke: RED, 'stroke-width': 3}, gStep, true, RED);
+
+      // 平行标记 KR // BL
+      arrowMark(R, K, SLATE, gStep, 0.5, 8);
+      arrowMark(B, L, SLATE, gStep, 0.5, 8);
+      break;
+  }
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `在四边形 $ABCD$ 中，点 $K$ 位于对角线 $BD$ 上，点 $L$ 位于线段 $CK$ 上。<br>
+已知角对应相等条件：<br>
+<span style="color:${ORANGE};font-weight:600;">$\\angle BLK = \\angle BDA$</span>，&nbsp;&nbsp;<span style="color:${GREEN};font-weight:600;">$\\angle BKL = \\angle BAD$</span>。<br>
+过点 $K$ 作 <span style="color:${PURPLE};font-weight:600;">$PK \\parallel DL$</span> 与 $CD$ 的延长线交于点 $P$。<br>
+<b>【求证目标】</b>：证明 <span style="color:${RED};font-weight:700;">$\\angle APK = \\angle LBC$</span>。`
+  },
+  {
+    title: '成对旋转相似推出比例式 ①',
+    body: `由已知 <span class="math">$\\angle BLK = \\angle BDA$</span> 且 <span class="math">$\\angle BKL = \\angle BAD$</span>，两角对应相等：
+<div class="formula-box">$\\triangle BLK \\sim \\triangle BDA$</div>
+对应边成比例且对应顶角相等：
+<div class="formula-box">$\\frac{BL}{BK} = \\frac{BD}{AB} \\iff \\frac{AB}{DB} = \\frac{BK}{BL}, \\quad \\angle ABK = \\angle DBL$</div>
+两边成比例且夹角相等，构成绕点 $B$ 的<b>成对旋转相似</b>：
+<div class="formula-box" style="border-color:${BLUE};background:#f0f7ff;">
+  <b>$\\triangle ABK \\sim \\triangle DBL$</b>
+</div>
+由此得出两对应边之比（式 ①）：
+<div class="formula-box" style="font-weight:bold;color:${BLUE};">
+  ① &nbsp; $\\frac{AK}{KB} = \\frac{DL}{LB}$
+</div>`
+  },
+  {
+    title: '引入辅助平行线 KR 建立比例链',
+    body: `作辅助线 <span style="color:${GREEN};font-weight:600;">$KR \\parallel BL$</span> 与 $CB$ 的延长线交于点 $R$。<br>
+利用平行线分线段成比例定理：
+<br>• 在 $\\triangle CPK$ 中，$DL \\parallel PK \\implies \\frac{DL}{PK} = \\frac{CL}{CK}$
+<br>• 在 $\\triangle CRK$ 中，$BL \\parallel RK \\implies \\frac{LB}{KR} = \\frac{CL}{CK}$
+<div class="formula-box" style="border-color:${GREEN};background:#f0fdf4;">
+  ② &nbsp; $\\frac{DL}{PK} = \\frac{CL}{CK} = \\frac{LB}{KR} \\implies \\frac{DL}{LB} = \\frac{PK}{KR}$
+</div>
+结合式 ① $\\frac{AK}{KB} = \\frac{DL}{LB}$，立即递推得到：
+<div class="formula-box" style="font-weight:bold;color:${GREEN};">
+  $\\frac{AK}{KB} = \\frac{PK}{KR} \\iff \\frac{PK}{AK} = \\frac{KR}{KB}$
+</div>`
+  },
+  {
+    title: '平行与相似推得夹角相等',
+    body: `考察绕点 $K$ 的射线方向与夹角转换：<br>
+• 因 $PK \\parallel DL$ 且 $KR \\parallel BL$，两组边分别平行同向：
+<div class="formula-box">$\\angle PKR = \\angle DLB$</div>
+• 由 Step 1 的相似 $\\triangle ABK \\sim \\triangle DBL$，对应角：
+<div class="formula-box">$\\angle DLB = \\angle AKB$</div>
+从而传递得到：$\\angle PKR = \\angle AKB$。<br>
+观察公共角与射线 $KB$：两相等大角减去公共部分：
+<div class="formula-box" style="font-weight:bold;color:${ORANGE};border-color:${ORANGE};background:#fff7ed;">
+  $\\angle PKR - \\angle AKR = \\angle AKB - \\angle AKR \\implies \\angle RKB = \\angle PKA$
+</div>`
+  },
+  {
+    title: 'SAS 相似判定 △RKB ∽ △PKA',
+    body: `综合 Step 2 的线段比例与 Step 3 的夹角关系，观察 $\\triangle RKB$ 与 $\\triangle PKA$：
+<br>1. <b>对应夹边成比例</b>：$\\frac{PK}{AK} = \\frac{KR}{KB}$ （由 Step 2 推得）；
+<br>2. <b>对应夹角相等</b>：$\\angle PKA = \\angle RKB$ （由 Step 3 推得）。<br>
+根据两边成比例且夹角相等的三角形相似判定定理（SAS）：
+<div class="formula-box" style="font-weight:bold;font-size:15px;border-color:${RED};background:#fef2f2;color:${RED};">
+  $\\triangle RKB \\sim \\triangle PKA$
+</div>`
+  },
+  {
+    title: '对应角相等得出最终结论',
+    body: `由相似三角形 $\\triangle RKB \\sim \\triangle PKA$ 对应角相等，得：
+<div class="formula-box">$\\angle APK = \\angle KRB$</div>
+又因为 $KR \\parallel BL$，$R$ 位于 $CB$ 的延长线上（$C, B, R$ 共线），由平行线同位角性质：
+<div class="formula-box">$\\angle KRB = \\angle LBC$</div>
+综上两步等量代换，严密推得：
+<div class="formula-box" style="font-weight:bold;font-size:16px;color:${RED};border:2px solid ${RED};background:#fff1f2;">
+  $\\angle APK = \\angle LBC$
+</div>
+<b>全命题获证！</b>`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3000);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

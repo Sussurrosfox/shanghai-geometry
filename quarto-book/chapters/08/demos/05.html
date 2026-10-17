@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 4：外切四边形内切圆、配极原则与调和角平分线 (BD平分∠AMC) — 分步几何证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14.5px; color: #475569; margin-top: 6px; line-height: 1.5; }
+  header .math-tag { background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-family: "Times New Roman", serif; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 640px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+    padding: 16px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid #cbd5e1;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; display: block; overflow: visible; }
+  .panel {
+    flex: 1 1 380px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+    padding: 20px; display: flex; flex-direction: column;
+    border: 1px solid #cbd5e1;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; max-height: calc(78vh - 100px); }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #93c5fd; background: #f0f7ff; transform: translateY(-1px); }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.7; color: #334155; margin-top: 10px; display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 4px 12px rgba(37,99,235,0.12); }
+  .step-item.active .title { color: #1d4ed8; font-weight: 700; }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1.3; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; color: #0f172a; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 10px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; font-weight: 600; }
+  .math { font-family: "Times New Roman", "KaTeX_Math", serif; font-style: italic; }
+  b.math { font-weight: bold; }
+  text.lbl {
+    font-family: "Times New Roman", "KaTeX_Math", serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 700;
+    fill: #0f172a;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 4：圆外切四边形、配极原则与角平分线证明 <span class="math-tag">BD 平分 ∠AMC</span></h1>
+    <p>设四边形 $ABCD$ 的内切圆为圆 $O$，过 $O$ 作 $OM \perp BD$ 于 $M$。求证：$BD$ 平分 $\angle AMC$。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="40 40 460 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+/* ============ 几何与向量计算辅助函数 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const dotProd = (p,q) => p.x*q.x + p.y*q.y;
+const cross = (p,q) => p.x*q.y - p.y*q.x;
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function foot(P, P1, P2){
+  const d = sub(P2, P1);
+  const denom = dotProd(d, d);
+  if (denom < 1e-9) return P1;
+  const t = dotProd(sub(P, P1), d) / denom;
+  return add(P1, mul(d, t));
+}
+
+/* ============ 精确几何解算数据 ============ */
+// 内心与内切圆
+const O = { x: 320.00, y: 270.00 };
+const r_circle = 100.00;
+
+// 切点 E on AB, F on BC, G on CD, H on DA
+const E = { x: 221.52, y: 287.36 };
+const F = { x: 262.64, y: 351.92 };
+const G = { x: 419.62, y: 261.28 };
+const H = { x: 270.00, y: 183.40 };
+
+// 凸四边形切线顶点
+const A = { x: 209.36, y: 218.41 };
+const B = { x: 228.71, y: 328.16 };
+const C = { x: 438.31, y: 474.92 };
+const D = { x: 405.94, y: 104.91 };
+
+// 对角线与割线关键交点
+const P = { x: 265.71, y: 281.55 }; // AC cap BD = EG cap FH
+const Q = { x: 98.36, y: 94.05 };   // GH cap FE
+const R = { x: 165.18, y: 408.19 }; // HE cap GF
+const M = { x: 292.32, y: 248.03 }; // OM perp BD
+const N = { x: 322.10, y: 210.52 }; // HG cap BD
+
+/* ============ SVG 绘图辅助函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color='#64748b', w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r:r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#2563eb', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r:r, fill:color, stroke:'#ffffff', 'stroke-width':2}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, class: 'lbl',
+    'font-size': size, fill: color
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1, v)), u2 = norm(sub(p2, v));
+  const a = add(v, mul(u1, s)), b = add(add(v, mul(u1, s)), mul(u2, s)), c = add(v, mul(u2, s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`, fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+
+function highlightSeg(p, q, color='#2563eb', parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.2}, parent);
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+function extended(p, q, ext1=20, ext2=20, attrs={}, parent){
+  const d = norm(sub(q, p));
+  const start = sub(p, mul(d, ext1));
+  const end = add(q, mul(d, ext2));
+  return line(start, end, attrs, parent);
+}
+
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+// 全程保留的基础图形
+function drawBase(){
+  gBase.innerHTML = '';
+  // 外切四边形 ABCD 边框
+  polygon([A, B, C, D], {stroke: '#1e293b', 'stroke-width': 2.2, fill: '#f8fafc', 'fill-opacity': 0.3}, gBase);
+
+  // 内切圆 O
+  circle(O, r_circle, {stroke: '#0284c7', 'stroke-width': 1.8, 'stroke-opacity': 0.9}, gBase);
+
+  // 对角线 AC 与 BD
+  line(A, C, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '5 4'}, gBase);
+  line(B, D, {stroke: '#94a3b8', 'stroke-width': 1.5}, gBase);
+
+  // 待平分角相关线段 MA, MC
+  line(M, A, {stroke: '#cbd5e1', 'stroke-width': 1.4, 'stroke-dasharray': '4 4'}, gBase);
+  line(M, C, {stroke: '#cbd5e1', 'stroke-width': 1.4, 'stroke-dasharray': '4 4'}, gBase);
+
+  // 垂线段 OM 与垂足直角标记
+  line(O, M, {stroke: '#dc2626', 'stroke-width': 1.6, 'stroke-dasharray': '4 3'}, gBase);
+  rightAngleMark(M, O, D, 10, '#dc2626', gBase);
+}
+
+// 顶层点与标签
+function drawPoints(stepIdx){
+  gPts.innerHTML = '';
+
+  // 核心基准点
+  const basePoints = [
+    { p: A, t: 'A', dx: -16, dy: -6, c: '#0f172a' },
+    { p: B, t: 'B', dx: -18, dy: 12, c: '#0f172a' },
+    { p: C, t: 'C', dx: 16, dy: 16, c: '#0f172a' },
+    { p: D, t: 'D', dx: 16, dy: -14, c: '#0f172a' },
+    { p: O, t: 'O', dx: 16, dy: 14, c: '#0284c7' },
+    { p: E, t: 'E', dx: -16, dy: 2, c: '#0284c7' },
+    { p: F, t: 'F', dx: -10, dy: 16, c: '#0284c7' },
+    { p: G, t: 'G', dx: 16, dy: -4, c: '#0284c7' },
+    { p: H, t: 'H', dx: -2, dy: -16, c: '#0284c7' },
+    { p: M, t: 'M', dx: 12, dy: -14, c: '#dc2626' }
+  ];
+
+  basePoints.forEach(pt => {
+    dot(pt.p, pt.c, 4.2, gPts);
+    label(pt.p, pt.t, pt.dx, pt.dy, pt.c, gPts);
+  });
+
+  // 交点 P（Step 1 起突出展示）
+  if (stepIdx >= 1) {
+    dot(P, '#e11d48', 4.8, gPts);
+    label(P, 'P', -14, 14, '#e11d48', gPts);
+  }
+
+  // 割线交点 Q（Step 1 起引入）
+  if (stepIdx >= 1) {
+    dot(Q, '#2563eb', 4.8, gPts);
+    label(Q, 'Q', -14, -12, '#2563eb', gPts);
+  }
+
+  // 割线交点 R（Step 2 引入）
+  if (stepIdx === 2) {
+    dot(R, '#ea580c', 4.8, gPts);
+    label(R, 'R', -16, 14, '#ea580c', gPts);
+  }
+
+  // 割线与极线交点 N（Step 3 引入）
+  if (stepIdx === 3) {
+    dot(N, '#059669', 4.5, gPts);
+    label(N, 'N', 14, -12, '#059669', gPts);
+  }
+}
+
+/* ============ 各步骤动态图元渲染 ============ */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', GOLD = '#d97706';
+
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0:
+      // Step 0: 已知条件与几何构型
+      // 强调内切圆及切点、OM 垂直 BD
+      highlightSeg(O, M, RED, gStep, 2.8);
+      highlightSeg(B, D, '#64748b', gStep, 2.5);
+      break;
+
+    case 1:
+      // Step 1: 牛顿定理与极线原理：P=AC∩BD，EF与GH交于Q，证明BD为Q的极线
+      // 绘制切点弦 EG 与 FH
+      line(E, G, {stroke: GREEN, 'stroke-width': 2.0, 'stroke-dasharray': '5 3'}, gStep);
+      line(F, H, {stroke: GREEN, 'stroke-width': 2.0, 'stroke-dasharray': '5 3'}, gStep);
+
+      // 延长 FE 与 GH 交于 Q
+      extended(F, Q, 0, 15, {stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+      extended(G, Q, 0, 15, {stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 高亮极线 BD
+      highlightSeg(B, D, PURPLE, gStep, 3.2);
+
+      // 强调切线 B-E, B-F 与 D-G, D-H
+      line(B, E, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      line(B, F, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      line(D, G, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      line(D, H, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      break;
+
+    case 2:
+      // Step 2: 证明 D,P,B,R 共线，Q,A,P,C 共线
+      // 绘制切点弦 HE 与 GF 延长交于 R
+      extended(H, R, 0, 15, {stroke: ORANGE, 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+      extended(G, R, 0, 15, {stroke: ORANGE, 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 自极三角形 PQR 边框
+      line(P, Q, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      line(P, R, {stroke: PURPLE, 'stroke-width': 2.0}, gStep);
+      line(Q, R, {stroke: ORANGE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+
+      // 强化展示直线 BD (贯穿 R, B, P, D)
+      extended(R, D, 15, 20, {stroke: PURPLE, 'stroke-width': 3.0, opacity: 0.8}, gStep);
+
+      // 强化展示直线 AC (贯穿 Q, A, P, C)
+      extended(Q, C, 15, 20, {stroke: CYAN, 'stroke-width': 3.0, opacity: 0.8}, gStep);
+      break;
+
+    case 3:
+      // Step 3: 由完全四边形性质证明 (Q, P; A, C) 为调和点列
+      // 割线 QHG 延伸
+      extended(Q, G, 15, 15, {stroke: '#64748b', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      
+      // 顶点 D 发出的四条调和射线: DQ, DN, DA (即DH), DC (即DG)
+      line(D, Q, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      line(D, N, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      line(D, A, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      line(D, C, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+
+      // 高亮被截线 Q-A-P-C 及其上的四个调和点
+      highlightSeg(Q, C, BLUE, gStep, 3.0);
+      [Q, A, P, C].forEach(pt => {
+        circle(pt, 8, {stroke: RED, 'stroke-width': 2.0, 'stroke-dasharray': '3 2'}, gStep);
+      });
+
+      // 显示调和文字标签
+      const lblHarm = el('text', {
+        x: 180, y: 150, class: 'lbl',
+        'font-size': 15, fill: RED
+      }, gStep);
+      lblHarm.textContent = '(Q, P; A, C) = -1';
+      break;
+
+    case 4:
+      // Step 4: 由BD为Q的极线得QO ⊥ BD，结合OM ⊥ BD得Q,M,O三点共线且QM ⊥ BD
+      // 高亮极线 BD
+      highlightSeg(B, D, PURPLE, gStep, 3.0);
+
+      // 绘制从极点 Q 到垂足 M 再到圆心 O 的贯穿直线
+      extended(Q, O, 15, 20, {stroke: RED, 'stroke-width': 2.8}, gStep);
+
+      // 突出垂足 M 处的两组垂直直角标记
+      rightAngleMark(M, Q, D, 13, RED, gStep);
+      rightAngleMark(M, O, B, 13, RED, gStep);
+
+      // 强调 Q, M, O 三点共线同心光圈
+      [Q, M, O].forEach(pt => {
+        circle(pt, 7.5, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      });
+      break;
+
+    case 5:
+      // Step 5: 由QM ⊥ MP且(Q, P; A, C)调和点列，得出MP（即BD）平分∠AMC。证毕。
+      // 高亮调和线束四条射线: MQ, MA, MP, MC
+      line(M, Q, {stroke: '#0284c7', 'stroke-width': 2.2, 'stroke-dasharray': '5 3'}, gStep);
+      highlightSeg(M, A, PURPLE, gStep, 3.2);
+      highlightSeg(M, C, PURPLE, gStep, 3.2);
+      highlightSeg(M, P, GOLD, gStep, 3.8);
+
+      // 直角标记 MQ perp MP
+      rightAngleMark(M, Q, P, 14, '#0284c7', gStep);
+
+      // 绘制相等的角弧标记 ∠PMA 与 ∠PMC
+      angleArc(M, P, A, 24, {stroke: GOLD, 'stroke-width': 2.4}, gStep);
+      angleArc(M, C, P, 28, {stroke: GOLD, 'stroke-width': 2.4}, gStep);
+
+      // 标注角平分文字
+      const lblBisect = el('text', {
+        x: 345, y: 285, class: 'lbl',
+        'font-size': 16, fill: GOLD
+      }, gStep);
+      lblBisect.textContent = '∠PMA = ∠PMC';
+      break;
+  }
+  if (window.renderMath) window.renderMath();
+}
+
+/* ============ 步骤讲解文本数据 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `设四边形 <span class="math">ABCD</span> 的内切圆为圆 <span class="math">O</span>，四边分别切于点 <span class="math">E, F, G, H</span>。<br>
+连接对角线 <span class="math">AC, BD</span>。过圆心 <span class="math">O</span> 作 <span class="math">OM ⊥ BD</span> 于点 <span class="math">M</span>。<br>
+连接 <span class="math">MA, MC</span>。求证：直线 <span class="math">BD</span> 平分 <span class="math">∠AMC</span>。`
+  },
+  {
+    title: '① 牛顿定理与配极原则：BD 为 Q 的极线',
+    body: `连接 <span class="math">AC</span> 与 <span class="math">BD</span> 交于点 <span class="math">P</span>。由<b>牛顿定理</b>，切点弦 <span class="math">EG</span> 与 <span class="math">FH</span> 亦必过点 <span class="math">P</span>。<br>
+设切点连线 <span class="math">GH</span> 与 <span class="math">FE</span> 的延长线交于点 <span class="math">Q</span>。<br>
+因为弦 <span class="math">EF</span> 为切线交点 <span class="math">B</span> 关于圆 <span class="math">O</span> 的极线，且 <span class="math">Q</span> 在直线 <span class="math">EF</span> 上，由<b>配极原则</b>，点 <span class="math">Q</span> 关于圆 <span class="math">O</span> 的极线必过点 <span class="math">B</span>。<br>
+同理，弦 <span class="math">GH</span> 为点 <span class="math">D</span> 的极线，故点 <span class="math">Q</span> 关于圆 <span class="math">O</span> 的极线亦过点 <span class="math">D</span>。<br>
+因此，直线 <span class="math">BD</span> 即为点 <span class="math">Q</span> 关于圆 <span class="math">O</span> 的极线。`
+  },
+  {
+    title: '② 自极三角形对偶：D,P,B,R 与 Q,A,P,C 共线',
+    body: `设切点弦 <span class="math">HE</span> 与 <span class="math">GF</span> 的延长线交于点 <span class="math">R</span>。<br>
+在内接四边形 <span class="math">EFGH</span> 中，<span class="math">P = EG ∩ FH</span>，<span class="math">Q = GH ∩ FE</span>，<span class="math">R = HE ∩ GF</span> 构成圆 <span class="math">O</span> 的<b>自极三角形 △PQR</b>。<br>
+由自极三角形性质，点 <span class="math">Q</span> 的极线即为直线 <span class="math">PR</span>。结合第 ① 步，直线 <span class="math">BD</span> 与 <span class="math">PR</span> 重合，即 <span class="math">D, P, B, R</span> 四点共线！<br>
+同理，切线交点 <span class="math">A</span> 的极线为 <span class="math">HE</span>（过 <span class="math">R</span>），切线交点 <span class="math">C</span> 的极线为 <span class="math">FG</span>（过 <span class="math">R</span>）。由配极原则，点 <span class="math">R</span> 的极线必过 <span class="math">A</span> 与 <span class="math">C</span>（即直线 <span class="math">AC</span>）。<br>
+而在自极三角形中点 <span class="math">R</span> 的极线即为直线 <span class="math">PQ</span>，故直线 <span class="math">PQ</span> 与 <span class="math">AC</span> 重合，即 <span class="math">Q, A, P, C</span> 四点共线！`
+  },
+  {
+    title: '③ 完全四边形截线：(Q, P; A, C) 为调和点列',
+    body: `设割线 <span class="math">QHG</span> 与直线 <span class="math">BD</span> 交于点 <span class="math">N</span>。<br>
+由完全四边形的基本调和性质，割线上的点列 <span class="math">(Q, N; H, G) = -1</span> 为调和点列。<br>
+从顶点 <span class="math">D</span> 发出投影线束，知 <span class="math">D(Q, N; H, G) = -1</span> 构成调和线束。<br>
+用截线 <span class="math">Q-A-P-C</span> 去截该调和线束：<br>
+因为 <span class="math">DQ ∩ 截线 = Q</span>，<span class="math">DN ∩ 截线 = P</span>，<span class="math">DH (即 DA) ∩ 截线 = A</span>，<span class="math">DG (即 DC) ∩ 截线 = C</span>。<br>
+由透视投影保持调和交叉比不变，立即导出截线上的四个点构成调和点列：<br>
+<b class="math" style="color:#dc2626;">(Q, P; A, C) = -1</b>。`
+  },
+  {
+    title: '④ 极点连径正交：Q, M, O 三点共线且 QM ⊥ BD',
+    body: `连接极点 <span class="math">Q</span> 与圆心 <span class="math">O</span>。<br>
+由极点与极线的基本正交性质：圆心与极点的连线垂直于该极点对应的极线。因为直线 <span class="math">BD</span> 为点 <span class="math">Q</span> 的极线，所以必有 <span class="math">QO ⊥ BD</span>。<br>
+又由已知条件，过圆心 <span class="math">O</span> 作 <span class="math">OM ⊥ BD</span> 且垂足为 <span class="math">M</span>。<br>
+过定点 <span class="math">O</span> 向直线 <span class="math">BD</span> 所引垂线唯一，垂足均为 <span class="math">M</span>，故垂线 <span class="math">OM</span> 与垂线 <span class="math">QO</span> 必在同一直线上！<br>
+由此导出：<span class="math">Q, M, O</span> 三点共线，且垂线段 <span class="math">QM ⊥ BD</span>（即 <span class="math">QM ⊥ MP</span>），在点 <span class="math">M</span> 处形成直角 <span class="math">∠QMD = 90°</span>。`
+  },
+  {
+    title: '⑤ 调和线束正交定理：BD 平分 ∠AMC（证毕）',
+    body: `以垂足 <span class="math">M</span> 为顶点，连接共线的调和点列 <span class="math">Q, A, P, C</span>，构成调和线束 <span class="math">M(Q, P; A, C) = -1</span>。<br>
+在这一调和线束中，射线 <span class="math">MQ</span> 与射线 <span class="math">MP</span> 是一对共轭射线。<br>
+由第 ④ 步结论，共轭射线相互垂直，即 <span class="math">MQ ⊥ MP</span>（<span class="math">∠QMP = 90°</span>）。<br>
+根据<b>调和线束正交定理</b>：若调和线束的两条共轭射线互相垂直，则这两条共轭射线恰好平分另外两条射线所夹的角及其外角！<br>
+因此，射线 <span class="math">MP</span> 必平分 <span class="math">∠AMC</span>，即 <span class="math">∠PMA = ∠PMC</span>。<br>
+由于点 <span class="math">P</span> 位于直线 <span class="math">BD</span> 上，射线 <span class="math">MP</span> 即为直线 <span class="math">BD</span>，故直线 <span class="math">BD</span> 严格平分 <span class="math">∠AMC</span>。<br>
+<b>原命题圆满得证！</b>`
+  }
+];
+
+/* ============ 交互控制与事件驱动 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (window.renderMath) window.renderMath();
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  // 同步 URL 参数
+  const url = new URL(window.location);
+  url.searchParams.set('step', cur);
+  window.history.replaceState({}, '', url);
+  if (window.renderMath) window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2600);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化
+drawBase();
+const initStep = parseInt(new URLSearchParams(location.search).get('step')) || 0;
+goTo(initStep);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

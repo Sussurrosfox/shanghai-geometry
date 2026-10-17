@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费尔巴哈定理（例 6）— 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 25px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14.5px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 600px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; }
+  text {
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    user-select: none;
+  }
+  .panel {
+    flex: 1 1 420px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 22px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 15px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 6：费尔巴哈定理 (Feuerbach's Theorem)</h1>
+    <p>已知：任意 $\triangle ABC$ 的九点圆、内切圆 $\odot I$ 与 $A$-旁切圆 $\odot I_a$ ｜ 求证：九点圆与其内切圆和三个旁切圆都相切</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="40 50 560 480" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+/* ============ 几何算法与高精度坐标解算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+function foot(P, P1, P2){
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+
+// 设定不等边锐角 △ABC
+const A = { x: 280, y: 110 };
+const B = { x: 120, y: 390 };
+const C = { x: 520, y: 390 };
+
+const a = dist(B, C); // 400
+const b = dist(C, A); // 368.7818
+const c = dist(A, B); // 322.4903
+const p = (a + b + c) / 2; // 545.6360
+
+// 三边中点
+const A1 = mid(B, C); // (320, 390)
+const B1 = mid(C, A); // (400, 250)
+const C1 = mid(A, B); // (200, 250)
+
+// 内心 I 与内切圆半径 r
+const area = Math.abs((B.x-A.x)*(C.y-A.y) - (C.x-A.x)*(B.y-A.y)) / 2; // 56000
+const r = area / p; // 102.6325
+const I = {
+  x: (a*A.x + b*B.x + c*C.x) / (a + b + c),
+  y: (a*A.y + b*B.y + c*C.y) / (a + b + c)
+};
+
+// 九点圆心 N 与半径 R_N (A1, B1, C1 的外心)
+function circumcenter(p1, p2, p3){
+  const d = 2 * (p1.x*(p2.y-p3.y) + p2.x*(p3.y-p1.y) + p3.x*(p1.y-p2.y));
+  const ux = ((p1.x*p1.x+p1.y*p1.y)*(p2.y-p3.y) + (p2.x*p2.x+p2.y*p2.y)*(p3.y-p1.y) + (p3.x*p3.x+p3.y*p3.y)*(p1.y-p2.y)) / d;
+  const uy = ((p1.x*p1.x+p1.y*p1.y)*(p3.x-p2.x) + (p2.x*p2.x+p2.y*p2.y)*(p1.x-p3.x) + (p3.x*p3.x+p3.y*p3.y)*(p2.x-p1.x)) / d;
+  return {x: ux, y: uy};
+}
+const N = circumcenter(A1, B1, C1); // (300, 285.7143)
+const R_N = dist(N, A1); // 106.1862
+
+// A-旁切圆心 Ia 与半径 ra
+const ra = area / (p - a); // 384.5202
+const Ia = {
+  x: (-a*A.x + b*B.x + c*C.x) / (-a + b + c),
+  y: (-a*A.y + b*B.y + c*C.y) / (-a + b + c)
+}; // (343.1457, 774.5202)
+
+// 切点 X 与 Xa on BC
+const X = { x: I.x, y: 390 }; // (296.8543, 390)
+const Xa = { x: Ia.x, y: 390 }; // (343.1457, 390)
+
+// 内角平分线交点 S
+const S = {
+  x: (b*B.x + c*C.x) / (b + c),
+  y: (b*B.y + c*C.y) / (b + c)
+}; // (306.6069, 390)
+
+// 第二条内公切线端点 B', C'
+const u_AB = norm(sub(B, A));
+const Cprime = add(A, mul(u_AB, b)); // (97.0330, 430.1922)
+const u_AC = norm(sub(C, A));
+const Bprime = add(A, mul(u_AC, c)); // (489.8739, 354.8529)
+
+// 中位线与公切线交点 B'', C''
+const dBCprime = sub(Cprime, Bprime);
+const Bpp = lineIntersect(Bprime, dBCprime, A1, sub(B1, A1)); // (321.6484, 387.1153)
+const Cpp = lineIntersect(Bprime, dBCprime, A1, sub(C1, A1)); // (318.1092, 387.7941)
+
+// 反演半径 R_inv = (b-c)/2
+const R_inv = (b - c) / 2; // 23.1457
+const R_inv2 = R_inv * R_inv;
+
+// 反演变换函数（以 A1 为中心）
+function invert(pt){
+  const dx = pt.x - A1.x;
+  const dy = pt.y - A1.y;
+  const d2 = dx*dx + dy*dy;
+  const k = R_inv2 / d2;
+  return { x: A1.x + k*dx, y: A1.y + k*dy };
+}
+
+// B'C' 与圆 I, 圆 Ia 的切点 T', Ta'
+const Tprime = foot(I, Bprime, Cprime); // (316.1849, 388.1631)
+const Taprime = foot(Ia, Bprime, Cprime); // (270.7220, 396.8820)
+
+// 费尔巴哈切点 T, Ta
+const T = invert(Tprime); // (206.0037, 335.1128)
+const Ta = invert(Taprime); // (309.3365, 391.4892)
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '400'}, parent);
+  t.textContent = text;
+  return t;
+}
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function extended(p, q, extBefore, extAfter, attrs, parent){
+  const d = norm(sub(q,p));
+  return line(sub(p, mul(d, extBefore)), add(q, mul(d, extAfter)), attrs, parent);
+}
+
+/* ============ 分层绘制 ============ */
+const gBase = el('g', {}, stage);      // 底层：原始三角形及长青图元
+const gStep = el('g', {}, stage);      // 动态步骤层
+const gPts  = el('g', {}, stage);      // 顶层：点与标签
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 三角形填充与边线
+  polygon([A, B, C], {fill:'#f8fafc', stroke:'#1e293b', 'stroke-width':2.2}, gBase);
+}
+
+function drawPoints(s){
+  gPts.innerHTML = '';
+
+  // 基础三顶点恒常显示
+  dot(A, '#1e293b', 4.5, gPts); label(A, 'A', 0, -16, '#0f172a', gPts);
+  dot(B, '#1e293b', 4.5, gPts); label(B, 'B', -16, 16, '#0f172a', gPts);
+  dot(C, '#1e293b', 4.5, gPts); label(C, 'C', 16, 16, '#0f172a', gPts);
+
+  // 中点 A1, B1, C1
+  dot(A1, BLUE, 4.5, gPts);
+  if (s === 6) {
+    label(A1, 'A₁', 16, 18, BLUE, gPts);
+  } else {
+    label(A1, 'A₁', 2, 18, BLUE, gPts);
+  }
+  if (s !== 1 && s !== 2) {
+    dot(B1, BLUE, 4, gPts); label(B1, 'B₁', 16, -12, BLUE, gPts);
+    dot(C1, BLUE, 4, gPts); label(C1, 'C₁', -16, -12, BLUE, gPts);
+  }
+
+  // 步骤 0: 介绍构型
+  if (s === 0) {
+    dot(I, GREEN, 4, gPts); label(I, 'I', -16, -6, GREEN, gPts);
+    dot(N, BLUE, 4, gPts); label(N, 'N', 16, -8, BLUE, gPts);
+    dot(X, GREEN, 3.8, gPts); label(X, 'X', -14, 18, GREEN, gPts);
+    dot(Xa, PURPLE, 3.8, gPts); label(Xa, 'Xₐ', 14, 18, PURPLE, gPts);
+  }
+
+  // 步骤 1: 对称性
+  if (s === 1) {
+    dot(X, GREEN, 4.5, gPts); label(X, 'X', -14, 18, GREEN, gPts);
+    dot(Xa, PURPLE, 4.5, gPts); label(Xa, 'Xₐ', 14, 18, PURPLE, gPts);
+  }
+
+  // 步骤 2: 公切线与四点共线
+  if (s === 2) {
+    dot(I, GREEN, 4, gPts); label(I, 'I', -16, -8, GREEN, gPts);
+    dot(S, ORANGE, 4.5, gPts); label(S, 'S', -14, -14, ORANGE, gPts);
+    dot(Bprime, ORANGE, 4, gPts); label(Bprime, "B'", 16, -4, ORANGE, gPts);
+    dot(Cprime, ORANGE, 4, gPts); label(Cprime, "C'", -18, 12, ORANGE, gPts);
+  }
+
+  // 步骤 3: 中位线与相似
+  if (s === 3) {
+    dot(S, ORANGE, 4, gPts); label(S, 'S', -14, 16, ORANGE, gPts);
+    dot(Bprime, ORANGE, 3.8, gPts); label(Bprime, "B'", 16, -4, ORANGE, gPts);
+    dot(Cprime, ORANGE, 3.8, gPts); label(Cprime, "C'", -16, 12, ORANGE, gPts);
+    dot(Bpp, CYAN, 4, gPts); label(Bpp, 'B″', 14, -14, CYAN, gPts);
+    dot(Cpp, CYAN, 4, gPts); label(Cpp, 'C″', -14, -14, CYAN, gPts);
+  }
+
+  // 步骤 4: 反演对应
+  if (s === 4) {
+    dot(Bpp, CYAN, 4, gPts); label(Bpp, 'B″', 14, -14, CYAN, gPts);
+    dot(Cpp, CYAN, 4, gPts); label(Cpp, 'C″', -14, -14, CYAN, gPts);
+    dot(X, GREEN, 4, gPts); label(X, 'X', -14, 18, GREEN, gPts);
+    dot(Xa, PURPLE, 4, gPts); label(Xa, 'Xₐ', 14, 18, PURPLE, gPts);
+  }
+
+  // 步骤 5: 内切圆相切
+  if (s === 5) {
+    dot(I, GREEN, 4, gPts); label(I, 'I', -16, -6, GREEN, gPts);
+    dot(N, BLUE, 4, gPts); label(N, 'N', 16, -8, BLUE, gPts);
+    dot(Tprime, ORANGE, 4, gPts); label(Tprime, "T'", 0, -15, ORANGE, gPts);
+    dot(T, RED, 5, gPts); label(T, 'T', -18, 12, RED, gPts, 18);
+  }
+
+  // 步骤 6: 旁切圆相切与全貌
+  if (s === 6) {
+    dot(I, GREEN, 4, gPts); label(I, 'I', -16, -6, GREEN, gPts);
+    dot(N, BLUE, 4, gPts); label(N, 'N', 16, -8, BLUE, gPts);
+    dot(T, RED, 5, gPts); label(T, 'T', -18, 12, RED, gPts, 18);
+    dot(Ta, RED, 5, gPts); label(Ta, 'Tₐ', -16, 18, RED, gPts, 18);
+  }
+}
+
+/* ============ 各步骤动态画面 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0: { // 构型引入
+      // 九点圆
+      circle(N, R_N, {stroke: BLUE, 'stroke-width': 2.2, fill: '#eff6ff', 'fill-opacity': 0.35}, gStep);
+      // 内切圆
+      circle(I, r, {stroke: GREEN, 'stroke-width': 2.2, fill: '#f0fdf4', 'fill-opacity': 0.4}, gStep);
+      // 旁切圆（上半弧）
+      circle(Ia, ra, {stroke: PURPLE, 'stroke-width': 2, 'stroke-dasharray': '6 4'}, gStep);
+      // 中点连线
+      line(A1, B1, {stroke: BLUE, 'stroke-width': 1.2, opacity: 0.6}, gStep);
+      line(B1, C1, {stroke: BLUE, 'stroke-width': 1.2, opacity: 0.6}, gStep);
+      line(C1, A1, {stroke: BLUE, 'stroke-width': 1.2, opacity: 0.6}, gStep);
+      break;
+    }
+
+    case 1: { // 切点对称性
+      // 内切圆与旁切圆局部
+      circle(I, r, {stroke: GREEN, 'stroke-width': 1.8, opacity: 0.75}, gStep);
+      circle(Ia, ra, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4', opacity: 0.75}, gStep);
+      
+      // 底边分段高亮
+      highlightSeg(B, X, '#10b981', gStep, 3.5);
+      highlightSeg(X, A1, '#f59e0b', gStep, 4);
+      highlightSeg(A1, Xa, '#f59e0b', gStep, 4);
+      highlightSeg(Xa, C, '#a855f7', gStep, 3.5);
+
+      // 垂线段 IX 与 IaXa 提示切点
+      line(I, X, {stroke: GREEN, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      line({x:Ia.x, y:390}, {x:Ia.x, y:430}, {stroke: PURPLE, 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      break;
+    }
+
+    case 2: { // 第二条内公切线 B'C' 与四点共线
+      circle(I, r, {stroke: GREEN, 'stroke-width': 1.8, opacity: 0.65}, gStep);
+      circle(Ia, ra, {stroke: PURPLE, 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: 0.5}, gStep);
+
+      // 角平分线 AS (过 I, Ia)
+      extended(A, S, 20, 50, {stroke: '#ef4444', 'stroke-width': 2, 'stroke-dasharray': '6 4'}, gStep);
+
+      // 延长 AB 至 C'
+      highlightSeg(B, Cprime, '#94a3b8', gStep, 2);
+
+      // 第二条内公切线 B'C'
+      extended(Cprime, Bprime, 15, 20, {stroke: ORANGE, 'stroke-width': 2.8}, gStep);
+
+      // 高亮对称公切线 BC
+      highlightSeg(B, C, '#64748b', gStep, 2.5);
+      break;
+    }
+
+    case 3: { // 中位线与相似三角形
+      // 第二条公切线
+      extended(Cprime, Bprime, 15, 20, {stroke: ORANGE, 'stroke-width': 2, opacity: 0.8}, gStep);
+
+      // 中位线 A1B1 与 A1C1
+      line(A1, B1, {stroke: CYAN, 'stroke-width': 2.5}, gStep);
+      line(A1, C1, {stroke: CYAN, 'stroke-width': 2.5}, gStep);
+
+      // 相似三角形着色: △SA1B'' 与 △SBC'
+      polygon([S, A1, Bpp], {fill: '#38bdf8', 'fill-opacity': 0.35, stroke: CYAN, 'stroke-width': 1.5}, gStep);
+      polygon([S, B, Cprime], {fill: '#fed7aa', 'fill-opacity': 0.25, stroke: ORANGE, 'stroke-width': 1.5}, gStep);
+
+      // 标注平行
+      line(B, Cprime, {stroke: '#1e293b', 'stroke-width': 2.5}, gStep);
+      break;
+    }
+
+    case 4: { // 建立反演变换
+      // 中位线与公切线
+      line(A1, B1, {stroke: CYAN, 'stroke-width': 1.8, opacity: 0.7}, gStep);
+      line(A1, C1, {stroke: CYAN, 'stroke-width': 1.8, opacity: 0.7}, gStep);
+      extended(Cprime, Bprime, 10, 15, {stroke: ORANGE, 'stroke-width': 2, opacity: 0.7}, gStep);
+
+      // 反演圆 (以 A1 为中心, 半径 R_inv)
+      circle(A1, R_inv, {stroke: ORANGE, 'stroke-width': 2.5, 'stroke-dasharray': '5 3', fill: '#ffedd5', 'fill-opacity': 0.3}, gStep);
+
+      // 高亮反演对应点连线
+      highlightSeg(A1, B1, CYAN, gStep, 2);
+      highlightSeg(A1, C1, CYAN, gStep, 2);
+      break;
+    }
+
+    case 5: { // 九点圆反演为公切线 B'C'，切圆 I 于 T
+      // 九点圆
+      circle(N, R_N, {stroke: BLUE, 'stroke-width': 2.5, fill: '#eff6ff', 'fill-opacity': 0.25}, gStep);
+      // 内切圆
+      circle(I, r, {stroke: GREEN, 'stroke-width': 2.5, fill: '#f0fdf4', 'fill-opacity': 0.3}, gStep);
+
+      // 公切线 B'C'
+      extended(Cprime, Bprime, 15, 20, {stroke: ORANGE, 'stroke-width': 2.4}, gStep);
+
+      // 反演射线: 从 A1 穿过 T 到 T'
+      segDashed(A1, T, RED, 2, gStep);
+      segDashed(T, Tprime, ORANGE, 2, gStep);
+
+      // 切点法线 IT 验证垂直与相切
+      line(I, T, {stroke: GREEN, 'stroke-width': 1.5, 'stroke-dasharray': '3 3'}, gStep);
+      line(N, T, {stroke: BLUE, 'stroke-width': 1.5, 'stroke-dasharray': '3 3'}, gStep);
+      break;
+    }
+
+    case 6: { // 与旁切圆相切，费尔巴哈定理完整展现
+      // 九点圆 (蓝色)
+      circle(N, R_N, {stroke: BLUE, 'stroke-width': 2.8, fill: '#eff6ff', 'fill-opacity': 0.25}, gStep);
+      // 内切圆 (绿色)
+      circle(I, r, {stroke: GREEN, 'stroke-width': 2.5, fill: '#f0fdf4', 'fill-opacity': 0.3}, gStep);
+      // 旁切圆弧 (紫色)
+      circle(Ia, ra, {stroke: PURPLE, 'stroke-width': 2.5, 'stroke-dasharray': '6 4'}, gStep);
+
+      // 公切线 B'C'
+      extended(Cprime, Bprime, 15, 20, {stroke: ORANGE, 'stroke-width': 2, opacity: 0.8}, gStep);
+
+      // 费尔巴哈切点 T 与 Ta
+      highlightSeg(N, T, RED, gStep, 2.5);
+      highlightSeg(N, Ta, RED, gStep, 2.5);
+
+      // 反演线
+      segDashed(A1, T, RED, 1.8, gStep);
+      segDashed(A1, Ta, RED, 1.8, gStep);
+      break;
+    }
+  }
+  if (window.renderMath) window.renderMath();
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '构型引入：九点圆、内切圆与旁切圆',
+    body: `在任意不等边锐角 $\\triangle ABC$ 中，记三边中点为 <b style="color:${BLUE}">A₁, B₁, C₁</b>，其外接圆即为三角形的<b>九点圆</b>（圆心为 <b style="color:${BLUE}">N</b>）。<br>
+           $\\triangle ABC$ 的内心为 <b style="color:${GREEN}">I</b>，内切圆切边 $BC$ 于点 <b style="color:${GREEN}">X</b>；顶点 $A$ 对应的旁切圆心为 <b style="color:${PURPLE}">Iₐ</b>，切边 $BC$ 于点 <b style="color:${PURPLE}">Xₐ</b>。<br>
+           <b>费尔巴哈定理</b>断言：九点圆与内切圆及三个旁切圆都相切。我们将以底边中点 <b style="color:${BLUE}">A₁</b> 为中心，运用反演几何完成严谨证明。`
+  },
+  {
+    title: '切点对称性：A₁ 是 XXₐ 的中点',
+    body: `记三边长为 $a, b, c$，半周长 $p = \\frac{1}{2}(a+b+c)$，不妨设 $b > c$。<br>
+           由切线长性质易知：$BX = CX_a = p - b = \\frac{a - b + c}{2}$。<br>
+           因为 $A_1$ 是边 $BC$ 的中点，即 $BA_1 = CA_1 = \\frac{a}{2}$，从而：<br>
+           $A_1X = BA_1 - BX = \\frac{a}{2} - (p - b) = \\frac{1}{2}(b - c)$，<br>
+           $A_1X_a = CA_1 - CX_a = \\frac{a}{2} - (p - b) = \\frac{1}{2}(b - c)$。<br>
+           结论：<b style="color:${ORANGE}">A₁ 是线段 XXₐ 的中点</b>，且 $A_1X = A_1X_a = \\frac{1}{2}(b - c)$！`
+  },
+  {
+    title: '第二条内公切线 B\'C\' 与四点共线',
+    body: `底边 $BC$ 是圆 $I$ 与圆 $I_a$ 的内公切线。两圆必有另一条对称的内公切线 <b style="color:${ORANGE}">B\'C\'</b>（$B\' \\in AC, C\' \\in AB$），且与 $BC$ 交于点 <b style="color:${ORANGE}">S</b>。<br>
+           两内公切线关于连心线 $I I_a$ 对称，而连心线正是 $\\angle A$ 的内角平分线，因此交点 $S$ 必在角平分线上：<b style="color:${RED}">A, I, S, Iₐ 四点共线</b>！<br>
+           由角平分线定理：$SC = \\frac{ab}{b+c}, SB = \\frac{ac}{b+c}$，<br>
+           故 $SA_1 = \\frac{1}{2}(SC - SB) = \\frac{a(b - c)}{2(b + c)}$。`
+  },
+  {
+    title: '中位线交公切线，相似三角形导出距离比例',
+    body: `连接中位线 <b style="color:${CYAN}">A₁B₁</b>（$\\parallel AB$）与 <b style="color:${CYAN}">A₁C₁</b>（$\\parallel AC$），分别与公切线 $B'C'$ 交于 <b style="color:${CYAN}">B″</b> 与 <b style="color:${CYAN}">C″</b>。<br>
+           由对称性，切线段长 $AC' = b \\implies BC' = b - c$；同理 $CB' = b - c$。<br>
+           利用中位线平行构建相似三角形：<br>
+           因 $A_1B'' \\parallel BC'$，故 $\\triangle SA_1B'' \\sim \\triangle SBC'$，从而：<br>
+           $\\frac{A_1B''}{BC'} = \\frac{SA_1}{SB} \\implies \\frac{A_1B''}{b-c} = \\frac{\\frac{a(b-c)}{2(b+c)}}{\\frac{ac}{b+c}} = \\frac{b-c}{2c} \\implies A_1B'' = \\frac{(b-c)^2}{2c}$。<br>
+           同理由 $\\triangle SA_1C'' \\sim \\triangle SCB'$ 得 $A_1C'' = \\frac{(b-c)^2}{2b}$。`
+  },
+  {
+    title: '建立以 A₁ 为中心、半径 (b-c)/2 的反演变换',
+    body: `注意到中位线长 $A_1B_1 = \\frac{c}{2}, A_1C_1 = \\frac{b}{2}$。将它们与前式相乘：<br>
+           <b style="color:${BLUE}">A₁B″ · A₁B₁</b> $= \\frac{(b-c)^2}{2c} \\cdot \\frac{c}{2} = \\left(\\frac{b-c}{2}\\right)^2$，<br>
+           <b style="color:${BLUE}">A₁C″ · A₁C₁</b> $= \\frac{(b-c)^2}{2b} \\cdot \\frac{b}{2} = \\left(\\frac{b-c}{2}\\right)^2$。<br>
+           由此建立以 <b style="color:${ORANGE}">A₁</b> 为中心、半径为 <b style="color:${ORANGE}">$R_{inv} = \\frac{1}{2}(b-c)$</b> 的反演变换：<br>
+           中点 <b style="color:${BLUE}">B₁</b> 的反演像是 <b style="color:${CYAN}">B″</b>，中点 <b style="color:${BLUE}">C₁</b> 的反演像是 <b style="color:${CYAN}">C″</b>！<br>
+           反演圆恰好通过两切点 $X$ 与 $X_a$。`
+  },
+  {
+    title: '九点圆反演为公切线 B\'C\'，切圆 I 于点 T',
+    body: `根据反演几何性质：<br>
+           1. 九点圆经过反演中心 $A_1$，且经过 $B_1, C_1$。其反演像为过 $B'', C''$ 的直线，即<b>内公切线 B'C'</b>！<br>
+           2. 线段 $A_1X$ 切圆 $I$ 于 $X$，切线长 $A_1X = R_{inv}$。故圆 $I$ 与反演圆正交，<b style="color:${GREEN}">圆 I 的反演像就是它自身</b>！<br>
+           3. 公切线 $B'C'$ 切圆 $I$ 于点 $T'$，反演变换保持相切性，故九点圆必与圆 $I$ 相切！<br>
+           其切点 <b style="color:${RED}">T</b> 正是 $T'$ 关于反演圆的像！九点圆与内切圆外切获证。`
+  },
+  {
+    title: '同理与旁切圆相切，费尔巴哈定理完整获证',
+    body: `同理，切线长 $A_1X_a = R_{inv}$，故<b>旁切圆 $\\odot I_a$ 的反演像也是其自身</b>！<br>
+           公切线 $B'C'$ 切旁切圆于 $T_a'$，反演后九点圆与旁切圆 $\\odot I_a$ 相切于点 <b style="color:${RED}">Tₐ</b>（$T_a$ 为 $T_a'$ 的像）！<br>
+           同理分别以 $B_1, C_1$ 为反演中心，可证九点圆与其余两个旁切圆 $\\odot I_b, \\odot I_c$ 均相切。<br>
+           综上所述：<b>任意三角形的九点圆与其内切圆和三个旁切圆都相切</b>！著名的费尔巴哈定理获证！`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (window.renderMath) window.renderMath();
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (window.renderMath) window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

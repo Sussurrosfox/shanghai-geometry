@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 5 垂心与平行四边形 — 分步证明交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #edf2f7 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14px; color: #475569; margin-top: 6px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 540px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; min-height: 480px;
+  }
+  svg { width: 100%; height: auto; max-height: 75vh; }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); padding: 20px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .step-list { flex: 1; overflow-y: auto; max-height: calc(75vh - 70px); padding-right: 4px; margin-bottom: 16px; }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease;
+    background: #ffffff;
+  }
+  .step-item:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 10px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12); }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all 0.15s; font-family: inherit;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1.2; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 10px; }
+  kbd { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; color: #475569; }
+  .math { font-family: "Cambria Math", "Times New Roman", serif; font-style: italic; }
+  .formula-box {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 6px 10px; margin: 6px 0; text-align: center; font-weight: 600;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          macros: {
+            '\\parallel': '\\mathbin{/\\!/}',
+            '\\bigtriangleup': '\\triangle',
+            '\\ang': '\\angle',
+            '\\angmsd': '\\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 5 垂心与平行四边形 — 几何分步交互证明</h1>
+    <p><b>已知：</b>在圆内接四边形 <span class="math">ABCD</span> 中，<span class="math">X, Y</span> 分别为 <span class="math">&bigtriangleup;ABC</span> 与 <span class="math">&bigtriangleup;BCD</span> 的垂心。<br>
+    <b>求证：</b>四边形 <span class="math">AXYD</span> 是平行四边形。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 580 500" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div>
+        <div class="controls">
+          <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+          <button class="btn-primary" id="btnNext">下一步 ▶</button>
+          <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+          <button class="btn-ghost" id="btnReset">重置</button>
+        </div>
+        <div class="progress">快捷键：支持键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算与坐标定义 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+// 精密计算的几何坐标
+const O = { x: 290.0, y: 270.0 };
+const R = 180.0;
+
+// BC 为水平弦 y = 315
+const B = { x: 115.72, y: 315.00 };
+const C = { x: 464.28, y: 315.00 };
+
+// 圆上顶点 A (130°) 与 D (45°)
+const A = { x: 174.30, y: 132.11 };
+const D = { x: 417.28, y: 142.72 };
+
+// 垂心 X (△ABC) 与 Y (△BCD)
+// 外接圆心为原点时 H = A + B + C，故 SVG 坐标下 y 增加 90
+const X = { x: 174.30, y: 222.11 };
+const Y = { x: 417.28, y: 232.72 };
+
+// X, Y 关于直线 BC (y=315) 的对称点 X', Y' (在圆上)
+const Xp = { x: 174.30, y: 407.89 };
+const Yp = { x: 417.28, y: 397.28 };
+
+// 垂足 (高线与 BC 的交点)
+const H1 = { x: 174.30, y: 315.00 };
+const H2 = { x: 417.28, y: 315.00 };
+
+/* ============ SVG 辅助工具函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color='#0891b2', w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'5 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#2563eb', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.5}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+// 防遮挡标签：带有白色描边轮廓
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Cambria Math", "Times New Roman", serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    style: 'paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round;'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+// 直角标记
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.6}, parent);
+}
+
+// 等长刻度线
+function tickMark(p, q, color='#059669', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+
+// 平行箭头标记
+function arrowMark(p, q, color='#2563eb', parent, double=false){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const drawOne = (center) => {
+    const tip = add(center, mul(d, 6));
+    const p1 = add(add(center, mul(d, -4)), mul(n, 4.5));
+    const p2 = add(add(center, mul(d, -4)), mul(n, -4.5));
+    el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+  };
+  if (!double) {
+    drawOne(m);
+  } else {
+    drawOne(add(m, mul(d, -7)));
+    drawOne(add(m, mul(d, 7)));
+  }
+}
+
+// 高亮线段（带柔和光晕底色）
+function highlightSeg(p, q, color='#2563eb', parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+// 延伸直线
+function extended(p, q, ext1=30, ext2=30, attrs={}, parent){
+  const d = norm(sub(q,p));
+  return line(sub(p, mul(d, ext1)), add(q, mul(d, ext2)), attrs, parent);
+}
+
+/* ============ 分层绘制结构 ============ */
+const gBase = el('g', { id: 'gBase' }, stage);
+const gStep = el('g', { id: 'gStep' }, stage);
+const gPts  = el('g', { id: 'gPts' }, stage);
+
+/* ============ 颜色常量 ============ */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const CYAN   = '#0891b2';
+const ORANGE = '#ea580c';
+const SLATE  = '#64748b';
+
+// 基础层：外接圆、四边形 ABCD
+function drawBase(){
+  gBase.innerHTML = '';
+  // 1. 外接圆
+  circle(O, R, { stroke: '#94a3b8', 'stroke-width': 1.6 }, gBase);
+
+  // 2. 四边形 ABCD 主边
+  line(A, B, { stroke: '#334155', 'stroke-width': 2.0 }, gBase);
+  line(B, C, { stroke: '#334155', 'stroke-width': 2.2 }, gBase);
+  line(C, D, { stroke: '#334155', 'stroke-width': 2.0 }, gBase);
+  line(D, A, { stroke: '#334155', 'stroke-width': 2.0 }, gBase);
+}
+
+// 绘制顶层点与标签
+function drawPoints(showXpYp = false){
+  gPts.innerHTML = '';
+
+  // 基础顶点 A, B, C, D
+  dot(A, '#0f172a', 4.5, gPts);
+  label(A, 'A', -14, -14, '#0f172a', gPts);
+
+  dot(B, '#0f172a', 4.5, gPts);
+  label(B, 'B', -18, 6, '#0f172a', gPts);
+
+  dot(C, '#0f172a', 4.5, gPts);
+  label(C, 'C', 18, 6, '#0f172a', gPts);
+
+  dot(D, '#0f172a', 4.5, gPts);
+  label(D, 'D', 16, -14, '#0f172a', gPts);
+
+  // 垂心 X, Y
+  dot(X, BLUE, 5, gPts);
+  label(X, 'X', -18, -4, BLUE, gPts);
+
+  dot(Y, PURPLE, 5, gPts);
+  label(Y, 'Y', 18, -4, PURPLE, gPts);
+
+  // 对称点 X', Y'（按步显隐）
+  if (showXpYp){
+    dot(Xp, GREEN, 4.5, gPts);
+    label(Xp, "X'", -16, 16, GREEN, gPts);
+
+    dot(Yp, GREEN, 4.5, gPts);
+    label(Yp, "Y'", 16, 16, GREEN, gPts);
+  }
+}
+
+/* ============ 各步骤动态渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 清空动态层
+
+  switch(s){
+    case 0: { // 步骤 0：已知构型与三角形连线
+      drawPoints(false);
+      // 浅色对角线，辅助辨识 △ABC 与 △BCD
+      line(A, C, { stroke: '#cbd5e1', 'stroke-width': 1.4, 'stroke-dasharray': '4 4' }, gStep);
+      line(B, D, { stroke: '#cbd5e1', 'stroke-width': 1.4, 'stroke-dasharray': '4 4' }, gStep);
+
+      // 垂心连线指示
+      segDashed(B, X, '#93c5fd', 1.2, gStep);
+      segDashed(C, X, '#93c5fd', 1.2, gStep);
+      segDashed(B, Y, '#c4b5fd', 1.2, gStep);
+      segDashed(C, Y, '#c4b5fd', 1.2, gStep);
+
+      // 连接待证目标四边形 AXYD（淡虚线）
+      line(A, X, { stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 3', opacity: 0.6 }, gStep);
+      line(X, Y, { stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 3', opacity: 0.6 }, gStep);
+      line(Y, D, { stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 3', opacity: 0.6 }, gStep);
+      line(D, A, { stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 3', opacity: 0.6 }, gStep);
+      break;
+    }
+
+    case 1: { // 步骤 1：对称点 X', Y' 落在圆上
+      drawPoints(true);
+      // BC 轴线延长高亮
+      extended(B, C, 40, 40, { stroke: '#475569', 'stroke-width': 1.8, 'stroke-dasharray': '6 4' }, gStep);
+
+      // 对称垂直引线 XX' 与 YY'
+      segDashed(X, Xp, CYAN, 2.0, gStep);
+      segDashed(Y, Yp, CYAN, 2.0, gStep);
+
+      // 垂足与直角标记
+      dot(H1, '#64748b', 3, gStep);
+      dot(H2, '#64748b', 3, gStep);
+      rightAngleMark(H1, X, C, 10, RED, gStep);
+      rightAngleMark(H2, Y, C, 10, RED, gStep);
+
+      // 等长对称刻度
+      tickMark(X, H1, CYAN, gStep);
+      tickMark(H1, Xp, CYAN, gStep);
+      tickMark(Y, H2, PURPLE, gStep);
+      tickMark(H2, Yp, PURPLE, gStep);
+
+      // 对称所得线段 X'Y' 与原线段 XY
+      highlightSeg(X, Y, BLUE, gStep, 2.8);
+      highlightSeg(Xp, Yp, GREEN, gStep, 3.2);
+
+      // 等长标记
+      tickMark(X, Y, '#2563eb', gStep, 10);
+      tickMark(Xp, Yp, '#059669', gStep, 10);
+      break;
+    }
+
+    case 2: { // 步骤 2：高线共线，AX' // DY' 且 AX // DY
+      drawPoints(true);
+      // 高线 AX' 与 DY' 贯通线
+      highlightSeg(A, Xp, BLUE, gStep, 3.0);
+      highlightSeg(D, Yp, BLUE, gStep, 3.0);
+
+      // 垂直直角标记
+      rightAngleMark(H1, A, C, 12, RED, gStep);
+      rightAngleMark(H2, D, C, 12, RED, gStep);
+
+      // 平行标记：AX // DY (单箭头)
+      arrowMark(A, X, BLUE, gStep, false);
+      arrowMark(D, Y, BLUE, gStep, false);
+
+      // 弦平行提示
+      line(Xp, Yp, { stroke: GREEN, 'stroke-width': 2.0, 'stroke-dasharray': '4 3' }, gStep);
+      line(A, D, { stroke: '#334155', 'stroke-width': 2.2 }, gStep);
+      break;
+    }
+
+    case 3: { // 步骤 3：圆内平行弦所夹等腰梯形，AD = X'Y' = XY
+      drawPoints(true);
+      // 等腰梯形 AX'Y'D 填充
+      polygon([A, Xp, Yp, D], { fill: 'rgba(5, 150, 105, 0.08)', stroke: 'none' }, gStep);
+
+      // 底边 AX' 与 DY'
+      line(A, Xp, { stroke: '#94a3b8', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      line(D, Yp, { stroke: '#94a3b8', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+
+      // 等腰梯形两腰高亮 AD 与 X'Y'
+      highlightSeg(A, D, GREEN, gStep, 3.5);
+      highlightSeg(Xp, Yp, GREEN, gStep, 3.5);
+      highlightSeg(X, Y, GREEN, gStep, 3.5);
+
+      // 三边等长刻度
+      tickMark(A, D, GREEN, gStep, 0);
+      tickMark(Xp, Yp, GREEN, gStep, 0);
+      tickMark(X, Y, GREEN, gStep, 0);
+
+      // 连接 AX 与 DY
+      line(A, X, { stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+      line(D, Y, { stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+      break;
+    }
+
+    case 4: { // 步骤 4：对称轴 L_sym 与两次平行反射复合平移
+      drawPoints(true);
+      // 两条平行基准轴：
+      // 1. 直线 BC (y=315)
+      extended(B, C, 40, 40, { stroke: '#475569', 'stroke-width': 2.0, 'stroke-dasharray': '6 4' }, gStep);
+      label({ x: 505, y: 315 }, '轴 BC', 0, -10, '#475569', gStep, 13, false);
+
+      // 2. 对称轴直径 L_sym (y=270, 水平穿过圆心 O)
+      const Lsym_L = { x: 95, y: 270 };
+      const Lsym_R = { x: 485, y: 270 };
+      line(Lsym_L, Lsym_R, { stroke: ORANGE, 'stroke-width': 2.2, 'stroke-dasharray': '8 4 2 4' }, gStep);
+      dot(O, ORANGE, 3.5, gStep);
+      label(O, 'O', 0, -14, ORANGE, gStep, 14);
+      label({ x: 505, y: 270 }, '轴 L_sym', 0, -10, ORANGE, gStep, 13, true);
+
+      // 动态平移路径：X -> A, Y -> D
+      segDashed(X, A, PURPLE, 2.4, gStep);
+      arrowMark(X, A, PURPLE, gStep, false);
+      segDashed(Y, D, PURPLE, 2.4, gStep);
+      arrowMark(Y, D, PURPLE, gStep, false);
+
+      // 线段 XY 与 AD 强化
+      highlightSeg(X, Y, BLUE, gStep, 3.0);
+      highlightSeg(Xp, Yp, GREEN, gStep, 2.0);
+      highlightSeg(A, D, BLUE, gStep, 3.0);
+
+      // 反射示意说明
+      label({ x: 290, y: 360 }, '① 关于 BC 反射', 0, 0, CYAN, gStep, 13, true);
+      label({ x: 290, y: 195 }, '② 关于 L_sym 反射 ⇒ 向上平移', 0, 0, ORANGE, gStep, 13, true);
+      break;
+    }
+
+    case 5: { // 步骤 5：最终结论，AXYD 为平行四边形
+      drawPoints(false);
+      // 平行四边形 AXYD 区域柔和高亮填充
+      polygon([A, X, Y, D], { fill: 'rgba(37, 99, 235, 0.12)', stroke: 'none' }, gStep);
+
+      // 四条边高亮
+      line(A, X, { stroke: BLUE, 'stroke-width': 3.2 }, gStep);
+      line(X, Y, { stroke: GREEN, 'stroke-width': 3.2 }, gStep);
+      line(Y, D, { stroke: BLUE, 'stroke-width': 3.2 }, gStep);
+      line(D, A, { stroke: GREEN, 'stroke-width': 3.2 }, gStep);
+
+      // 对边平行箭头
+      arrowMark(A, X, BLUE, gStep, false);
+      arrowMark(D, Y, BLUE, gStep, false);
+      arrowMark(X, Y, GREEN, gStep, true);
+      arrowMark(A, D, GREEN, gStep, true);
+
+      // 等长刻度
+      tickMark(A, X, BLUE, gStep, -4);
+      tickMark(A, X, BLUE, gStep, 4);
+      tickMark(D, Y, BLUE, gStep, -4);
+      tickMark(D, Y, BLUE, gStep, 4);
+
+      tickMark(A, D, GREEN, gStep, 0);
+      tickMark(X, Y, GREEN, gStep, 0);
+
+      // 中心徽标
+      const centerAXYD = mid(mid(A,Y), mid(X,D));
+      label(centerAXYD, '平行四边形 AXYD', 0, 0, BLUE, gStep, 15, true);
+      break;
+    }
+  }
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与图形构型',
+    body: `四边形 $ABCD$ 内接于圆 $\\odot O$。<br>
+          点 $X$ 是 $\\triangle ABC$ 的垂心，点 $Y$ 是 $\\triangle BCD$ 的垂心。<br>
+          <b>求证：</b>四边形 $AXYD$ 是平行四边形。`
+  },
+  {
+    title: '① 垂心反射性质 ⇒ 对称点 X\', Y\' 落在外接圆上',
+    body: `设 $X, Y$ 关于边 $BC$ 的轴对称点分别为 $X', Y'$。<br>
+          由<b>垂心经典性质</b>：三角形垂心关于任何边的对称点必落在其外接圆上。<br>
+          在 $\\triangle ABC$ 中，$\\angle BXC = 180^\\circ - \\angle A$；轴对称后 $\\angle BX'C = \\angle BXC = 180^\\circ - \\angle A$，故四边形 $ABX'C$ 对角互补，即 <span style="color:${GREEN};">$X' \\in \\odot O$</span>。<br>
+          同理，$\\triangle BCD$ 之外接圆亦为 $\\odot O$，故 <span style="color:${GREEN};">$Y' \\in \\odot O$</span>。<br>
+          由轴对称保距性：<span style="color:${GREEN};font-weight:bold;">$X'Y' = XY$</span>，且线段 $XY$ 与 $X'Y'$ 关于直线 $BC$ 轴对称。`
+  },
+  {
+    title: '② 高线共线与垂直判定 ⇒ 两对平行线',
+    body: `由垂心定义，高线 $AX \\perp BC$；由对称定义，$XX' \\perp BC$。<br>
+          因为过点 $X$ 垂直于 $BC$ 的直线唯一，所以 $A, X, X'$ <b>三点共线</b>，且割线 $AX' \\perp BC$。<br>
+          同理，$D, Y, Y'$ <b>三点共线</b>，且割线 $DY' \\perp BC$。<br>
+          由此立得两组垂直于同一直线的平行关系：<br>
+          1. 弦平行：<span style="color:${BLUE};font-weight:bold;">$AX' \\parallel DY'$</span>（均垂直于 $BC$）；<br>
+          2. 对边平行：<span style="color:${BLUE};font-weight:bold;">$AX \\parallel DY$</span>。`
+  },
+  {
+    title: '③ 圆内平行弦夹等腰梯形 ⇒ 边长等长 AD = XY',
+    body: `在外接圆 $\\odot O$ 中，两平行弦 $AX' \\parallel DY'$ 所夹的圆内接四边形 $AX'Y'D$ 必然是<b>等腰梯形</b>。<br>
+          因此两腰相等：<span style="color:${GREEN};">$AD = X'Y'$</span>。<br>
+          结合步骤 ① 中轴对称得到的 $X'Y' = XY$，立即得出：<br>
+          <div class="formula-box" style="color:${GREEN};font-weight:bold;">$$AD = XY$$</div>
+          至此，四边形 $AXYD$ 已满足：一组对边平行 $AX \\parallel DY$，另一组对边等长 $AD = XY$。`
+  },
+  {
+    title: '④ 两次平行轴反射复合 ⇒ 向量平移',
+    body: `等腰梯形 $AX'Y'D$ 垂直平分底边的对称轴是圆的直径，记为 <span style="color:${ORANGE};">$L_{\\text{sym}}$</span>。<br>
+          由于底边 $AX' \\perp BC$，故直径 <span style="color:${ORANGE};">$L_{\\text{sym}} \\parallel BC$</span>！<br>
+          观察两次对称变换：<br>
+          1. 线段 $XY$ 关于直线 $BC$ 反射得到线段 $X'Y'$；<br>
+          2. 线段 $X'Y'$ 关于平行直径 $L_{\\text{sym}}$ 反射得到线段 $AD$。<br>
+          <b>几何变换复合定理：</b>关于两条平行直线先后作两次轴反射，等价于<b>纯平移变换</b>！`
+  },
+  {
+    title: '⑤ 得出最终结论 ⇒ AXYD 为平行四边形',
+    body: `由于线段 $AD$ 由线段 $XY$ 经平移变换生成，因此对应向量严格相等：<br>
+          <div class="formula-box" style="color:${BLUE};font-weight:bold;">$$\\vec{XY} = \\vec{AD} \\quad (\\text{同向且等长})$$</div>
+          这保证了线段 <span style="color:${GREEN};">$XY \\parallel AD$</span> 且方向同向。<br>
+          结合步骤 ② 已证的 <span style="color:${BLUE};">$AX \\parallel DY$</span>，四边形 $AXYD$ 两组对边分别平行！<br>
+          <b>结论：</b>四边形 $AXYD$ 是<b>平行四边形</b>。证毕！`
+  }
+];
+
+/* ============ 交互控制与事件绑定 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `
+    <div class="title">
+      <span class="badge">${i === 0 ? '✦' : i}</span>
+      <span>${s.title}</span>
+    </div>
+    <div class="body">${s.body}</div>
+  `;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  if (typeof window.renderMath === "function") window.renderMath();
+}
+
+function stopAuto(){
+  if (timer){
+    clearInterval(timer);
+    timer = null;
+    btnAuto.textContent = '▶ 自动';
+  }
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+btnReset.onclick = () => { stopAuto(); goTo(0); };
+
+btnAuto.onclick = () => {
+  if (timer){
+    stopAuto();
+    return;
+  }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){
+      stopAuto();
+      return;
+    }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+// 初始化
+drawBase();
+const urlStep = parseInt(new URLSearchParams(location.search).get('step'));
+goTo(isNaN(urlStep) ? 0 : urlStep);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+  // 监听动态步骤切换导致的 DOM 变动，自动重新渲染数学公式
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => {
+      if (typeof window.renderMath === 'function') window.renderMath();
+    }, 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'], characterData: true });
+});
+window.addEventListener('load', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+});
+</script>
+</body>
+</html>

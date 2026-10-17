@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 4 · 垂心、正三角形与外心共线问题 — 分步证明交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header {
+    text-align: center; margin-bottom: 16px;
+    background: #ffffff; padding: 18px 24px; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,.06);
+  }
+  header h1 {
+    font-size: 22px; font-weight: 800; color: #0f172a;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  header .tag {
+    font-size: 13px; font-weight: 600; background: #eff6ff; color: #2563eb;
+    padding: 3px 10px; border-radius: 999px; border: 1px solid #bfdbfe;
+  }
+  header p {
+    font-size: 13.5px; color: #475569; margin-top: 8px; line-height: 1.6;
+    max-width: 960px; margin-left: auto; margin-right: auto;
+  }
+  .main { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .canvas-header {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px; padding: 0 4px; font-size: 13px; color: #64748b;
+  }
+  .legend {
+    display: flex; gap: 12px; align-items: center; font-size: 12px; flex-wrap: wrap;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  svg {
+    width: 100%; height: auto; max-height: 74vh;
+    border-radius: 12px; background: #fafbfc;
+    box-shadow: inset 0 0 0 1px rgba(226,232,240,0.8);
+  }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .panel-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;
+  }
+  .panel-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+  .panel-badge { font-size: 12px; color: #2563eb; background: #dbeafe; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; padding-right: 4px; }
+  .step-list::-webkit-scrollbar { width: 5px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+  }
+  .step-item:hover { border-color: #93c5fd; background: #f8fafc; }
+  .step-item .title {
+    font-weight: 600; font-size: 13.5px; display: flex; gap: 8px; align-items: center;
+    color: #1e293b;
+  }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 11px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13px; line-height: 1.75; color: #334155; margin-top: 10px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active {
+    border-color: #2563eb; background: #eff6ff;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+  }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1; box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+  .math { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; font-style: italic; }
+  .formula-box {
+    background: #f8fafc; border-left: 3px solid #2563eb;
+    padding: 6px 10px; margin: 6px 0; border-radius: 4px; font-size: 12.5px;
+  }
+  .qed-card {
+    margin-top: 8px; padding: 6px 10px; background: #ecfdf5;
+    border: 1px solid #a7f3d0; border-radius: 6px; color: #065f46;
+    font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          macros: {
+            '\\parallel': '\\mathbin{/\\!/}',
+            '\\bigtriangleup': '\\triangle',
+            '\\ang': '\\angle',
+            '\\angmsd': '\\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 4 · 垂心、正三角形与外心共线问题 <span class="tag">平面几何证明可视化</span></h1>
+    <p><b>已知：</b>在锐角 <span class="math">&Delta;ABC</span> 中，<span class="math">&ang;A &gt; 60&deg;</span>，<span class="math">H</span> 为垂心，<span class="math">M, N</span> 分别在边 <span class="math">AB, AC</span> 上满足 <span class="math">&ang;HMB = &ang;HNC = 60&deg;</span>，<span class="math">O</span> 为 <span class="math">&Delta;HMN</span> 的外心，<span class="math">&Delta;DBC</span> 为正三角形（<span class="math">A, D</span> 在 <span class="math">BC</span> 同侧）。<br><b>求证：</b><span class="math">H, O, D</span> 三点共线。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <div class="canvas-header">
+        <span>高精度几何画板 (精确解算)</span>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#1e293b;"></span>&Delta;ABC</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#ea580c;"></span>正&Delta;DBC</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#0891b2;"></span>外接圆</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#7c3aed;"></span>旋转点 H'</span>
+        </div>
+      </div>
+      <svg id="stage" viewBox="0 0 720 640" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">分步推理剖析</span>
+        <span class="panel-badge" id="stepCounter">第 1 / 7 步</span>
+      </div>
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：<kbd>&larr;</kbd> <kbd>&rarr;</kbd> 翻步 | 空格键 播放/暂停</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 精确几何解算与坐标系 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+const rot = (p, rad) => ({x: p.x*Math.cos(rad) - p.y*Math.sin(rad), y: p.x*Math.sin(rad) + p.y*Math.cos(rad)});
+const rotAround = (p, c, rad) => add(c, rot(sub(p,c), rad));
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function foot(P, P1, P2){
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+
+/* 严谨数学解算获得的全局精确坐标 (已映射到 viewBox 0 0 720 640) */
+const B = { x: 119.67, y: 545.17 };
+const C = { x: 639.67, y: 545.17 };
+const A = { x: 295.79, y: 149.59 };
+const H = { x: 295.79, y: 392.07 };
+const D = { x: 379.67, y:  94.83 };
+const M = { x: 228.85, y: 299.93 };
+const N = { x: 355.60, y: 218.38 };
+const O = { x: 320.78, y: 303.53 };
+const H_prime = { x: 80.32, y: 170.81 };
+
+/* 垂足点 */
+const HA = { x: A.x, y: B.y };
+const HB = foot(B, A, C);
+const HC = foot(C, A, B);
+
+/* 外接圆半径 */
+const R_HMN = dist(O, H); // ~92.0px
+
+/* ============ SVG 绘图工具库 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=1.8, parent, dash='6 4'){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':dash, fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+/* 防遮挡标签 */
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Cambria Math", "Times New Roman", serif', 'font-style': 'italic',
+    'font-weight': bold ? '700' : '500',
+    'paint-order': 'stroke fill',
+    'stroke': '#ffffff', 'stroke-width': '4.5px', 'stroke-linejoin': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 直角标记 */
+function rightAngleMark(v, p1, p2, s=12, color='#94a3b8', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.6}, parent);
+}
+
+/* 等长刻度标记 */
+function tickMark(p, q, color='#059669', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2, 'stroke-linecap':'round'}, parent);
+}
+
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.2}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 劣角圆弧：确保严格绘制劣角内侧 */
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  
+  const sweep = diff > 0 ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 2, ...attrs
+  }, parent);
+}
+
+/* 双弧角标记 */
+function doubleAngleArc(v, p1, p2, r1=20, r2=25, attrs={}, parent){
+  angleArc(v, p1, p2, r1, attrs, parent);
+  angleArc(v, p1, p2, r2, attrs, parent);
+}
+
+/* 旋转引导弧 (带箭头) */
+function rotArc(c, p_start, p_end, attrs={}, parent){
+  const r = dist(c, p_start);
+  const a1 = Math.atan2(p_start.y - c.y, p_start.x - c.x);
+  const a2 = Math.atan2(p_end.y - c.y, p_end.x - c.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  const sweep = diff > 0 ? 1 : 0;
+  
+  const s = { x: c.x + r * Math.cos(a1), y: c.y + r * Math.sin(a1) };
+  const e = { x: c.x + r * Math.cos(a2), y: c.y + r * Math.sin(a2) };
+  
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#7c3aed', 'stroke-width': 1.8, 'stroke-dasharray': '5 3',
+    'marker-end': 'url(#arrow-purple)', ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const defs = el('defs', {}, stage);
+
+/* 箭头定义 */
+const markerP = el('marker', {
+  id: 'arrow-purple', viewBox: '0 0 10 10', refX: '8', refY: '5',
+  markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse'
+}, defs);
+el('path', { d: 'M 0 1.5 L 9 5 L 0 8.5 z', fill: '#7c3aed' }, markerP);
+
+const markerGold = el('marker', {
+  id: 'arrow-gold', viewBox: '0 0 10 10', refX: '8', refY: '5',
+  markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse'
+}, defs);
+el('path', { d: 'M 0 1.5 L 9 5 L 0 8.5 z', fill: '#d97706' }, markerGold);
+
+const gBase = el('g', { id: 'gBase' }, stage);  // 静态底层
+const gStep = el('g', { id: 'gStep' }, stage);  // 动态步骤层
+const gPts  = el('g', { id: 'gPts' }, stage);   // 顶层点与标签
+
+/* 调色盘 */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      GOLD = '#d97706', SLATE = '#475569';
+
+/* 静态底层绘制 */
+function drawBase(){
+  gBase.innerHTML = '';
+  
+  // 基础三角形 ABC
+  polygon([A, B, C], { fill: '#f8fafc', stroke: '#1e293b', 'stroke-width': 2.4 }, gBase);
+  
+  // 正三角形 DBC (边 DB, DC)
+  line(D, B, { stroke: '#f97316', 'stroke-width': 1.8, 'stroke-dasharray': '5 3' }, gBase);
+  line(D, C, { stroke: '#f97316', 'stroke-width': 1.8, 'stroke-dasharray': '5 3' }, gBase);
+  
+  // 垂高线与脚印
+  segDashed(A, HA, '#cbd5e1', 1.2, gBase);
+  segDashed(B, HB, '#cbd5e1', 1.2, gBase);
+  segDashed(C, HC, '#cbd5e1', 1.2, gBase);
+  rightAngleMark(HA, A, C, 10, '#94a3b8', gBase);
+  rightAngleMark(HB, B, A, 10, '#94a3b8', gBase);
+  rightAngleMark(HC, C, B, 10, '#94a3b8', gBase);
+  
+  // 连线 HM, HN
+  line(H, M, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+  line(H, N, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+}
+
+/* 顶层点与标签 (带状态控制) */
+function drawPoints(showHPrime=false, highlightHOD=false){
+  gPts.innerHTML = '';
+  
+  // 基础点
+  dot(A, '#1e293b', 4.5, gPts);
+  dot(B, '#1e293b', 4.5, gPts);
+  dot(C, '#1e293b', 4.5, gPts);
+  dot(D, ORANGE, 5, gPts);
+  dot(H, highlightHOD ? RED : '#0f172a', 5, gPts);
+  dot(M, BLUE, 4.5, gPts);
+  dot(N, GREEN, 4.5, gPts);
+  dot(O, highlightHOD ? RED : CYAN, 5, gPts);
+  
+  // 标签位置精心调优 (避开所有引线)
+  label(A, 'A', 0, -18, '#0f172a', gPts);
+  label(B, 'B', -16, 14, '#0f172a', gPts);
+  label(C, 'C', 18, 14, '#0f172a', gPts);
+  label(D, 'D', 0, -18, ORANGE, gPts);
+  label(H, 'H', 18, 14, highlightHOD ? RED : '#0f172a', gPts);
+  label(M, 'M', -18, -12, BLUE, gPts);
+  label(N, 'N', 18, -10, GREEN, gPts);
+  label(O, 'O', 16, 0, highlightHOD ? RED : CYAN, gPts);
+  
+  if (showHPrime) {
+    dot(H_prime, PURPLE, 5, gPts);
+    label(H_prime, "H'", -18, -8, PURPLE, gPts);
+  }
+}
+
+/* ============ 各步骤动态层呈现 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 核心：清空动态步骤层
+  
+  switch(s){
+    case 0: { // 已知条件与几何构型
+      drawPoints(false, false);
+      // 外接圆
+      circle(O, R_HMN, { stroke: CYAN, 'stroke-width': 1.8, 'stroke-dasharray': '5 4', opacity: 0.75 }, gStep);
+      // 已知角弧 60°
+      angleArc(M, B, H, 24, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      angleArc(N, C, H, 24, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      label({x: 200, y: 320}, '60°', 0, 0, RED, gStep, 13, false);
+      label({x: 382, y: 245}, '60°', 0, 0, RED, gStep, 13, false);
+      // 正三角形 DBC 提示
+      highlightSeg(B, C, ORANGE, gStep, 2.5);
+      highlightSeg(D, B, ORANGE, gStep, 2.5);
+      highlightSeg(D, C, ORANGE, gStep, 2.5);
+      tickMark(B, C, ORANGE, gStep);
+      tickMark(D, B, ORANGE, gStep);
+      tickMark(D, C, ORANGE, gStep);
+      break;
+    }
+    
+    case 1: { // 垂心角与第一对相似 MHB ~ NHC
+      drawPoints(false, false);
+      // 高亮两三角形
+      polygon([M, H, B], { fill: 'rgba(37,99,235,0.18)', stroke: BLUE, 'stroke-width': 2 }, gStep);
+      polygon([N, H, C], { fill: 'rgba(5,150,105,0.18)', stroke: GREEN, 'stroke-width': 2 }, gStep);
+      // 角 HMB = HNC = 60°
+      angleArc(M, B, H, 24, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      angleArc(N, C, H, 24, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      // 角 MBH = NCH = 90° - A
+      doubleAngleArc(B, M, H, 24, 29, { stroke: BLUE, 'stroke-width': 1.8 }, gStep);
+      doubleAngleArc(C, N, H, 24, 29, { stroke: GREEN, 'stroke-width': 1.8 }, gStep);
+      // 对应边高亮
+      highlightSeg(M, H, BLUE, gStep, 3);
+      highlightSeg(N, H, GREEN, gStep, 3);
+      highlightSeg(B, H, '#4338ca', gStep, 3);
+      highlightSeg(C, H, '#047857', gStep, 3);
+      break;
+    }
+    
+    case 2: { // 绕 D 顺时针旋转 60° 得到 H'
+      drawPoints(true, false);
+      // 辅助连线
+      line(D, H_prime, { stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      line(B, H_prime, { stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      line(H, H_prime, { stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 3' }, gStep);
+      line(D, H, { stroke: ORANGE, 'stroke-width': 1.8 }, gStep);
+      
+      // 顺时针旋转 60° 引导弧
+      rotArc(D, H, H_prime, { stroke: PURPLE }, gStep);
+      label(mid(H, H_prime), '顺时针 60°', -42, -18, PURPLE, gStep, 12.5);
+      
+      // 全等三角形 DBH' 与 DCH
+      polygon([D, B, H_prime], { fill: 'rgba(124,58,237,0.18)', stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      polygon([D, C, H], { fill: 'rgba(234,88,12,0.18)', stroke: ORANGE, 'stroke-width': 2 }, gStep);
+      
+      // 标记等长 H'B = HC
+      tickMark(B, H_prime, PURPLE, gStep, -4);
+      tickMark(B, H_prime, PURPLE, gStep, 4);
+      tickMark(C, H, ORANGE, gStep, -4);
+      tickMark(C, H, ORANGE, gStep, 4);
+      break;
+    }
+    
+    case 3: { // 角度外角分解与夹角相等 MHN = HBH'
+      drawPoints(true, false);
+      // 连线
+      line(B, H_prime, { stroke: PURPLE, 'stroke-width': 1.8 }, gStep);
+      line(B, H, { stroke: SLATE, 'stroke-width': 1.8 }, gStep);
+      line(B, D, { stroke: ORANGE, 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, gStep);
+      highlightSeg(A, H, '#0284c7', gStep, 2.5);
+      
+      // 拆分角 1: AHN = DBH = C - 30°
+      angleArc(H, A, N, 30, { stroke: CYAN, 'stroke-width': 2.2 }, gStep);
+      angleArc(B, D, H, 34, { stroke: CYAN, 'stroke-width': 2.2 }, gStep);
+      
+      // 拆分角 2: AHM = DBH' = B - 30°
+      angleArc(H, A, M, 24, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      angleArc(B, D, H_prime, 26, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      
+      // 大角 MHN 与 HBH' 整体弧
+      doubleAngleArc(H, M, N, 38, 43, { stroke: GOLD, 'stroke-width': 2 }, gStep);
+      doubleAngleArc(B, H, H_prime, 42, 47, { stroke: GOLD, 'stroke-width': 2 }, gStep);
+      break;
+    }
+    
+    case 4: { // 第二对相似 H'BH ~ NHM
+      drawPoints(true, false);
+      // 两相似三角形
+      polygon([H_prime, B, H], { fill: 'rgba(124,58,237,0.22)', stroke: PURPLE, 'stroke-width': 2.2 }, gStep);
+      polygon([N, H, M], { fill: 'rgba(14,165,233,0.22)', stroke: CYAN, 'stroke-width': 2.2 }, gStep);
+      
+      // 夹角相等 MHN = HBH'
+      angleArc(H, M, N, 32, { stroke: GOLD, 'stroke-width': 2.4 }, gStep);
+      angleArc(B, H, H_prime, 32, { stroke: GOLD, 'stroke-width': 2.4 }, gStep);
+      
+      // 导出角相等: MNH = HH'B
+      angleArc(N, M, H, 26, { stroke: RED, 'stroke-width': 2.4 }, gStep);
+      angleArc(H_prime, H, B, 26, { stroke: RED, 'stroke-width': 2.4 }, gStep);
+      label({x: N.x - 18, y: N.y + 24}, '∠MNH', 0, 0, RED, gStep, 12.5);
+      label({x: H_prime.x + 22, y: H_prime.y + 14}, "∠HH'B", 0, 0, RED, gStep, 12.5);
+      break;
+    }
+    
+    case 5: { // 外心 O 的圆心角-圆周角转化
+      drawPoints(false, false);
+      // 醒目的外接圆
+      circle(O, R_HMN, { stroke: CYAN, 'stroke-width': 2.4, fill: 'rgba(8,145,178,0.06)' }, gStep);
+      
+      // 外心半径连线 OM, OH, ON
+      line(O, M, { stroke: CYAN, 'stroke-width': 2 }, gStep);
+      line(O, H, { stroke: CYAN, 'stroke-width': 2 }, gStep);
+      line(O, N, { stroke: CYAN, 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, gStep);
+      
+      // 圆心角 MOH 与圆周角 MNH
+      angleArc(O, M, H, 24, { stroke: ORANGE, 'stroke-width': 2.4 }, gStep);
+      angleArc(N, M, H, 26, { stroke: RED, 'stroke-width': 2 }, gStep);
+      label({x: O.x - 22, y: O.y + 16}, '2∠MNH', 0, 0, ORANGE, gStep, 12.5);
+      
+      // 底角 MHO = 90° - MNH = 150° - DHC
+      angleArc(H, M, O, 28, { stroke: BLUE, 'stroke-width': 2.4 }, gStep);
+      label({x: H.x - 12, y: H.y - 28}, '∠MHO', 0, 0, BLUE, gStep, 13);
+      break;
+    }
+    
+    case 6: { // 角度等量代换，得出 H, O, D 三点共线 (Q.E.D.)
+      drawPoints(false, true);
+      
+      // 外接圆保留
+      circle(O, R_HMN, { stroke: CYAN, 'stroke-width': 1.6, 'stroke-dasharray': '5 4', opacity: 0.6 }, gStep);
+      
+      // H, O, D 贯通共线金光大轴
+      line(H, D, { stroke: GOLD, 'stroke-width': 10, 'stroke-linecap': 'round', opacity: 0.25 }, gStep);
+      line(H, D, { stroke: GOLD, 'stroke-width': 3.5, 'stroke-linecap': 'round' }, gStep);
+      
+      // 角 MHD 与角 MHO 重合演示
+      angleArc(H, M, D, 36, { stroke: RED, 'stroke-width': 2.6 }, gStep);
+      label({x: H.x - 30, y: H.y - 36}, '∠MHO = ∠MHD', 0, 0, RED, gStep, 13.5, true);
+      
+      // Q.E.D. 水印装饰卡片
+      const qedBox = el('g', { transform: 'translate(440, 50)' }, gStep);
+      el('rect', { width: 140, height: 42, rx: 8, fill: '#ecfdf5', stroke: '#10b981', 'stroke-width': 1.5 }, qedBox);
+      const qedText = el('text', {
+        x: 70, y: 22, fill: '#047857', 'font-size': 15, 'font-weight': '700',
+        'text-anchor': 'middle', 'dominant-baseline': 'central',
+        'font-family': '"Cambria Math", serif'
+      }, qedBox);
+      qedText.textContent = 'H, O, D 三点共线 ✓';
+      break;
+    }
+  }
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `在锐角 $\\triangle ABC$ 中，$\\angle A > 60^\\circ$，$H$ 为垂心。<br>
+    点 $M, N$ 分别在边 $AB, AC$ 上，满足 $\\angle HMB = \\angle HNC = 60^\\circ$。<br>
+    $O$ 为 $\\triangle HMN$ 的外心。<br>
+    以 $BC$ 为边在 $A$ 同侧作正三角形 $\\triangle DBC$。<br>
+    <div class="formula-box"><b>目标：</b>证明 $H, O, D$ 三点共线。</div>`
+  },
+  {
+    title: '① 垂心角与第一对相似 △MHB ∼ △NHC',
+    body: `因为 $H$ 为 $\\triangle ABC$ 的垂心，所以高线与对边垂直：<br>
+    $$\\angle ABH = \\angle ACH = 90^\\circ - \\angle A$$
+    又由题设已知：$\\angle HMB = \\angle HNC = 60^\\circ$。<br>
+    两组对应角分别相等，故两三角形相似：
+    <div class="formula-box">$$\\triangle MHB \\sim \\triangle NHC \\implies \\frac{MH}{NH} = \\frac{BH}{HC}$$</div>`
+  },
+  {
+    title: '② 绕点 D 旋转 60° 构造全等 △DBH\' ≅ △DCH',
+    body: `将点 $H$ 绕正三角形顶点 $D$ 顺时针旋转 $60^\\circ$ 得到点 $H'$。<br>
+    • 由旋转定义，$\\triangle DH'H$ 为正三角形。<br>
+    • 由于 $\\triangle DBC$ 是正三角形，边 $DC$ 绕 $D$ 顺时针旋转 $60^\\circ$ 恰与边 $DB$ 重合。<br>
+    因此整个三角形旋转对应：
+    <div class="formula-box">$$\\triangle DBH' \\cong \\triangle DCH \\implies H'B = HC \\quad \\text{且} \\quad \\angle DBH' = \\angle DCH$$</div>
+    将 $HC = H'B$ 代入前式比例，得到：
+    <div class="formula-box"><b>$$\\frac{MH}{NH} = \\frac{BH}{BH'}$$</b></div>`
+  },
+  {
+    title: '③ 角度外角分解与夹角相等 ∠MHN = ∠HBH\'',
+    body: `在 $\\triangle AHN$ 中利用外角定理展开：<br>
+    $$\\angle AHN = \\angle CNH - \\angle CAH = 60^\\circ - (90^\\circ - \\angle C) = \\angle C - 30^\\circ$$
+    而在正三角形 $\\triangle DBC$ 中：<br>
+    $$\\angle DBH = \\angle DBC - \\angle CBH = 60^\\circ - (90^\\circ - \\angle C) = \\angle C - 30^\\circ$$
+    因此：<b>$$\\angle AHN = \\angle DBH$$</b>
+    同理可证：<b>$$\\angle AHM = \\angle DCH = \\angle DBH'$$</b>
+    两式相加合成大角：
+    <div class="formula-box">$$\\angle MHN = \\angle AHM + \\angle AHN = \\angle DBH' + \\angle DBH = \\angle HBH'$$</div>`
+  },
+  {
+    title: '④ 第二对相似 △H\'BH ∼ △NHM',
+    body: `由对应边成比例 $\\frac{NH}{MH} = \\frac{BH'}{BH}$，且夹角相等 $\\angle MHN = \\angle HBH'$：<br>
+    根据边角边判定定理（SAS），两三角形相似：
+    <div class="formula-box">$$\\triangle H'BH \\sim \\triangle NHM$$</div>
+    从而对应角相等：
+    <div class="formula-box">$$\\angle MNH = \\angle HH'B = \\angle DH'B - \\angle DH'H = \\angle DHC - 60^\\circ$$</div>`
+  },
+  {
+    title: '⑤ 外心 O 的圆心角-圆周角转化',
+    body: `因为 $O$ 是 $\\triangle HMN$ 的外心，故 $OM = OH = ON$。<br>
+    由圆周角与圆心角定理，顶角 $\\angle MOH = 2\\angle MNH$。<br>
+    在等腰 $\\triangle MOH$ 中，两底角相等：
+    <div class="formula-box">$$\\angle MHO = \\frac{180^\\circ - \\angle MOH}{2} = 90^\\circ - \\angle MNH$$</div>
+    代入前一步结论 $\\angle MNH = \\angle DHC - 60^\\circ$：
+    <div class="formula-box"><b>$$\\angle MHO = 90^\\circ - (\\angle DHC - 60^\\circ) = 150^\\circ - \\angle DHC$$</b></div>`
+  },
+  {
+    title: '⑥ 角度等量代换得出 H, O, D 三点共线',
+    body: `因为 $AH \\perp BC$，而正三角形 $\\triangle DBC$ 的对称轴为 $BC$ 垂直平分线，故 $AH$ 平行于中垂线。<br>
+    由角度关系推得：
+    $$\\angle AHD = 30^\\circ - \\angle BDH \\implies \\angle HDC = 30^\\circ + \\angle AHD$$
+    在 $\\triangle DHC$ 中：
+    $$\\angle DHC = 180^\\circ - \\angle HDC - \\angle DCH = 180^\\circ - (\\angle AHD + 30^\\circ) - \\angle AHM$$
+    <div class="formula-box">$$\\angle DHC = 150^\\circ - (\\angle AHD + \\angle AHM) = 150^\\circ - \\angle MHD$$</div>
+    整理得到：<b>$$\\angle MHD = 150^\\circ - \\angle DHC$$</b><br>
+    与上一步 $\\angle MHO = 150^\\circ - \\angle DHC$ 对比，立即得出：
+    <div class="formula-box" style="border-color:#10b981; background:#ecfdf5; color:#065f46;"><b>$$\\angle MHO = \\angle MHD$$</b></div>
+    由于射线 $HO$ 与射线 $HD$ 在 $HM$ 同侧且夹角相等，射线重合，故 <b>$H, O, D$ 三点共线</b>！
+    <div class="qed-card">✓ 命题获证 (Q.E.D.)</div>`
+  }
+];
+
+/* ============ 交互控制逻辑 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+const counterEl = document.getElementById('stepCounter');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  counterEl.textContent = `第 ${cur+1} / ${steps.length} 步`;
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 同步 URL 参数
+  const url = new URL(window.location);
+  url.searchParams.set('step', cur);
+  window.history.replaceState({}, '', url);
+  if (typeof window.renderMath === "function") window.renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+  if (e.key === ' '){
+    e.preventDefault();
+    if (timer) stopAuto(); else btnAuto.click();
+  }
+});
+
+// 初始化
+drawBase();
+const initStep = parseInt(new URLSearchParams(location.search).get('step')) || 0;
+goTo(initStep);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+  // 监听动态步骤切换导致的 DOM 变动，自动重新渲染数学公式
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => {
+      if (typeof window.renderMath === 'function') window.renderMath();
+    }, 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'], characterData: true });
+});
+window.addEventListener('load', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+});
+</script>
+</body>
+</html>

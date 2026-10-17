@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="data:,">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 9：正交投影外接圆根轴平分两直径圆交点连线 — 交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px; }
+  header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; display: block; }
+  .panel {
+    flex: 1 1 400px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 520px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,0.08); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; font-size: 12px;
+    padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 9：正交投影外接圆根轴平分交点连线</h1>
+    <p>已知凸四边形 <span class="math">ABCD</span> 中 <span class="math">AD ∦ BC</span>，以 <span class="math">AB, CD</span> 为直径的两圆交于 <span class="math">E, F</span>。求证：<span class="math">ω<sub>E</sub></span> 与 <span class="math">ω<sub>F</sub></span> 的根轴平分 <span class="math">EF</span></p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="40 70 600 480" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#0f172a"></span> 四边形 ABCD</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#94a3b8"></span> 直径圆 C₁, C₂</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span> 交点连线 EF</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#059669"></span> 圆 ω<sub>E</sub></div>
+        <div class="legend-item"><span class="legend-dot" style="background:#ea580c"></span> 圆 ω<sub>F</sub></div>
+        <div class="legend-item"><span class="legend-dot" style="background:#dc2626"></span> 根轴 XY</div>
+      </div>
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 严格几何解算坐标体系 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+function foot(P, P1, P2){
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+
+/* 顶点定义与圆心解算 */
+const A = { x: 220.00, y: 160.00 };
+const B = { x: 220.00, y: 460.00 };
+const C = { x: 388.74, y: 487.27 };
+const D = { x: 451.26, y: 132.73 };
+
+const O1 = mid(A, B);  // { x: 220, y: 310 }
+const r1 = dist(A, B) / 2; // 150
+const O2 = mid(C, D);  // { x: 420, y: 310 }
+const r2 = dist(C, D) / 2; // 180
+
+/* 两圆交点 E, F */
+const E = { x: 295.25, y: 180.24 };
+const F = { x: 295.25, y: 439.76 };
+
+/* 点 E 的投影及延长线交点 */
+const M1 = foot(E, A, B); // { x: 220, y: 180.24 }
+const N1 = foot(E, C, D); // { x: 438.43, y: 205.49 }
+const P1 = foot(E, B, C); // { x: 249.28, y: 464.73 }
+const Q1 = foot(E, A, D); // { x: 291.86, y: 151.53 }
+const S1 = lineIntersect(E, sub(P1, E), A, sub(D, A)); // { x: 300.05, y: 150.56 }
+const R1 = lineIntersect(E, sub(Q1, E), B, sub(C, B)); // { x: 330.34, y: 477.83 }
+const cE = { x: 315.19, y: 314.20 };
+const rE = 164.33;
+
+/* 点 F 的投影及延长线交点 */
+const M2 = foot(F, A, B); // { x: 220, y: 439.76 }
+const N2 = foot(F, C, D); // { x: 394.05, y: 457.18 }
+const P2 = foot(F, B, C); // { x: 290.15, y: 471.33 }
+const Q2 = foot(F, A, D); // { x: 261.69, y: 155.09 }
+const S2 = lineIntersect(F, sub(P2, F), A, sub(D, A)); // { x: 342.79, y: 145.52 }
+const R2 = lineIntersect(F, sub(Q2, F), B, sub(C, B)); // { x: 299.14, y: 472.79 }
+const cF = { x: 320.97, y: 309.16 };
+const rF = 165.08;
+
+/* 割线交点 X, Y 与对角线交点 Omid */
+const X = lineIntersect(E, sub(Q1, E), F, sub(P2, F)); // { x: 312.94, y: 330.28 }
+const Y = lineIntersect(E, sub(P1, E), F, sub(Q2, F)); // { x: 277.56, y: 289.72 }
+const Omid = mid(E, F); // { x: 295.25, y: 310.00 }
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':2}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+/* 顶层文字：具备 4px 白色轮廓描边，确保文字任何时候均不被背景线段干扰 */
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=15, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    stroke: '#ffffff',
+    'stroke-width': '4px',
+    'stroke-linejoin': 'round',
+    'paint-order': 'stroke fill',
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '500'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=9, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.5}, parent);
+}
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,5)), add(c, mul(n,-5)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function arrowMark(p, q, color, parent){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const tip = add(m, mul(d,7));
+  const p1 = add(add(m, mul(d,-5)), mul(n,4.5));
+  const p2 = add(add(m, mul(d,-5)), mul(n,-4.5));
+  el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+}
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+4, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=16, color='#dc2626', attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: color, 'stroke-width': 1.6, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id:'gBase'}, stage);
+const gStep = el('g', {id:'gStep'}, stage);
+const gPts  = el('g', {id:'gPts'}, stage);
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      SLATE = '#64748b', MUTED = '#94a3b8', GOLD = '#d97706';
+
+/* 静态底层：全过程保留 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 两基准直径圆
+  circle(O1, r1, {stroke: MUTED, 'stroke-width': 1.2, 'stroke-dasharray':'5 4', opacity:.7}, gBase);
+  circle(O2, r2, {stroke: MUTED, 'stroke-width': 1.2, 'stroke-dasharray':'5 4', opacity:.7}, gBase);
+  // 四边形 ABCD
+  polygon([A, B, C, D], {stroke:'#0f172a', 'stroke-width':2.2, fill:'#f8fafc', 'fill-opacity':0.35}, gBase);
+}
+
+/* 顶层：点与标签绘制 */
+function drawPoints(step){
+  gPts.innerHTML = '';
+  // 基础四边形点
+  dot(A, '#0f172a', 4.5, gPts); label(A, 'A', -16, -14, '#0f172a', gPts);
+  dot(B, '#0f172a', 4.5, gPts); label(B, 'B', -16, 14, '#0f172a', gPts);
+  dot(C, '#0f172a', 4.5, gPts); label(C, 'C', 16, 14, '#0f172a', gPts);
+  dot(D, '#0f172a', 4.5, gPts); label(D, 'D', 16, -14, '#0f172a', gPts);
+
+  // 交点 E, F 全程显示
+  dot(E, PURPLE, 5, gPts); label(E, 'E', 15, -10, PURPLE, gPts, 16);
+  dot(F, PURPLE, 5, gPts); label(F, 'F', 15, 10, PURPLE, gPts, 16);
+
+  if (step === 1 || step === 2){
+    dot(M1, GREEN, 4, gPts); label(M1, 'M₁', -18, -4, GREEN, gPts, 14);
+    dot(N1, GREEN, 4, gPts); label(N1, 'N₁', 18, -4, GREEN, gPts, 14);
+    dot(P1, GREEN, 4, gPts); label(P1, 'P₁', -10, 16, GREEN, gPts, 14);
+    dot(Q1, GREEN, 4, gPts); label(Q1, 'Q₁', -12, -15, GREEN, gPts, 14);
+  }
+  if (step === 2){
+    dot(S1, GREEN, 4, gPts); label(S1, 'S₁', 14, -15, GREEN, gPts, 14);
+    dot(R1, GREEN, 4, gPts); label(R1, 'R₁', 12, 16, GREEN, gPts, 14);
+  }
+  if (step === 3){
+    dot(M2, ORANGE, 4, gPts); label(M2, 'M₂', -18, 4, ORANGE, gPts, 14);
+    dot(N2, ORANGE, 4, gPts); label(N2, 'N₂', 18, 4, ORANGE, gPts, 14);
+    dot(P2, ORANGE, 4, gPts); label(P2, 'P₂', -10, 16, ORANGE, gPts, 14);
+    dot(Q2, ORANGE, 4, gPts); label(Q2, 'Q₂', -12, -15, ORANGE, gPts, 14);
+    dot(S2, ORANGE, 4, gPts); label(S2, 'S₂', 14, -15, ORANGE, gPts, 14);
+    dot(R2, ORANGE, 4, gPts); label(R2, 'R₂', 12, 16, ORANGE, gPts, 14);
+  }
+  if (step === 4){
+    dot(Q1, GREEN, 4, gPts); label(Q1, 'Q₁', -12, -15, GREEN, gPts, 14);
+    dot(R1, GREEN, 4, gPts); label(R1, 'R₁', 12, 16, GREEN, gPts, 14);
+    dot(P2, ORANGE, 4, gPts); label(P2, 'P₂', -10, 16, ORANGE, gPts, 14);
+    dot(S2, ORANGE, 4, gPts); label(S2, 'S₂', 14, -15, ORANGE, gPts, 14);
+    dot(X, RED, 5.5, gPts); label(X, 'X', 18, -8, RED, gPts, 16);
+  }
+  if (step === 5){
+    dot(P1, GREEN, 4, gPts); label(P1, 'P₁', -10, 16, GREEN, gPts, 14);
+    dot(S1, GREEN, 4, gPts); label(S1, 'S₁', 14, -15, GREEN, gPts, 14);
+    dot(Q2, ORANGE, 4, gPts); label(Q2, 'Q₂', -12, -15, ORANGE, gPts, 14);
+    dot(R2, ORANGE, 4, gPts); label(R2, 'R₂', 12, 16, ORANGE, gPts, 14);
+    dot(X, RED, 5, gPts); label(X, 'X', 18, -8, RED, gPts, 15);
+    dot(Y, RED, 5.5, gPts); label(Y, 'Y', -18, 8, RED, gPts, 16);
+  }
+  if (step === 6){
+    dot(X, RED, 5, gPts); label(X, 'X', 18, -8, RED, gPts, 15);
+    dot(Y, RED, 5, gPts); label(Y, 'Y', -18, 8, RED, gPts, 15);
+    dot(Omid, GOLD, 5, gPts); label(Omid, 'O', 0, 16, GOLD, gPts, 14);
+  }
+}
+
+/* ============ 各步骤动态层绘制 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  switch(s){
+    case 0:
+      // Step 0: 已知条件与几何构型
+      segDashed(E, F, PURPLE, 2, gStep);
+      break;
+
+    case 1:
+      // Step 1: 点 E 在四边上的投影
+      segDashed(E, M1, GREEN, 1.8, gStep);
+      segDashed(E, N1, GREEN, 1.8, gStep);
+      segDashed(E, P1, GREEN, 1.8, gStep);
+      segDashed(E, Q1, GREEN, 1.8, gStep);
+      rightAngleMark(M1, A, E, 8, GREEN, gStep);
+      rightAngleMark(N1, D, E, 8, GREEN, gStep);
+      rightAngleMark(P1, C, E, 8, GREEN, gStep);
+      rightAngleMark(Q1, A, E, 8, GREEN, gStep);
+      break;
+
+    case 2:
+      // Step 2: 证明六点共圆于 ωE
+      // 垂线及延长线
+      line(S1, P1, {stroke:GREEN, 'stroke-width':1.6}, gStep);
+      line(Q1, R1, {stroke:GREEN, 'stroke-width':1.6}, gStep);
+      segDashed(E, M1, GREEN, 1.5, gStep);
+      segDashed(E, N1, GREEN, 1.5, gStep);
+      // 外接圆 ωE
+      circle(cE, rE, {stroke: GREEN, 'stroke-width': 2.2, fill: GREEN, 'fill-opacity': 0.08}, gStep);
+      // 导角弧线
+      angleArc(M1, Q1, P1, 15, RED, {}, gStep);
+      angleArc(S1, Q1, E, 14, RED, {}, gStep);
+      angleArc(R1, P1, E, 14, RED, {}, gStep);
+      break;
+
+    case 3:
+      // Step 3: 点 F 六点共圆于 ωF
+      // 背景淡出 ωE
+      circle(cE, rE, {stroke: GREEN, 'stroke-width': 1.4, 'stroke-dasharray':'4 3', opacity: 0.55}, gStep);
+      // 点 F 垂线及延长线
+      line(S2, P2, {stroke:ORANGE, 'stroke-width':1.6}, gStep);
+      line(Q2, R2, {stroke:ORANGE, 'stroke-width':1.6}, gStep);
+      segDashed(F, M2, ORANGE, 1.5, gStep);
+      segDashed(F, N2, ORANGE, 1.5, gStep);
+      rightAngleMark(P2, C, F, 8, ORANGE, gStep);
+      rightAngleMark(Q2, A, F, 8, ORANGE, gStep);
+      // 外接圆 ωF
+      circle(cF, rF, {stroke: ORANGE, 'stroke-width': 2.2, fill: ORANGE, 'fill-opacity': 0.08}, gStep);
+      break;
+
+    case 4:
+      // Step 4: 割线交点 X 位于根轴上
+      circle(cE, rE, {stroke: GREEN, 'stroke-width': 1.6, fill: GREEN, 'fill-opacity': 0.05}, gStep);
+      circle(cF, rF, {stroke: ORANGE, 'stroke-width': 1.6, fill: ORANGE, 'fill-opacity': 0.05}, gStep);
+      // 割线 Q1R1 (ωE) 与 P2S2 (ωF)
+      line(Q1, R1, {stroke:GREEN, 'stroke-width':2.2}, gStep);
+      line(P2, S2, {stroke:ORANGE, 'stroke-width':2.2}, gStep);
+      // 相似三角形高亮
+      polygon([X, Q1, S2], {fill:BLUE, 'fill-opacity':0.15, stroke:BLUE, 'stroke-width':1.2}, gStep);
+      polygon([X, P2, R1], {fill:GOLD, 'fill-opacity':0.15, stroke:GOLD, 'stroke-width':1.2}, gStep);
+      rightAngleMark(Q1, S2, X, 8, BLUE, gStep);
+      rightAngleMark(P2, R1, X, 8, GOLD, gStep);
+      break;
+
+    case 5:
+      // Step 5: 对称交点 Y 确定直线 XY 为根轴
+      circle(cE, rE, {stroke: GREEN, 'stroke-width': 1.4, opacity:0.6}, gStep);
+      circle(cF, rF, {stroke: ORANGE, 'stroke-width': 1.4, opacity:0.6}, gStep);
+      // 割线引线
+      segDashed(Q1, R1, GREEN, 1.4, gStep);
+      segDashed(P2, S2, ORANGE, 1.4, gStep);
+      line(S1, P1, {stroke:GREEN, 'stroke-width':2.0}, gStep);
+      line(Q2, R2, {stroke:ORANGE, 'stroke-width':2.0}, gStep);
+      // 根轴 XY 延长线
+      const dirXY = norm(sub(Y, X));
+      line(sub(X, mul(dirXY, 60)), add(Y, mul(dirXY, 60)), {stroke:RED, 'stroke-width':2.5, 'stroke-linecap':'round'}, gStep);
+      break;
+
+    case 6:
+      // Step 6: EXFY 为平行四边形，根轴平分 EF
+      circle(cE, rE, {stroke: GREEN, 'stroke-width': 1.2, 'stroke-dasharray':'4 3', opacity:0.45}, gStep);
+      circle(cF, rF, {stroke: ORANGE, 'stroke-width': 1.2, 'stroke-dasharray':'4 3', opacity:0.45}, gStep);
+      // 平行四边形 EXFY 面
+      polygon([E, X, F, Y], {fill:BLUE, 'fill-opacity':0.14, stroke:BLUE, 'stroke-width':2}, gStep);
+      // 平行标记
+      arrowMark(E, X, BLUE, gStep);
+      arrowMark(Y, F, BLUE, gStep);
+      arrowMark(E, Y, CYAN, gStep);
+      arrowMark(X, F, CYAN, gStep);
+      // 对角线 EF 与 根轴 XY
+      highlightSeg(E, F, PURPLE, gStep, 3.2);
+      const dirXY6 = norm(sub(Y, X));
+      line(sub(X, mul(dirXY6, 50)), add(Y, mul(dirXY6, 50)), {stroke:RED, 'stroke-width':2.6}, gStep);
+      // 等长刻度线
+      tickMark(E, Omid, PURPLE, gStep);
+      tickMark(Omid, F, PURPLE, gStep);
+      break;
+  }
+  drawPoints(s);
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '✦ 已知条件与几何构型',
+    body: `凸四边形 <span class="math">ABCD</span> 中，<span class="math">AD</span> 与 <span class="math">BC</span> 不平行。<br>
+分别以边 <span class="math">AB, CD</span> 为直径作圆 <span class="math">C₁, C₂</span>，两圆交于四边形形内两点 <span class="math">E, F</span>。<br>
+连接交点连线 <span class="math">EF</span>。本题求证：点 <span class="math">E, F</span> 的正交投影外接圆 <span class="math">ω<sub>E</sub></span> 与 <span class="math">ω<sub>F</sub></span> 的<b>根轴平分线段 <span class="math">EF</span></b>。`
+  },
+  {
+    title: '① 点 E 在四边上的正交投影',
+    body: `分别过点 <span class="math">E</span> 作四边 <span class="math">AB, CD, BC, AD</span> 的垂线，垂足分别为 <span class="math">M₁, N₁, P₁, Q₁</span>。<br>
+因为点 <span class="math">E</span> 在以 <span class="math">AB</span> 为直径的圆上，故 <span class="math">∠AEB = 90°</span>；同理 <span class="math">∠CED = 90°</span>。<br>
+在四边形 <span class="math">AQ₁EM₁</span> 与 <span class="math">BP₁EM₁</span> 中，对角均为直角，天然存在共圆结构。`
+  },
+  {
+    title: '② 导角证明六点共圆于 ω<sub>E</sub>',
+    body: `延长 <span class="math">EP₁</span> 交 <span class="math">AD</span> 于 <span class="math">S₁</span>，延长 <span class="math">EQ₁</span> 交 <span class="math">BC</span> 于 <span class="math">R₁</span>。<br>
+由 <span class="math">A, Q₁, E, M₁</span> 与 <span class="math">B, P₁, E, M₁</span> 分别共圆，得：<br>
+<span class="math">∠Q₁M₁P₁ = ∠Q₁M₁E + ∠P₁M₁E = ∠EAD + ∠EBC</span><br>
+<span class="math">= ∠DAB + ∠ABC - (180° - ∠AEB) = ∠Q₁S₁E = ∠P₁R₁E</span>。<br>
+因此 <span class="math">P₁, Q₁, M₁, R₁, S₁</span> 五点共圆；同理 <span class="math">N₁</span> 亦在该圆上！<br>
+即 <span class="math">M₁, N₁, P₁, Q₁, R₁, S₁</span> <b>六点共圆于 <span class="math">ω<sub>E</sub></span></b>。`
+  },
+  {
+    title: '③ 对称推导点 F 的六点共圆于 ω<sub>F</sub>',
+    body: `设点 <span class="math">F</span> 在 <span class="math">AB, CD, BC, AD</span> 上的投影分别为 <span class="math">M₂, N₂, P₂, Q₂</span>。<br>
+延长 <span class="math">FP₂</span> 交 <span class="math">AD</span> 于 <span class="math">S₂</span>，延长 <span class="math">FQ₂</span> 交 <span class="math">BC</span> 于 <span class="math">R₂</span>。<br>
+完全同理可得：<span class="math">M₂, N₂, P₂, Q₂, R₂, S₂</span> <b>六点共圆于外接圆 <span class="math">ω<sub>F</sub></span></b>。`
+  },
+  {
+    title: '④ 割线交点 X 位于根轴上',
+    body: `记直线 <span class="math">EQ₁</span> 与 <span class="math">FP₂</span> 的交点为 <span class="math">X</span>（即直线 <span class="math">Q₁R₁</span> 与 <span class="math">P₂S₂</span> 的交点）。<br>
+在直角三角形 <span class="math">△XQ₁S₂</span> 与 <span class="math">△XP₂R₁</span> 中，锐角均等于边夹角的余角，故两三角形相似：<br>
+<span class="math">XQ₁ / XP₂ = XS₂ / XR₁  ⇒  Q₁X · XR₁ = P₂X · XS₂</span>。<br>
+因为割线 <span class="math">Q₁R₁</span> 位于 <span class="math">ω<sub>E</sub></span> 上，割线 <span class="math">P₂S₂</span> 位于 <span class="math">ω<sub>F</sub></span> 上，故点 <span class="math">X</span> 对两圆圆幂相等！<br>
+因此，<b><span class="math">X</span> 必在两圆的根轴上</b>！`
+  },
+  {
+    title: '⑤ 对称交点 Y 确定直线 XY 为根轴',
+    body: `同理，记直线 <span class="math">EP₁</span> 与 <span class="math">FQ₂</span> 的交点为 <span class="math">Y</span>（即直线 <span class="math">P₁S₁</span> 与 <span class="math">Q₂R₂</span> 的交点）。<br>
+对称地，由直角三角形相似知：<span class="math">YP₁ · YS₁ = YQ₂ · YR₂</span>。<br>
+故点 <span class="math">Y</span> 对圆 <span class="math">ω<sub>E</sub></span> 与 <span class="math">ω<sub>F</sub></span> 的圆幂亦相等，<span class="math">Y</span> 亦在根轴上！<br>
+两点确定一条直线，<b>直线 <span class="math">XY</span> 即为两圆 <span class="math">ω<sub>E</sub></span> 与 <span class="math">ω<sub>F</sub></span> 的根轴</b>。`
+  },
+  {
+    title: '⑥ 平行四边形对角线平分 ⇒ 根轴平分 EF',
+    body: `考察四边形 <span class="math">EXFY</span> 的对边：<br>
+因为 <span class="math">EQ₁ ⟂ AD</span> 且 <span class="math">FQ₂ ⟂ AD</span>，故 <span class="math">EQ₁ ∥ FQ₂</span>，即 <b><span class="math">EX ∥ YF</span></b>；<br>
+因为 <span class="math">EP₁ ⟂ BC</span> 且 <span class="math">FP₂ ⟂ BC</span>，故 <span class="math">EP₁ ∥ FP₂</span>，即 <b><span class="math">EY ∥ XF</span></b>。<br>
+两组对边分别平行，所以 <b>四边形 <span class="math">EXFY</span> 为严格的平行四边形</b>！<br>
+在平行四边形中，对角线互相平分，因此对角线 <span class="math">XY</span> 必平分线段 <span class="math">EF</span>。<br>
+结论：<b><span class="math">ω<sub>E</sub></span> 与 <span class="math">ω<sub>F</sub></span> 的根轴平分线段 <span class="math">EF</span></b>。命题证毕！`
+  }
+];
+
+/* ============ 交互控制与双向 URL 绑定 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // URL ?step=N 参数双向同步绑定
+  try {
+    const url = new URL(window.location);
+    if (url.searchParams.get('step') !== String(cur)) {
+      url.searchParams.set('step', cur);
+      window.history.replaceState({}, '', url);
+    }
+  } catch(e) {}
+
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0);
+if (typeof renderMath === 'function') renderMath(); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+if (typeof renderMath === 'function') renderMath();
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

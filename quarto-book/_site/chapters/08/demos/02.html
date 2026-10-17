@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 1：内切圆切点、外接圆弧中点与位似中心 (XY // BC) — 分步几何证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14.5px; color: #475569; margin-top: 6px; line-height: 1.5; }
+  header .math-tag { background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-family: "Times New Roman", serif; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 640px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+    padding: 16px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid #cbd5e1;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; display: block; overflow: visible; }
+  .panel {
+    flex: 1 1 380px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+    padding: 20px; display: flex; flex-direction: column;
+    border: 1px solid #cbd5e1;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; max-height: calc(78vh - 100px); }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .22s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #93c5fd; background: #f0f7ff; transform: translateY(-1px); }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.7; color: #334155; margin-top: 10px; display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 4px 12px rgba(37,99,235,0.12); }
+  .step-item.active .title { color: #1d4ed8; font-weight: 700; }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1.3; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; color: #0f172a; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 10px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; font-weight: 600; }
+  .math { font-family: "Times New Roman", "KaTeX_Math", serif; font-style: italic; }
+  b.math { font-weight: bold; }
+  text.lbl {
+    font-family: "Times New Roman", "KaTeX_Math", serif;
+    font-style: italic;
+    font-size: 17px;
+    font-weight: 700;
+    fill: #0f172a;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 1：内切圆切点、外接圆弧中点与位似中心证明 <span class="math-tag">XY // BC</span></h1>
+    <p>已知 $\triangle ABC$ 内切圆 $I$ 切于 $D,E,F$，外接圆 $\omega$ 弧 $AC,AB$ 中点为 $M,N$；$ME, NF$ 交于 $P$；$PB, PC$ 与圆 $I$ 交于 $X, Y$。求证 $XY \parallel BC$。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="-60 -90 810 640" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+/* ============ 几何与向量计算辅助函数 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const dotProd = (p,q) => p.x*q.x + p.y*q.y;
+const cross = (p,q) => p.x*q.y - p.y*q.x;
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function foot(P, P1, P2){
+  const d = sub(P2, P1);
+  const denom = dotProd(d, d);
+  if (denom < 1e-9) return P1;
+  const t = dotProd(sub(P, P1), d) / denom;
+  return add(P1, mul(d, t));
+}
+
+/* ============ 精确几何解算（一般不等角锐角三角形） ============ */
+const A = { x: 300.0, y: 110.0 };
+const B = { x: 140.0, y: 390.0 };
+const C = { x: 500.0, y: 390.0 };
+
+const a_side = dist(B, C);
+const b_side = dist(C, A);
+const c_side = dist(A, B);
+
+// 内心 I
+const I = {
+  x: (a_side*A.x + b_side*B.x + c_side*C.x) / (a_side + b_side + c_side),
+  y: (a_side*A.y + b_side*B.y + c_side*C.y) / (a_side + b_side + c_side)
+};
+const s_p = (a_side + b_side + c_side) / 2;
+const triArea = Math.abs(cross(sub(B, A), sub(C, A))) / 2;
+const r_in = triArea / s_p;
+
+// 内切圆切点 D on BC, E on CA, F on AB
+const D = foot(I, B, C);
+const E = foot(I, C, A);
+const F = foot(I, A, B);
+
+// 外心 O 与外接圆半径 R
+const d_det = 2 * (A.x*(B.y - C.y) + B.x*(C.y - A.y) + C.x*(A.y - B.y));
+const ux = ((A.x*A.x + A.y*A.y)*(B.y - C.y) + (B.x*B.x + B.y*B.y)*(C.y - A.y) + (C.x*C.x + C.y*C.y)*(A.y - B.y)) / d_det;
+const uy = ((A.x*A.x + A.y*A.y)*(C.x - B.x) + (B.x*B.x + B.y*B.y)*(A.x - C.x) + (C.x*C.x + C.y*C.y)*(B.x - A.x)) / d_det;
+const O = { x: ux, y: uy };
+const R_circ = dist(O, A);
+
+// 弧中点 M (弧 AC), N (弧 AB), R (弧 BC)
+const getArcMid = (p1, p2, opp) => {
+  const m = mid(p1, p2);
+  let v = norm(sub(m, O));
+  if (cross(sub(p2, p1), sub(opp, p1)) * cross(sub(p2, p1), v) > 0) {
+    v = mul(v, -1);
+  }
+  return add(O, mul(v, R_circ));
+};
+const M = getArcMid(A, C, B);
+const N = getArcMid(A, B, C);
+const R = getArcMid(B, C, A);
+
+// 交点 P = ME 与 NF 的交点
+const P = lineIntersect(M, sub(E, M), N, sub(F, N));
+
+// 位似外切三角形 A'B'C'
+// N 处的切线垂直于 ON
+const vN = norm(sub(N, O));
+const vM = norm(sub(M, O));
+const vR = norm(sub(R, O));
+const d_tanN = perp(vN);
+const d_tanM = perp(vM);
+const d_tanR = perp(vR);
+
+const A_prime = lineIntersect(N, d_tanN, M, d_tanM);
+const B_prime = lineIntersect(N, d_tanN, R, d_tanR);
+const C_prime = lineIntersect(M, d_tanM, R, d_tanR);
+
+// 割线交点 X on PB, Y on PC 与内切圆的交点
+// 由位似性质：P + (1/k)*(B - P) = X, P + (1/k)*(C - P) = Y
+const k_hom = R_circ / r_in;
+const X = add(P, mul(sub(B, P), 1 / k_hom));
+const Y = add(P, mul(sub(C, P), 1 / k_hom));
+
+/* ============ SVG 绘图辅助函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color='#64748b', w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r:r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#2563eb', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r:r, fill:color, stroke:'#ffffff', 'stroke-width':2}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=17){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, class: 'lbl',
+    'font-size': size, fill: color
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1, v)), u2 = norm(sub(p2, v));
+  const a = add(v, mul(u1, s)), b = add(add(v, mul(u1, s)), mul(u2, s)), c = add(v, mul(u2, s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`, fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+
+function highlightSeg(p, q, color='#2563eb', parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.2}, parent);
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+function arrowMark(p, q, color='#2563eb', parent, count=1, spacing=10){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const startOffset = -((count - 1) * spacing) / 2;
+  for (let i = 0; i < count; i++) {
+    const center = add(m, mul(d, startOffset + i * spacing));
+    const tip = add(center, mul(d, 6.5));
+    const p1 = add(add(center, mul(d, -5)), mul(n, 4.5));
+    const p2 = add(add(center, mul(d, -5)), mul(n, -4.5));
+    el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+  }
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+/* 颜色体系 */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      GOLD = '#d97706', SLATE = '#64748b';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 原始三角形 ABC 填充与边框
+  polygon([A, B, C], {fill:'#f8fafc', stroke:'#1e293b', 'stroke-width':2.2}, gBase);
+  // 外接圆 omega
+  circle(O, R_circ, {stroke:'#94a3b8', 'stroke-width':1.8, 'stroke-dasharray':'6 4'}, gBase);
+  // 内切圆 I
+  circle(I, r_in, {stroke:'#3b82f6', 'stroke-width':2.0}, gBase);
+  // 内心与外心基础圆点
+  dot(I, '#3b82f6', 3.5, gBase);
+  dot(O, '#94a3b8', 3.5, gBase);
+}
+
+function drawPoints(step){
+  gPts.innerHTML = '';
+
+  // 基础顶点与切点：A, B, C, I, D, E, F
+  dot(A, '#1e293b', 4.5, gPts);
+  label(A, 'A', -4, -18, '#1e293b', gPts);
+
+  dot(B, '#1e293b', 4.5, gPts);
+  label(B, 'B', -18, 14, '#1e293b', gPts);
+
+  dot(C, '#1e293b', 4.5, gPts);
+  label(C, 'C', 18, 14, '#1e293b', gPts);
+
+  label(I, 'I', 16, 5, '#2563eb', gPts, 16);
+
+  dot(D, '#2563eb', 4, gPts);
+  label(D, 'D', 0, 18, '#2563eb', gPts, 15);
+
+  dot(E, '#2563eb', 4, gPts);
+  label(E, 'E', 15, -12, '#2563eb', gPts, 15);
+
+  dot(F, '#2563eb', 4, gPts);
+  label(F, 'F', -15, -12, '#2563eb', gPts, 15);
+
+  // 弧中点 M, N
+  dot(M, '#7c3aed', 4.5, gPts);
+  label(M, 'M', 18, -8, '#7c3aed', gPts);
+
+  dot(N, '#7c3aed', 4.5, gPts);
+  label(N, 'N', -18, -8, '#7c3aed', gPts);
+
+  // 交点 P
+  dot(P, '#dc2626', 5, gPts);
+  label(P, 'P', -14, -15, '#dc2626', gPts, 18);
+
+  // 割线交点 X, Y
+  dot(X, '#0891b2', 4.5, gPts);
+  label(X, 'X', -16, 4, '#0891b2', gPts);
+
+  dot(Y, '#0891b2', 4.5, gPts);
+  label(Y, 'Y', 16, 4, '#0891b2', gPts);
+
+  // 外心 O 标签在 Step 2 及后续显示
+  if (step >= 2) {
+    label(O, 'O', 16, 12, '#64748b', gPts, 15);
+  }
+
+  // 弧中点 R 与外切三角形 A'B'C' 在 Step 1 及后续显示
+  if (step >= 1) {
+    dot(R, '#ea580c', 4.5, gPts);
+    label(R, 'R', 0, 20, '#ea580c', gPts);
+
+    dot(A_prime, '#ea580c', 5, gPts);
+    label(A_prime, "A'", 0, -18, '#ea580c', gPts);
+
+    dot(B_prime, '#ea580c', 5, gPts);
+    label(B_prime, "B'", -18, 14, '#ea580c', gPts);
+
+    dot(C_prime, '#ea580c', 5, gPts);
+    label(C_prime, "C'", 18, 14, '#ea580c', gPts);
+  }
+}
+
+/* ============ 各步骤动态图元渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0: {
+      // 构型：连结 ME, NF 延长相交于 P
+      line(M, P, {stroke:PURPLE, 'stroke-width':1.8, 'stroke-dasharray':'5 4'}, gStep);
+      line(N, P, {stroke:PURPLE, 'stroke-width':1.8, 'stroke-dasharray':'5 4'}, gStep);
+      // 射线 PB, PC
+      line(P, B, {stroke:SLATE, 'stroke-width':1.8, 'stroke-dasharray':'5 4'}, gStep);
+      line(P, C, {stroke:SLATE, 'stroke-width':1.8, 'stroke-dasharray':'5 4'}, gStep);
+      // 待求证线段 XY 与底边 BC
+      line(X, Y, {stroke:CYAN, 'stroke-width':3, 'stroke-dasharray':'7 4'}, gStep);
+      highlightSeg(B, C, SLATE, gStep, 2.5);
+      break;
+    }
+
+    case 1: {
+      // Step 1: 引出弧中点 R，过 M, N, R 作切线交成 A'B'C'
+      polygon([A_prime, B_prime, C_prime], {
+        fill:'none', stroke:ORANGE, 'stroke-width':2.6, 'stroke-linejoin':'round'
+      }, gStep);
+
+      // 高亮切线
+      highlightSeg(A_prime, B_prime, ORANGE, gStep, 3);
+      highlightSeg(B_prime, C_prime, ORANGE, gStep, 3);
+      highlightSeg(C_prime, A_prime, ORANGE, gStep, 3);
+
+      // 标出外切三角形内切圆就是 omega
+      circle(O, R_circ, {stroke:GOLD, 'stroke-width':3.5, opacity:0.6}, gStep);
+      break;
+    }
+
+    case 2: {
+      // Step 2: 垂径定理 => AB // A'B', BC // B'C', CA // C'A'
+      polygon([A_prime, B_prime, C_prime], {
+        fill:'none', stroke:'#fdba74', 'stroke-width':1.6
+      }, gStep);
+
+      // 外心 O 到各切点的垂直线段
+      line(O, N, {stroke:RED, 'stroke-width':2.2}, gStep);
+      line(O, M, {stroke:RED, 'stroke-width':2.2}, gStep);
+      line(O, R, {stroke:RED, 'stroke-width':2.2}, gStep);
+
+      // 垂径垂直标记
+      const midAB = mid(A, B);
+      const midAC = mid(A, C);
+      const midBC = mid(B, C);
+      rightAngleMark(midAB, O, A, 11, RED, gStep);
+      rightAngleMark(midAC, O, C, 11, RED, gStep);
+      rightAngleMark(midBC, O, C, 11, RED, gStep);
+
+      // 切线垂直标记
+      rightAngleMark(N, O, A_prime, 12, ORANGE, gStep);
+      rightAngleMark(M, O, C_prime, 12, ORANGE, gStep);
+      rightAngleMark(R, O, C_prime, 12, ORANGE, gStep);
+
+      // 高亮三对平行线并加箭头
+      highlightSeg(A, B, BLUE, gStep, 3);
+      highlightSeg(A_prime, B_prime, BLUE, gStep, 3);
+      arrowMark(A, B, BLUE, gStep, 1);
+      arrowMark(A_prime, B_prime, BLUE, gStep, 1);
+
+      highlightSeg(B, C, GREEN, gStep, 3);
+      highlightSeg(B_prime, C_prime, GREEN, gStep, 3);
+      arrowMark(B, C, GREEN, gStep, 2);
+      arrowMark(B_prime, C_prime, GREEN, gStep, 2);
+
+      highlightSeg(C, A, PURPLE, gStep, 3);
+      highlightSeg(C_prime, A_prime, PURPLE, gStep, 3);
+      arrowMark(C, A, PURPLE, gStep, 3);
+      arrowMark(C_prime, A_prime, PURPLE, gStep, 3);
+      break;
+    }
+
+    case 3: {
+      // Step 3: 位似映射确立，将圆 I 变为圆 omega，F 变为 N，E 变为 M
+      polygon([A_prime, B_prime, C_prime], {fill:'rgba(251, 146, 60, 0.08)', stroke:ORANGE, 'stroke-width':2}, gStep);
+      polygon([A, B, C], {fill:'rgba(59, 130, 246, 0.12)', stroke:'#1e293b', 'stroke-width':2.2}, gStep);
+
+      // 高亮内切圆 I 和外接圆 omega
+      circle(I, r_in, {stroke:BLUE, 'stroke-width':3}, gStep);
+      circle(O, R_circ, {stroke:GOLD, 'stroke-width':3.2}, gStep);
+
+      // 对应切点连线
+      line(F, N, {stroke:CYAN, 'stroke-width':2.5, 'stroke-dasharray':'5 3'}, gStep);
+      line(E, M, {stroke:PURPLE, 'stroke-width':2.5, 'stroke-dasharray':'5 3'}, gStep);
+      line(D, R, {stroke:GREEN, 'stroke-width':2.5, 'stroke-dasharray':'5 3'}, gStep);
+
+      // 强化对应切点光晕
+      dot(F, CYAN, 6, gStep); dot(N, CYAN, 6, gStep);
+      dot(E, PURPLE, 6, gStep); dot(M, PURPLE, 6, gStep);
+      dot(D, GREEN, 6, gStep); dot(R, GREEN, 6, gStep);
+      break;
+    }
+
+    case 4: {
+      // Step 4: P 为位似中心，P, B, B' 与 P, C, C' 共线
+      polygon([A_prime, B_prime, C_prime], {fill:'none', stroke:'#fdba74', 'stroke-width':1.5}, gStep);
+
+      // 切线相交线 ME 和 NF
+      line(P, M, {stroke:PURPLE, 'stroke-width':2.2}, gStep);
+      line(P, N, {stroke:CYAN, 'stroke-width':2.2}, gStep);
+
+      // 位似中心放射线
+      line(P, A_prime, {stroke:GOLD, 'stroke-width':2, 'stroke-dasharray':'6 4'}, gStep);
+      line(P, B_prime, {stroke:RED, 'stroke-width':2.2, 'stroke-dasharray':'6 4'}, gStep);
+      line(P, C_prime, {stroke:RED, 'stroke-width':2.2, 'stroke-dasharray':'6 4'}, gStep);
+      line(P, R, {stroke:GREEN, 'stroke-width':1.8, 'stroke-dasharray':'6 4'}, gStep);
+
+      // 高亮放射线上的共线顶点
+      highlightSeg(P, B_prime, RED, gStep, 3.5);
+      highlightSeg(P, C_prime, RED, gStep, 3.5);
+
+      // 位似中心 P 专属光环标记
+      circle(P, 12, {stroke:RED, 'stroke-width':2, fill:'rgba(220, 38, 38, 0.2)'}, gStep);
+      circle(P, 18, {stroke:RED, 'stroke-width':1.2, 'stroke-dasharray':'3 3'}, gStep);
+      break;
+    }
+
+    case 5: {
+      // Step 5: 圆 I 变为圆 omega，X 变 B，Y 变 C => XY // BC
+      line(P, B, {stroke:SLATE, 'stroke-width':1.8, 'stroke-dasharray':'4 4'}, gStep);
+      line(P, C, {stroke:SLATE, 'stroke-width':1.8, 'stroke-dasharray':'4 4'}, gStep);
+
+      // 位似对应段高亮
+      highlightSeg(P, X, CYAN, gStep, 3);
+      highlightSeg(P, Y, CYAN, gStep, 3);
+      highlightSeg(X, B, BLUE, gStep, 3);
+      highlightSeg(Y, C, BLUE, gStep, 3);
+
+      // 核心结论：高亮 XY 与 BC
+      highlightSeg(X, Y, RED, gStep, 4.5);
+      highlightSeg(B, C, RED, gStep, 4.5);
+
+      // 平行双箭头标记
+      arrowMark(X, Y, RED, gStep, 2, 12);
+      arrowMark(B, C, RED, gStep, 2, 12);
+
+      // 闪烁高亮内切圆上的 X, Y 与外接圆上的 B, C
+      circle(X, 8, {stroke:CYAN, 'stroke-width':2.5, fill:'rgba(8, 145, 178, 0.25)'}, gStep);
+      circle(Y, 8, {stroke:CYAN, 'stroke-width':2.5, fill:'rgba(8, 145, 178, 0.25)'}, gStep);
+      circle(B, 8, {stroke:BLUE, 'stroke-width':2.5, fill:'rgba(37, 99, 235, 0.2)'}, gStep);
+      circle(C, 8, {stroke:BLUE, 'stroke-width':2.5, fill:'rgba(37, 99, 235, 0.2)'}, gStep);
+      break;
+    }
+  }
+  if (window.renderMath) window.renderMath();
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: "已知条件与几何构型",
+    body: `设锐角 $\\bigtriangleup ABC$ 的内切圆 $I$ 与三边 $BC, CA, AB$ 分别切于点 $D, E, F$；其外接圆记为 $\\omega$。<br>
+取劣弧 $AC, AB$ 的中点分别为 $M, N$。<br>
+连结 $ME, NF$ 并延长相交于点 $P$。<br>
+从 $P$ 引割线 $PB, PC$ 分别与内切圆 $I$ 交于点 $X, Y$。<br>
+<b style="color:#2563eb;">求证：</b>$XY \\parallel BC$。`
+  },
+  {
+    title: "引出弧中点 R 作外切三角形",
+    body: `设外接圆 $\\omega$ 上劣弧 $BC$ 的中点为 $R$。<br>
+分别过点 $M, N, R$ 作外接圆 $\\omega$ 的三条切线，两两相交依次构成 $\\bigtriangleup A'B'C'$：<br>
+切点为 $N \\in A'B'$, $R \\in B'C'$, $M \\in C'A'$。<br>
+显然，外接圆 $\\omega$ 恰好为大三角形 $\\bigtriangleup A'B'C'$ 的<b>内切圆</b>。`
+  },
+  {
+    title: "垂径定理导出三组对应边平行",
+    body: `记外接圆 $\\omega$ 的圆心为 $O$。<br>
+因为 $A'B'$ 切圆 $\\omega$ 于点 $N$，所以半径 $ON \\bot A'B'$。<br>
+又因 $N$ 为弧 $AB$ 的中点，由垂径定理知直径所在直线 $ON \\bot AB$。<br>
+故 <b style="color:#2563eb;">$AB \\parallel A'B'$</b>。<br>
+同理可得：<b style="color:#059669;">$BC \\parallel B'C'$</b>，<b style="color:#7c3aed;">$CA \\parallel C'A'$</b>。<br>
+三角形的三对边均保持平行！`
+  },
+  {
+    title: "确立两三角形的外位似映射",
+    body: `由三边对应平行且同向，必存在正位似变换 $\\mathcal{H}$，将 $\\bigtriangleup ABC$ 映射为 $\\bigtriangleup A'B'C'$。<br>
+在该位似变换下：<br>
+1. $\\bigtriangleup ABC$ 的内切圆 $I$ 必然映射为 $\\bigtriangleup A'B'C'$ 的内切圆（即外接圆 $\\omega$）；<br>
+2. 边 $AB$ 上的切点 $F$ 必映射为边 $A'B'$ 上的切点 $N$（$F \\mapsto N$）；<br>
+3. 同理切点 $E \\mapsto M$，切点 $D \\mapsto R$。`
+  },
+  {
+    title: "交点 P 即为位似中心，三线共点",
+    body: `在位似变换下，任何一对对应点的连线必过<b>位似中心</b>。<br>
+由于 $F \\mapsto N$ 且 $E \\mapsto M$，故连线 $FN$ 与 $EM$ 必交于位似中心。<br>
+而已知 $ME \\cap NF = P$，因此 <b style="color:#dc2626;">$P$ 恰为位似中心</b>！<br>
+对应顶点连线必过位似中心，立得：<br>
+<b style="color:#dc2626;">$P, A, A'$ 共线</b>；<b style="color:#dc2626;">$P, B, B'$ 共线</b>；<b style="color:#dc2626;">$P, C, C'$ 共线</b>。`
+  },
+  {
+    title: "位似映射导出 XY // BC（原命题得证）",
+    body: `位似变换 $\\mathcal{H}$（中心为 $P$）将圆 $I$ 变换为圆 $\\omega$：<br>
+由于点 $X$ 在圆 $I$ 上，且在射线 $PB$ 上，而 $B$ 为圆 $\\omega$ 上的对应点，因此 $X$ 的位似对应点即为 $B$（$X \\mapsto B$）。<br>
+同理，射线 $PC$ 上的圆 $I$ 点 $Y$ 的位似对应点即为 $C$（$Y \\mapsto C$）。<br>
+因此，线段 $XY$ 在该位似变换下直接映射为线段 $BC$。<br>
+由位似变换保持直线方向平行的基本性质，直接得出：<br>
+<b style="color:#dc2626; font-size:16px;">$XY \\parallel BC$</b>。<br>
+原命题完全得证！`
+  }
+];
+
+/* ============ 交互控制 ============ */
+window.steps = steps;
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (window.renderMath) window.renderMath();
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // URL 参数双向绑定
+  const url = new URL(window.location);
+  url.searchParams.set('step', cur);
+  window.history.replaceState({}, '', url);
+  if (window.renderMath) window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+window.goTo = goTo;
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化
+drawBase();
+const initStep = parseInt(new URLSearchParams(location.search).get('step')) || 0;
+goTo(initStep);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

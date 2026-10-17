@@ -1,0 +1,219 @@
+---
+title: '例 9：共轴圆与四点共圆判定'
+chapter: 6
+problem: 9
+source-chapter: '06'
+source-file: '06/9.md'
+id: 'ch06-p09'
+tags:
+- 圆的基本性质
+- 四点共圆
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">第 5 讲 圆的基本性质</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">圆的基本性质</span> <span class="problem-meta-badge badge-tag">四点共圆</span>
+:::
+
+## 题目
+
+在 $\triangle {ABC}$ 中， $\angle A = {90}^{ \circ  }, D, E$ 分别为 $\triangle {ABC}$ 的内切圆与 ${AB},{AC}$ 的切点，边 ${BC}$ 的中位线所在直线与 $\triangle  {ABC}$ 的外接圆交于点 $P$ ， $Q$ . 证明: $D$ ， $E$ ， $P$ ， $Q$ 四点共圆.
+
+![60_1029_1699_432_406_0.jpg](../images/60_1029_1699_432_406_0.jpg)
+
+图 5-13
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图 5-13，设 $I$ ， $O$ 分别为 $\triangle  {ABC}$ 的内心、外心， ${AI}$ 的延长线与 $\triangle  {ABC}$ 的外接圆的第二个交点为 $S$ ，则点 $D$ ， $E$ 关于 ${AS}$ 对称，点 $P$ ， $Q$ 关于 ${OS}$ 对称，故只需证明 ${SD} = {SP}$ .
+
+设 ${OS} \perp  {PQ}$ 于点 $K$ ，记 $r$ ， $R$ 分别为 $\triangle  {ABC}$ 的内切圆、外接圆的半径， $h$ 为点 $A$ 到 ${BC}$ 的距离.
+
+由 $\angle {BAC} = {90}^{ \circ  }$ ，得 ${SI} = {SB} = \sqrt{2}R$ ， $\angle {DIS} = \; {180}^{ \circ  } - \angle {AID} = {135}^{ \circ  }$ . 于是由余弦定理得 $S{D}^2 =$
+
+$$
+S{I}^{2} + I{D}^{2} - {2SI} \cdot  {ID}\cos \angle {SID} = 2{R}^{2} + {r}^{2} + {2Rr}\text{ . 而 }S{P}^{2} = S{K}^{2} + O{P}^{2} - O{K}^{2} =
+$$
+
+${\left( R + \frac{h}{2}\right) }^2 + {R}^2 - {\left( \frac{h}{2}\right) }^2 = 2{R}^2 + {Rh}$ . 故只需证明
+
+$$
+{r}^2 + {2Rr} = {Rh}.
+$$
+
+①
+
+事实上, $\triangle {ABC}$ 的周长为
+
+$$
+{2P} = \left( {{AD} + {AE}}\right)  + \left( {{BD} + {CE}}\right)  + {BC}
+$$
+
+$$
+= {2r} + {2BC} = {2r} + {4R}.
+$$
+
+故 ${r}^2 + {2Rr} = \left( {r + {2R}}\right) r = {Pr} = {S}_{\triangle {ABC}} = \frac{1}{2}{BC} \cdot  h = {Rh}$ ,即①成立.
+
+因此, 原问题得证.
+
+注: 先定出圆心, 再通过基本量的表示证明线段相等.
+:::
+
+## 解题思路与分析
+
+::: {.callout-note title="思路还原与分析" collapse="false"}
+这份解答之所以让人觉得“像变魔术一样费解”，是因为数学书为了追求排版简练，采用了**“倒果为因”的写法**——它一上来就把点 $S$ 抛给你，却隐藏了在草稿纸上寻找点 $S$ 的分析过程。
+
+如果我们把作者在草稿纸上的**逆向思维（执果索因）**还原出来，你会发现这个证明不仅不诡异，反而每一步都是最自然的顺水推舟。以下是完整的思考破局过程：
+
+---
+
+### 第一步：如果 $D, E, P, Q$ 四点共圆，圆心必须在那？
+
+证明四点共圆，除了导角、相交弦定理之外，最本质的方法就是回归圆的定义：**找到一个点，使它到这四个点的距离相等**（即题末“注”里说的“先定出圆心”）。
+
+假设 $D, E, P, Q$ 真的共圆，设圆心为 $S'$，那么 $S'$ 必须同时满足两个条件：
+1. **在弦 $DE$ 的垂直平分线上**：因为 $AD, AE$ 是内切圆的切线，所以 $AD = AE$，$\triangle ADE$ 是等腰三角形。根据三线合一，**$DE$ 的垂直平分线就是 $\angle BAC$ 的平分线 $AI$**！
+2. **在弦 $PQ$ 的垂直平分线上**：注意 $P, Q$ 同时也是 $\triangle ABC$ 外接圆 $\odot O$ 上的点，即 $PQ$ 是 $\odot O$ 的一条弦。根据垂径定理，$PQ$ 的垂直平分线一定过外心 $O$。又因为 $PQ$ 是中位线（$PQ \parallel BC$），过点 $O$ 且垂直于 $PQ$ 的直线，其实就是**过外心 $O$ 且垂直于 $BC$ 的直线（即 $BC$ 的垂直平分线）**！
+
+**【第一个顿悟时刻】**
+既然圆心必须同时在这两条垂直平分线上，那圆心就只能是**“$\angle A$ 的平分线”与“$BC$ 的垂直平分线”的交点**！
+在初中和高中几何里，有一个极其经典的基础模型：
+> **三角形一内角的平分线，与对边的垂直平分线，必相交于外接圆上该对边所对弧的中点。**
+
+也就是说，这两条线的交点根本不是什么陌生的点，它恰好落在 $\triangle ABC$ 的外接圆上，正是弧 $BC$ 的中点 $S$！
+
+这就是为什么证明的第一句话会突兀地写出“设 $AI$ 的延长线与外接圆交于点 $S$”。**作者并不是灵光一闪猜到了点 $S$，而是通过两条垂直平分线“算”出了圆心只可能是点 $S$。**
+
+---
+
+### 第二步：目标转化——把“几何共圆”变成“代数计算”
+
+一旦锁定了唯一的候选圆心 $S$：
+* 因为 $S$ 在 $DE$ 的中垂线上，所以天然有 $SD = SE$；
+* 因为 $S$ 在 $PQ$ 的中垂线上，所以天然有 $SP = SQ$。
+
+要证四点到 $S$ 的距离都相等，只需要打通最后一层窗户纸：**证明 $SD = SP$**（或者更方便计算的 $SD^2 = SP^2$）。此时，一个看似无从下手的纯几何证明，瞬间降维成了一道**“分别求两条线段长度”的计算题**。
+
+---
+
+### 第三步：为什么求 $SD$ 和 $SP$ 会想到那两个公式？
+
+接下来需要在直角三角形 $\triangle ABC$ 中，选定一组基本量（这里选了外接圆半径 $R$、内切圆半径 $r$、斜边上的高 $h$）把 $SD^2$ 和 $SP^2$ 表示出来：
+
+**1. 怎么算 $SD^2$？（利用“鸡爪定理”）**
+点 $D$ 是内切圆切点，它和内心 $I$ 绑定（$ID = r$）；而点 $S$ 是外接圆弧 $BC$ 的中点，它和内心 $I$ 之间有一个几何竞赛中人尽皆知的**内心-外心引理（俗称“鸡爪定理”）**：
+$$SI = SB = SC$$
+* 因为 $\angle A = 90^\circ$，$BC$ 是外接圆直径，而 $S$ 是半圆弧 $BC$ 的中点，所以 $\triangle SBC$ 是等腰直角三角形，直接得出 $SI = SB = \sqrt{2}R$。
+* 在 $\triangle SID$ 中，我们已知两条边：$SI = \sqrt{2}R$，$ID = r$。它们的夹角是多少呢？在 $\text{Rt}\triangle AID$ 中，$\angle IAD = 45^\circ$，所以 $\angle AID = 45^\circ$，从而邻补角 $\angle SID = 135^\circ$。
+* **已知两边及夹角（$\sqrt{2}R$、$r$、$135^\circ$）求第三边 $SD$**，使用余弦定理完全是肌肉反应：
+$$SD^2 = (\sqrt{2}R)^2 + r^2 - 2(\sqrt{2}R)r\cos 135^\circ = 2R^2 + r^2 + 2Rr$$
+
+**2. 怎么算 $SP^2$？（利用垂径定理与勾股定理）**
+点 $P$ 在外接圆上，且在距离 $BC$ 为 $\frac{h}{2}$ 的中位线上。
+* 过 $S$ 作 $PQ$ 的垂线，垂足为 $K$（这条线其实就是刚才说的直径所在的直线 $OS$）。
+* 在 $\text{Rt}\triangle SKP$ 中，$SP^2 = SK^2 + PK^2$。
+* $SK$ 的长度很好看：它是半径 $OS$（长为 $R$）加上中位线到 $BC$ 的距离 $OK$（长为 $\frac{h}{2}$），即 $SK = R + \frac{h}{2}$。
+* $PK^2$ 则是标准的垂径定理勾股计算：在 $\text{Rt}\triangle OKP$ 中，$PK^2 = OP^2 - OK^2 = R^2 - \left(\frac{h}{2}\right)^2$。
+* 两式相加，$\left(\frac{h}{2}\right)^2$ 刚好抵消，极其干净地得到：
+$$SP^2 = 2R^2 + Rh$$
+
+---
+
+### 第四步：最后一步的面积桥是怎么搭起来的？
+
+算到这里，对比 $SD^2$ 和 $SP^2$，消去相同的 $2R^2$，问题就变成了：在直角三角形中，为什么会有下面这个等式？
+$$r^2 + 2Rr = Rh$$
+
+对于熟悉三角形基本量关系的解题者来说，看到这个式子会立刻触发两个直觉：
+1. **看右边 $Rh$**：在直角三角形中，斜边 $BC = 2R$。看到 $R \cdot h$，其实就是 $\frac{1}{2} \cdot (2R) \cdot h = \frac{1}{2} BC \cdot h$，**这不就是 $\triangle ABC$ 的面积 $S_{\triangle ABC}$ 吗！**
+2. **看左边 $r(r + 2R)$**：既然右边是面积，左边又带着内切圆半径 $r$，马上联想到三角形的另一个面积公式 $S_{\triangle ABC} = pr$（其中 $p$ 为半周长）。
+3. 那么 $r + 2R$ 是不是半周长 $p$ 呢？在直角三角形中，有一个经典结论：**内切圆半径 $r = \frac{a+b-c}{2}$**（或者直接用切线长拼凑：周长 $2p = AD+AE+BD+CE+BC = 2r + 2BC = 2r + 4R$）。两边除以 $2$，立刻得到半周长 $p = r + 2R$！
+
+至此，$r(r + 2R) = pr = S_{\triangle ABC} = Rh$ 完美闭合。写解答的人再把上述这四个步骤**完全倒过来抄一遍**，就成了你在书上看到的那段让人摸不着头脑的“天书”证明。
+
+在这个还原的过程中，哪一步的转换最让你有“原来如此”的感觉？如果你想了解这道题不通过代数计算、而是用纯几何（比如相交弦定理或导角）的证法，我也可以为你推演。
+:::
+
+## 分步证明
+
+::: {.callout-tip title="分步推理与几何步骤" collapse="false"}
+### 步骤 0：已知条件与几何构型
+
+在 $\text{Rt}\triangle ABC$ 中，$\angle A = 90^\circ$。
+• $O$ 为斜边 $BC$ 的中点，外接圆为 $\odot O$（直径 $BC = 2R$）；
+• $I$ 为内心，内切圆 $\odot I$ 与直角边 $AB, AC$ 分别切于点 $D, E$；
+• 中位线所在直线 $PQ \parallel BC$，与外接圆 $\odot O$ 交于点 $P, Q$。
+求证：$D, E, P, Q$ 四点共圆。
+
+### 步骤 1：构造对称轴，转化目标为 SD = SP
+
+延长角平分线 $AI$ 交外接圆于点 $S$：
+1. $\angle BAC = 90^\circ$ 且 $AD=AE=r$，故切点 $D, E$ 关于直线 $AS$ 对称 $\implies \mathbf{SD = SE}$；
+2. $\angle BAS = 45^\circ$ 所对弧相等，故 $S$ 为劣弧 $BC$ 中点，径线 $OS \perp BC$；
+3. 中位线 $PQ \parallel BC \implies OS \perp PQ$，垂径定理得 $OS$ 垂直平分弦 $PQ$，故 $P, Q$ 关于 $OS$ 对称 $\implies \mathbf{SP = SQ}$；
+核心转化：若证明 SD = SP，则 $SD = SE = SP = SQ$，即四点全在以 $S$ 为圆心的圆上！
+
+### 步骤 2：聚焦 △SID，余弦定理算 SD²
+
+在 $\triangle SID$ 中计算线段 $SD$ 的长度：
+1. 在等腰直角 $\triangle OBC$ 中，$SB = \sqrt{2}R$。由鸡爪定理（内心-外心三叉戟定理），内心满足：
+$$SI = SB = \sqrt{2}R$$
+2. 四边形 $ADIE$ 为正方形，$ID = r$，$\angle AID = 45^\circ$。因 $A, I, S$ 共线：
+$$\angle DIS = 180^\circ - 45^\circ = 135^\circ$$
+3. 在 $\triangle SID$ 中由余弦定理：
+
+$$SD^2 = SI^2 + ID^2 - 2 SI \cdot ID \cos 135^\circ$$
+$$= (\sqrt{2}R)^2 + r^2 - 2(\sqrt{2}R)r\left(-\frac{\sqrt{2}}{2}\right) = \mathbf{2R^2 + r^2 + 2Rr}$$
+
+### 步骤 3：设 OS ⊥ PQ 于 K，勾股定理算 SP²
+
+设 $OS$ 与中位线 $PQ$ 相交于垂足 $K$：
+1. 设点 $A$ 到斜边 $BC$ 的高为 $h$。由于 $PQ$ 是中位线，$PQ$ 到 $BC$ 的距离为 $\frac{h}{2}$，且 $S$ 在 $BC$ 异侧：
+$$SK = SO + OK = R + \frac{h}{2}$$
+2. 在 $\text{Rt}\triangle OKP$ 中，半弦长平方为：
+$$KP^2 = OP^2 - OK^2 = R^2 - \left(\frac{h}{2}\right)^2$$
+3. 在 $\text{Rt}\triangle SKP$ 中应用勾股定理：
+
+$$SP^2 = SK^2 + KP^2 = \left(R + \frac{h}{2}\right)^2 + \left[R^2 - \left(\frac{h}{2}\right)^2\right] = \mathbf{2R^2 + Rh}$$
+
+### 步骤 4：代数闭环：证明 r² + 2Rr = Rh
+
+对比两式结果：$SD^2 = 2R^2 + (r^2 + 2Rr)$，$SP^2 = 2R^2 + Rh$。
+欲证 $SD = SP$，只需证明代数恒等式：$\mathbf{r^2 + 2Rr = Rh}$。
+严密证明：
+直角三角形周长为：
+$$2p = (AD+AE) + (BD+CE) + BC = 2r + 2BC = 2r + 4R$$
+得半周长 $p = r + 2R$。因此：
+
+$$r^2 + 2Rr = (r + 2R)r = pr = S_{\triangle ABC}$$
+又 $S_{\triangle ABC} = \frac{1}{2} BC \cdot h = \frac{1}{2}(2R)h = Rh$
+
+从而 $pr = Rh$ 严格成立！代数恒等式获证，故 $\mathbf{SD^2 = SP^2 \implies SD = SP}$。
+
+### 步骤 5：得出结论：D, E, P, Q 四点共圆
+
+终局总结：
+由前面各步推导：
+
+$$SD = SP \quad \text{且} \quad SD = SE, \; SP = SQ$$
+$$\implies \mathbf{SD = SE = SP = SQ}$$
+
+这表明：点 $D, E, P, Q$ 到点 $S$ 的距离全部相等！
+因此，以点 $S$ 为圆心、$SD$ 为半径的圆恰好同时经过 $D, E, P, Q$ 四点。
+原命题得证：$D, E, P, Q$ 四点共圆！
+:::
+
+## 动态演示
+
+::: {.demo-link-container}
+[在新窗口打开交互式分步演示](../demos/09.html){.demo-link target="_blank" rel="noopener"}
+:::
+
+<div class="demo-frame">
+  <iframe src="../demos/09.html" title="例 9：共轴圆与四点共圆判定 分步演示" loading="lazy"></iframe>
+</div>

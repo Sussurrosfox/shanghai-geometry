@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凸六边形全等与正三角形 — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 560px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; }
+  .panel {
+    flex: 1 1 380px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 520px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .formula-box {
+    background: #f8fafc; border-left: 3px solid #2563eb;
+    padding: 6px 10px; margin: 6px 0; border-radius: 0 6px 6px 0;
+    font-size: 13px; color: #1e293b;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\(', right: '\)', display: false},
+            {left: '\[', right: '\]', display: true}
+          ],
+          macros: {
+            '\parallel': '\mathbin{/\\!/}',
+            '\bigtriangleup': '\triangle',
+            '\triangle': '\triangle',
+            '\odot': '\odot',
+            '\ang': '\angle',
+            '\angmsd': '\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>凸六边形全等与正三角形性质证明</h1>
+    <p>已知：$AB = CD = EF$，$BC = DE = FA$，$\angle FAB + \angle ABC = \angle FAB + \angle EFA = 240^\circ$ ｜ 求证：$\angle FAB + \angle CDE = 240^\circ$</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 660 620" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算与坐标定义 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 精确几何顶点坐标（经 Wolfram 数值求解验证，具备严格 3-重旋转对称与凸多边形性质） */
+const A = { x: 330.00, y: 135.00 };
+const B = { x: 530.57, y: 237.19 };
+const C = { x: 481.55, y: 397.50 };
+const D = { x: 292.77, y: 520.10 };
+const E = { x: 178.45, y: 397.50 };
+const F = { x: 166.66, y: 172.71 };
+
+/* ============ SVG 工具函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 5', fill:'none'}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=18, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", serif', 'font-style': 'italic',
+    'font-weight': bold ? '700' : '400'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 刻度线：支持单杠、双杠、三杠 */
+function tickMarks(p, q, color, count=1, parent){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const spacing = 5;
+  const offsets = count === 1 ? [0] : (count === 2 ? [-spacing/2, spacing/2] : [-spacing, 0, spacing]);
+  offsets.forEach(offset => {
+    const c = add(m, mul(d, offset));
+    line(add(c, mul(n, 6)), add(c, mul(n, -6)), {stroke: color, 'stroke-width': 2.2, 'stroke-linecap': 'round'}, parent);
+  });
+}
+
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke: color, 'stroke-width': w + 6, 'stroke-linecap': 'round', opacity: .22}, parent);
+  line(p, q, {stroke: color, 'stroke-width': w, 'stroke-linecap': 'round'}, parent);
+}
+
+/* 角弧线绘制：通过叉积确保只画小于 180° 的内角弧 */
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const d1 = norm(sub(p1, v)), d2 = norm(sub(p2, v));
+  const s = add(v, mul(d1, r)), e = add(v, mul(d2, r));
+  const cross = d1.x * d2.y - d1.y * d2.x;
+  const sweep = cross > 0 ? 1 : 0;
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: attrs.stroke || '#dc2626', 'stroke-width': attrs['stroke-width'] || 2, ...attrs
+  }, parent);
+}
+
+/* 角弧旁的文本标注（沿角平分线向外延伸） */
+function angleText(v, p1, p2, r, text, color='#dc2626', parent, size=13, bold=true){
+  const d1 = norm(sub(p1, v)), d2 = norm(sub(p2, v));
+  let bis = norm(add(d1, d2));
+  // 检查角平分线与叉积方向一致性，确保落在小角内部
+  const dotProd = d1.x*d2.x + d1.y*d2.y;
+  if (dotProd < -0.999) { bis = perp(d1); }
+  const pos = add(v, mul(bis, r));
+  const t = el('text', {
+    x: pos.x, y: pos.y, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"PingFang SC", "Microsoft YaHei", sans-serif',
+    'font-weight': bold ? '700' : '500'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* ============ 分层绘制架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：原始六边形与基础要素
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层（每步切换自动重画）
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与文本标签（永不被遮挡）
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 绘制六边形浅灰底色
+  polygon([A, B, C, D, E, F], {fill: 'rgba(248, 250, 252, 0.65)', stroke: 'none'}, gBase);
+  // 绘制六边形主体轮廓边框
+  const pts = [A, B, C, D, E, F];
+  for(let i = 0; i < pts.length; i++){
+    const p1 = pts[i], p2 = pts[(i+1)%pts.length];
+    line(p1, p2, {stroke: '#475569', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}, gBase);
+  }
+}
+
+function drawPoints(){
+  gPts.innerHTML = '';
+  const pts = [
+    { p: A, name: 'A', dx: 0, dy: -20 },
+    { p: B, name: 'B', dx: 22, dy: -2 },
+    { p: C, name: 'C', dx: 20, dy: 16 },
+    { p: D, name: 'D', dx: 0, dy: 24 },
+    { p: E, name: 'E', dx: -20, dy: 16 },
+    { p: F, name: 'F', dx: -22, dy: -2 }
+  ];
+  pts.forEach(item => {
+    dot(item.p, '#0f172a', 4.5, gPts);
+    label(item.p, item.name, item.dx, item.dy, '#0f172a', gPts, 18, true);
+  });
+}
+
+/* ============ 颜色规范 ============ */
+const BLUE   = '#2563eb', // 第一组等边 AB = CD = EF
+      ORANGE = '#ea580c', // 第二组等边 BC = DE = FA
+      PURPLE = '#7c3aed', // 正三角形对角线 AC, CE, EA 及关键角
+      GREEN  = '#059669', // 全等三角形 EFA
+      RED    = '#dc2626'; // 关键对应角与 60° 标记
+
+/* ============ 分步动态渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 步骤切换时清空动态层
+  
+  switch(s){
+    case 0: // 已知条件
+      // AB = CD = EF 双刻度（蓝色）
+      tickMarks(A, B, BLUE, 2, gStep);
+      tickMarks(C, D, BLUE, 2, gStep);
+      tickMarks(E, F, BLUE, 2, gStep);
+      // BC = DE = FA 单刻度（橙色）
+      tickMarks(B, C, ORANGE, 1, gStep);
+      tickMarks(D, E, ORANGE, 1, gStep);
+      tickMarks(F, A, ORANGE, 1, gStep);
+      // 标记已知角 ∠FAB, ∠ABC, ∠EFA
+      angleArc(A, F, B, 30, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+      angleArc(B, A, C, 26, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      angleArc(F, E, A, 26, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      break;
+
+    case 1: // ① 连接对角线并导出 ∠ABC = ∠EFA
+      // 连接对角线 AC, CE, EA (虚线)
+      segDashed(A, C, PURPLE, 2, gStep);
+      segDashed(C, E, PURPLE, 2, gStep);
+      segDashed(E, A, PURPLE, 2, gStep);
+      // 高亮顶角 ∠ABC 与 ∠EFA
+      angleArc(B, A, C, 28, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+      angleArc(F, E, A, 28, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+      angleText(B, A, C, 44, '∠ABC', PURPLE, gStep, 13);
+      angleText(F, E, A, 44, '∠EFA', PURPLE, gStep, 13);
+      // 保留两组等边刻度线
+      tickMarks(A, B, BLUE, 2, gStep);
+      tickMarks(E, F, BLUE, 2, gStep);
+      tickMarks(B, C, ORANGE, 1, gStep);
+      tickMarks(F, A, ORANGE, 1, gStep);
+      break;
+
+    case 2: // ② 证明 △ABC ≌ △EFA
+      // 虚线对角线 CE
+      segDashed(C, E, '#94a3b8', 1.8, gStep);
+      // △ABC 浅蓝半透明填充
+      polygon([A, B, C], {fill: 'rgba(37, 99, 235, 0.16)', stroke: BLUE, 'stroke-width': 2.5}, gStep);
+      // △EFA 浅绿半透明填充
+      polygon([E, F, A], {fill: 'rgba(5, 150, 105, 0.16)', stroke: GREEN, 'stroke-width': 2.5}, gStep);
+      // 刻度线表示边相等
+      tickMarks(A, B, BLUE, 2, gStep);
+      tickMarks(E, F, BLUE, 2, gStep);
+      tickMarks(B, C, ORANGE, 1, gStep);
+      tickMarks(F, A, ORANGE, 1, gStep);
+      // 夹角相等
+      angleArc(B, A, C, 26, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      angleArc(F, E, A, 26, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      // 全等得出对应边 AC = AE 高亮
+      highlightSeg(A, C, RED, gStep, 3.5);
+      highlightSeg(A, E, RED, gStep, 3.5);
+      // 对应角 ∠BAC = ∠FEA
+      angleArc(A, B, C, 42, {stroke: RED, 'stroke-width': 2}, gStep);
+      angleArc(E, F, A, 42, {stroke: RED, 'stroke-width': 2}, gStep);
+      angleText(A, B, C, 58, 'α', RED, gStep, 13);
+      angleText(E, F, A, 58, 'α', RED, gStep, 13);
+      break;
+
+    case 3: // ③ 角度代换求得 ∠EAC = 60°
+      // 保留 AC, AE
+      line(A, C, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      line(A, E, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      segDashed(C, E, '#94a3b8', 1.8, gStep);
+      // 在 A 处展示角拆分
+      angleArc(A, F, B, 48, {stroke: '#94a3b8', 'stroke-width': 2}, gStep); // 大角 FAB
+      angleArc(A, F, E, 32, {stroke: GREEN, 'stroke-width': 2}, gStep);     // ∠FAE
+      angleArc(A, B, C, 32, {stroke: BLUE, 'stroke-width': 2}, gStep);      // ∠BAC = ∠FEA
+      // 顶角 ∠EAC = 60° 醒目标注
+      angleArc(A, E, C, 40, {stroke: RED, 'stroke-width': 2.8}, gStep);
+      angleText(A, E, C, 58, '60°', RED, gStep, 15, true);
+      // △EFA 内部展示 ∠FEA
+      angleArc(E, F, A, 36, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      angleText(E, F, A, 50, 'α', BLUE, gStep, 13);
+      angleText(A, B, C, 46, 'α', BLUE, gStep, 13);
+      break;
+
+    case 4: // ④ 判定 △ACE 是正三角形
+      // △ACE 浅紫半透明填充与三边高亮
+      polygon([A, C, E], {fill: 'rgba(124, 58, 237, 0.14)', stroke: PURPLE, 'stroke-width': 2.8}, gStep);
+      // 三边均打上三道等长刻度线
+      tickMarks(A, C, PURPLE, 3, gStep);
+      tickMarks(C, E, PURPLE, 3, gStep);
+      tickMarks(E, A, PURPLE, 3, gStep);
+      // 三个内角标注 60°
+      angleArc(A, E, C, 34, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleText(A, E, C, 50, '60°', RED, gStep, 13);
+      angleArc(C, A, E, 34, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleText(C, A, E, 50, '60°', RED, gStep, 13);
+      angleArc(E, C, A, 34, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleText(E, C, A, 50, '60°', RED, gStep, 13);
+      break;
+
+    case 5: // ⑤ 证明 △ABC ≌ △CDE 并得出结论
+      // 正三角形作为背景虚线
+      polygon([A, C, E], {fill: 'none', stroke: '#cbd5e1', 'stroke-width': 1.5, 'stroke-dasharray': '5 4'}, gStep);
+      // △ABC 浅蓝填充
+      polygon([A, B, C], {fill: 'rgba(37, 99, 235, 0.16)', stroke: BLUE, 'stroke-width': 2.5}, gStep);
+      // △CDE 浅橙填充
+      polygon([C, D, E], {fill: 'rgba(234, 88, 12, 0.16)', stroke: ORANGE, 'stroke-width': 2.5}, gStep);
+      // 对应边 SSS 刻度
+      tickMarks(A, B, BLUE, 2, gStep);
+      tickMarks(C, D, BLUE, 2, gStep);
+      tickMarks(B, C, ORANGE, 1, gStep);
+      tickMarks(D, E, ORANGE, 1, gStep);
+      tickMarks(A, C, PURPLE, 3, gStep);
+      tickMarks(C, E, PURPLE, 3, gStep);
+      // 对应角 ∠ABC = ∠CDE 高亮
+      angleArc(B, A, C, 26, {stroke: BLUE, 'stroke-width': 2.6}, gStep);
+      angleArc(D, C, E, 26, {stroke: ORANGE, 'stroke-width': 2.6}, gStep);
+      angleText(B, A, C, 44, '∠ABC', BLUE, gStep, 13);
+      angleText(D, C, E, 44, '∠CDE', ORANGE, gStep, 13);
+      // 结论顶角 ∠FAB
+      angleArc(A, F, B, 32, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      break;
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与凸六边形',
+    body: `在凸六边形 $ABCDEF$ 中，已知两组对应边相等：<br>
+           • <span style="color:${BLUE};font-weight:600;">AB = CD = EF</span>（图中双杠标记）<br>
+           • <span style="color:${ORANGE};font-weight:600;">BC = DE = FA</span>（图中单杠标记）<br>
+           角满足和关系：
+           <div class="formula-box">
+             ∠FAB + ∠ABC = ∠FAB + ∠EFA = 240°
+           </div>
+           求证：<b>∠FAB + ∠CDE = 240°</b>。`
+  },
+  {
+    title: '① 连接对角线并导出 ∠ABC = ∠EFA',
+    body: `连接三条对角线 $AC, CE, EA$（紫色虚线）。<br>
+           由题目已知条件：
+           <div class="formula-box">
+             ∠FAB + ∠ABC = 240°<br>
+             ∠FAB + ∠EFA = 240°
+           </div>
+           两式同时减去公共角 $\\angle FAB$，立即可得：
+           <div class="formula-box">
+             <b>∠ABC = ∠EFA</b>
+           </div>
+           由此将两处顶角建立等量联系。`
+  },
+  {
+    title: '② 证明 △ABC ≌ △EFA',
+    body: `在 $\\triangle ABC$ 与 $\\triangle EFA$ 中：<br>
+           • $AB = EF$（已知对应边相等）<br>
+           • $\\angle ABC = \\angle EFA$（Step 1 已证）<br>
+           • $BC = FA$（已知对应边相等）<br>
+           由<b>边角边（SAS）全等判定</b>：
+           <div class="formula-box">
+             <b>△ABC ≌ △EFA</b>
+           </div>
+           由此得出对应边与对应角相等：
+           <div class="formula-box">
+             <b>AC = AE</b>，且 <b>∠BAC = ∠FEA</b>（记为 α）
+           </div>`
+  },
+  {
+    title: '③ 角度代换求得 ∠EAC = 60°',
+    body: `观察顶点 $A$ 处的内角拆分：
+           <div class="formula-box">
+             ∠EAC = ∠FAB - ∠FAE - ∠BAC
+           </div>
+           代入 Step 2 全等所得对应角 $\\angle BAC = \\angle FEA$：
+           <div class="formula-box">
+             ∠EAC = ∠FAB - (∠FAE + ∠FEA)
+           </div>
+           在 $\\triangle EFA$ 中，两内角和 $\\angle FAE + \\angle FEA = 180^\\circ - \\angle EFA$，代入得：
+           <div class="formula-box">
+             ∠EAC = ∠FAB - (180° - ∠EFA)<br>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= (∠FAB + ∠EFA) - 180°<br>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 240° - 180° = <b>60°</b>
+           </div>`
+  },
+  {
+    title: '④ 判定 △ACE 是正三角形',
+    body: `综合前面的几何结论：<br>
+           • 由 Step 2 知：<b>AC = AE</b>（等腰）<br>
+           • 由 Step 3 算得顶角：<b>∠EAC = 60°</b><br>
+           有一个角是 60° 的等腰三角形必为正三角形：
+           <div class="formula-box">
+             <b>△ACE 是正三角形（等边三角形）</b>
+           </div>
+           因此三边对角线完全等长：
+           <div class="formula-box">
+             <b>AC = CE = EA</b>
+           </div>`
+  },
+  {
+    title: '⑤ △ABC ≌ △CDE 推出最终结论',
+    body: `比较 $\\triangle ABC$ 与 $\\triangle CDE$ 的三条边长：<br>
+           • $AB = CD$（已知条件）<br>
+           • $BC = DE$（已知条件）<br>
+           • $AC = CE$（Step 4 已证正三角形边长）<br>
+           由<b>边边边（SSS）全等判定</b>：
+           <div class="formula-box">
+             <b>△ABC ≌ △CDE</b>
+           </div>
+           从而对应角相等：<b>∠ABC = ∠CDE</b>。<br>
+           代入已知等式：
+           <div class="formula-box">
+             <b>∠FAB + ∠CDE = ∠FAB + ∠ABC = 240°</b>
+           </div>
+           原命题获证！`
+  }
+];
+
+/* ============ 交互控制逻辑 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (typeof window.renderMath === 'function') window.renderMath(listEl);
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  drawPoints(); // 保证点与文字始终处于最上层
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化
+drawBase();
+drawPoints();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

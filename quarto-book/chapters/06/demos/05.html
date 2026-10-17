@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极点极线与密克点判定共圆 — 题目 06/5（例 4）交互分步几何演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1260px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header .tag {
+    display: inline-block; background: #dbeafe; color: #1e40af; font-size: 12px;
+    font-weight: 700; padding: 3px 12px; border-radius: 999px; margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  header h1 { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 13.5px; color: #475569; margin-top: 8px; line-height: 1.6; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 600px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 74vh; display: block; }
+  .panel {
+    flex: 1 1 420px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 22px; display: flex; flex-direction: column; min-height: 580px;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s ease;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item .title { font-weight: 700; font-size: 14.5px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #cbd5e1; color: #334155; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 10px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,.12); }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #1e3a8a; }
+  .formula-box {
+    background: #ffffff; border-left: 3px solid #2563eb; padding: 6px 12px;
+    margin: 8px 0; border-radius: 4px; font-size: 13px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 12px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 5px; font-size:11px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .legend {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    font-size: 12px; color: #475569; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+
+</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="tag">高精度交互几何 · 射影调和与密克点定理</div>
+    <h1>题目 06/5（例 4）：极点极线与密克点判定共圆</h1>
+    <p><b>已知</b>：圆 <span class="math">O</span> 为 <span class="math">△ABC</span> 的外接圆，点 <span class="math">K</span> 在边 <span class="math">BC</span> 上且不为中点，<span class="math">D</span> 为 <span class="math">AK</span> 延长线上一点，<span class="math">AB</span> 与 <span class="math">CD</span> 的延长线交于点 <span class="math">E</span>，<span class="math">AC</span> 与 <span class="math">BD</span> 的延长线交于点 <span class="math">F</span>，且 <span class="math">OK ⊥ EF</span>。<br>
+       <b>求证</b>：点 <span class="math">D</span> 在圆 <span class="math">O</span> 上。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span>直线 EF 与对角交点</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#dc2626;"></span>垂直线 OK ⊥ EF 及垂足 H</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#059669;"></span>共圆 ⊙(OBHC)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#7c3aed;"></span>共圆 ⊙(AEHC) / 调和列</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#ea580c;"></span>密克圆 ⊙(CDHF)</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">支持键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何与向量计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function circle3Pts(p1, p2, p3){
+  const d12 = sub(p2, p1), m12 = mid(p1, p2), n12 = {x:-d12.y, y:d12.x};
+  const d23 = sub(p3, p2), m23 = mid(p2, p3), n23 = {x:-d23.y, y:d23.x};
+  const det = n12.x*(-n23.y) - (-n23.x)*n12.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((m23.x - m12.x)*(-n23.y) - (-n23.x)*(m23.y - m12.y)) / det;
+  const center = add(m12, mul(n12, t));
+  return { center, radius: dist(center, p1) };
+}
+
+/* ============ 绝对精确几何坐标系统 ============ */
+const O = { x: 400.00, y: 230.00 };
+const R = 140.00;
+
+// 三角形 ABC 与点 D 在外接圆 O 上的精确解析坐标
+const A = { x: 301.01, y: 131.01 };
+const B = { x: 319.70, y: 344.68 };
+const C = { x: 521.24, y: 300.00 };
+const D = { x: 412.20, y: 369.47 };
+
+// 完全四边形交点
+const E = lineIntersect(A, sub(B, A), C, sub(D, C)); // AB 与 CD 延长线交点: (326.64, 423.98)
+const F = lineIntersect(A, sub(C, A), B, sub(D, B)); // AC 与 BD 延长线交点: (718.86, 451.64)
+const K = lineIntersect(A, sub(D, A), B, sub(C, B)); // AD 与 BC 交点: (393.06, 328.42)
+const G = lineIntersect(B, sub(C, B), E, sub(F, E)); // BC 与 EF 延长线交点: (50.00, 404.47)
+const H = lineIntersect(O, sub(K, O), E, sub(F, E)); // OK 与 EF 垂足: (386.03, 428.17)
+
+// 辅助共圆精确圆心与半径
+const cOBHC = circle3Pts(O, B, C); // { center: (422.43, 331.16), radius: 103.61 }
+const cABHF = circle3Pts(A, B, F); // { center: (568.28, 215.28), radius: 280.25 }
+const cAEHC = circle3Pts(A, E, C); // { center: (367.14, 272.83), radius: 156.48 }
+const cCDHF = circle3Pts(C, D, F); // { center: (550.58, 466.36), radius: 168.93 }
+const cBDHE = circle3Pts(B, D, E); // { center: (359.50, 381.15), radius: 53.98 }
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIX Two Math, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    'stroke': '#ffffff', 'stroke-width': '3.5', 'stroke-linejoin': 'round',
+    'paint-order': 'stroke fill'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,5.5)), add(c, mul(n,-5.5)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+6, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=20, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 三层 SVG 架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage); // 底层：静态基础图元
+const gStep = el('g', {id: 'gStep'}, stage); // 中层：动态交互图元（每步重绘）
+const gPts  = el('g', {id: 'gPts'}, stage);  // 顶层：点与白底防遮挡标签
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 1. 外接圆 O (半透明底色 + 浅蓝灰色边界)
+  circle(O, R, {stroke: '#94a3b8', 'stroke-width': 1.8, fill: '#f8fafc', 'fill-opacity': 0.4}, gBase);
+
+  // 2. 三角形 ABC
+  polygon([A, B, C], {fill: 'rgba(241, 245, 249, 0.45)', stroke: '#334155', 'stroke-width': 2}, gBase);
+
+  // 3. 射线 AD (过 K 到 D)
+  line(A, D, {stroke: '#334155', 'stroke-width': 1.8}, gBase);
+
+  // 4. 延长线及完全四边形各线段
+  // 延长线 BE (虚线) 与 CD 延长至 E (虚线)
+  segDashed(B, E, '#64748b', 1.5, gBase);
+  segDashed(C, E, '#64748b', 1.5, gBase);
+
+  // 延长线 CF (虚线) 与 BD 延长至 F (虚线)
+  segDashed(C, F, '#64748b', 1.5, gBase);
+  segDashed(D, F, '#64748b', 1.5, gBase);
+  line(B, D, {stroke: '#334155', 'stroke-width': 1.6}, gBase);
+
+  // 直线 EF 及向 G 的延长线
+  line(G, F, {stroke: BLUE, 'stroke-width': 2, opacity: 0.85}, gBase);
+
+  // 直线 CB 向 G 的延长线
+  segDashed(B, G, '#64748b', 1.5, gBase);
+
+  // 垂线段 OK 及其延长至 H
+  line(O, H, {stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 3'}, gBase);
+}
+
+function drawPoints(){
+  gPts.innerHTML = '';
+
+  // 绘制各个点
+  dot(O, '#475569', 4, gPts);
+  dot(A, '#0f172a', 4.5, gPts);
+  dot(B, '#0f172a', 4.5, gPts);
+  dot(C, '#0f172a', 4.5, gPts);
+  dot(D, RED, 4.5, gPts);
+  dot(K, PURPLE, 4, gPts);
+  dot(E, BLUE, 4.5, gPts);
+  dot(F, BLUE, 4.5, gPts);
+  dot(G, PURPLE, 4.5, gPts);
+  dot(H, RED, 4.5, gPts);
+
+  // 绘制防遮挡标签 (微调偏移量避免压盖引线与顶点)
+  label(O, 'O', 16, -12, '#475569', gPts);
+  label(A, 'A', -12, -14, '#0f172a', gPts);
+  label(B, 'B', -18, -4, '#0f172a', gPts);
+  label(C, 'C', 18, -6, '#0f172a', gPts);
+  label(D, 'D', 16, 14, RED, gPts);
+  label(K, 'K', -16, -12, PURPLE, gPts);
+  label(E, 'E', -16, 14, BLUE, gPts);
+  label(F, 'F', 16, 14, BLUE, gPts);
+  label(G, 'G', -18, -6, PURPLE, gPts);
+  label(H, 'H', 2, 18, RED, gPts);
+}
+
+/* ============ 各步骤动态图元渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 切换时彻底清空步骤层，实现辅助线随用随画随擦
+
+  switch(s){
+    case 0: // 步骤 0：已知条件与几何图景
+      // 高亮 OK ⊥ EF 条件与垂足 H
+      highlightSeg(O, H, RED, gStep, 3);
+      highlightSeg(E, F, BLUE, gStep, 3);
+      rightAngleMark(H, K, F, 12, RED, gStep);
+      break;
+
+    case 1: // 步骤 1：调和点列与角平分线
+      // 高亮完全四边形对角线 BC 上的调和点列 G, B, K, C
+      highlightSeg(G, C, PURPLE, gStep, 3.5);
+      dot(G, PURPLE, 6, gStep);
+      dot(B, PURPLE, 6, gStep);
+      dot(K, PURPLE, 6, gStep);
+      dot(C, PURPLE, 6, gStep);
+
+      // 连接 HB 与 HC
+      line(H, B, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(H, C, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(H, G, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      line(H, K, {stroke: RED, 'stroke-width': 2.2}, gStep);
+
+      // 直角标记 ∠GHK = 90°
+      rightAngleMark(H, G, K, 12, RED, gStep);
+
+      // 角平分线标记：∠BHO = ∠CHO
+      angleArc(H, B, K, 24, {stroke: RED, 'stroke-width': 2}, gStep);
+      angleArc(H, K, C, 28, {stroke: RED, 'stroke-width': 2}, gStep);
+      break;
+
+    case 2: // 步骤 2：外心等距与 O, B, H, C 四点共圆
+      // 绘制辅助圆 ⊙(OBHC)
+      circle(cOBHC.center, cOBHC.radius, {
+        stroke: GREEN, 'stroke-width': 2.2, 'stroke-dasharray': '6 4',
+        fill: 'rgba(5, 150, 105, 0.07)'
+      }, gStep);
+
+      // 高亮外心半径 OB 与 OC
+      highlightSeg(O, B, GREEN, gStep, 3);
+      highlightSeg(O, C, GREEN, gStep, 3);
+      tickMark(O, B, GREEN, gStep);
+      tickMark(O, C, GREEN, gStep);
+
+      // 保留角平分线 HB, HC, HO 骨架
+      line(H, B, {stroke: '#059669', 'stroke-width': 1.8, 'stroke-dasharray': '4 3'}, gStep);
+      line(H, C, {stroke: '#059669', 'stroke-width': 1.8, 'stroke-dasharray': '4 3'}, gStep);
+      line(H, O, {stroke: RED, 'stroke-width': 2}, gStep);
+
+      // 高亮共圆的四点
+      [O, B, H, C].forEach(p => dot(p, GREEN, 6, gStep));
+      break;
+
+    case 3: // 步骤 3：圆周角转移与 A, B, H, F 共圆
+      // 淡化保留 ⊙(OBHC)
+      circle(cOBHC.center, cOBHC.radius, {stroke: '#86efac', 'stroke-width': 1.4, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 绘制新确立的外接圆 ⊙(ABHF) 与 ⊙(AEHC)
+      circle(cABHF.center, cABHF.radius, {
+        stroke: BLUE, 'stroke-width': 2.2, 'stroke-dasharray': '7 5',
+        fill: 'rgba(37, 99, 235, 0.05)'
+      }, gStep);
+      circle(cAEHC.center, cAEHC.radius, {
+        stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '6 4',
+        fill: 'rgba(124, 58, 237, 0.04)'
+      }, gStep);
+
+      // 直角 ∠EHO = 90° 标记
+      rightAngleMark(H, E, O, 12, RED, gStep);
+
+      // 连线 HB, OC, HF
+      line(H, B, {stroke: '#334155', 'stroke-width': 1.8}, gStep);
+      line(O, C, {stroke: '#334155', 'stroke-width': 1.8}, gStep);
+      line(H, F, {stroke: BLUE, 'stroke-width': 2}, gStep);
+
+      // 高亮关键相等角：∠EHB = ∠BAC
+      angleArc(H, E, B, 24, {stroke: RED, 'stroke-width': 2.4}, gStep);
+      angleArc(A, B, C, 26, {stroke: RED, 'stroke-width': 2.4}, gStep);
+
+      // 高亮共圆的四点 A, B, H, F
+      [A, B, H, F].forEach(p => dot(p, BLUE, 6, gStep));
+      break;
+
+    case 4: // 步骤 4：密克点定理与 C, D, H, F & B, D, H, E 共圆
+      // 绘制密克圆 ⊙(CDHF) 与 ⊙(BDHE)
+      circle(cCDHF.center, cCDHF.radius, {
+        stroke: ORANGE, 'stroke-width': 2.2, 'stroke-dasharray': '6 4',
+        fill: 'rgba(234, 88, 12, 0.06)'
+      }, gStep);
+      circle(cBDHE.center, cBDHE.radius, {
+        stroke: CYAN, 'stroke-width': 2.2, 'stroke-dasharray': '6 4',
+        fill: 'rgba(8, 145, 178, 0.06)'
+      }, gStep);
+
+      // 连线 HD (连接密克点 H 与待定点 D)
+      line(H, D, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      line(C, D, {stroke: ORANGE, 'stroke-width': 2}, gStep);
+      line(B, D, {stroke: CYAN, 'stroke-width': 2}, gStep);
+
+      // 密克点 H 显著高亮 (四圆共点枢纽)
+      circle(H, 9, {stroke: RED, 'stroke-width': 2, fill: 'none'}, gStep);
+      dot(H, RED, 6, gStep);
+      dot(D, RED, 6, gStep);
+
+      // 展示关键等角：∠ABD = ∠EHD = ∠DCF
+      angleArc(B, A, D, 22, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      angleArc(H, E, D, 22, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(C, D, F, 22, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      break;
+
+    case 5: // 步骤 5：最终判定，D 在圆 O 上
+      // 高亮原外接圆 ⊙O
+      circle(O, R, {stroke: '#1d4ed8', 'stroke-width': 3.2, fill: 'rgba(37, 99, 235, 0.08)'}, gStep);
+
+      // 高亮内接四边形 ABDC
+      polygon([A, B, D, C], {stroke: '#2563eb', 'stroke-width': 2.4, fill: 'none'}, gStep);
+
+      // 高亮由圆周角确立的相等角：∠ABD 与 ∠DCF (外角等于内对角 ⇒ 对角互补)
+      angleArc(B, A, D, 22, {stroke: RED, 'stroke-width': 2.5}, gStep);
+      angleArc(C, D, F, 22, {stroke: RED, 'stroke-width': 2.5}, gStep);
+
+      // 终点 D 闪耀高亮
+      circle(D, 11, {stroke: RED, 'stroke-width': 2.5, fill: 'none'}, gStep);
+      dot(D, RED, 6.5, gStep);
+      [A, B, C].forEach(p => dot(p, '#1d4ed8', 5, gStep));
+      break;
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+/* ============ 步骤文本配置 ============ */
+const steps = [
+  {
+    title: '已知条件与几何图景',
+    body: `设圆 <span class="math">O</span> 为 <span class="math">△ABC</span> 的外接圆，<span class="math">K</span> 为边 <span class="math">BC</span> 上非中点的一点，<span class="math">D</span> 为射线 <span class="math">AK</span> 上一点。<br>
+           直线 <span class="math">AB</span> 与 <span class="math">CD</span> 延长线交于 <span class="math">E</span>，<span class="math">AC</span> 与 <span class="math">BD</span> 延长线交于 <span class="math">F</span>。<br>
+           过 <span class="math">OK</span> 作垂线交 <span class="math">EF</span> 于点 <span class="math">H</span>，<span class="math">CB</span> 与 <span class="math">FE</span> 延长线交于点 <span class="math">G</span>。<br>
+           已知条件为 <span class="math" style="color:${RED};font-weight:bold;">OK ⊥ EF</span>（即 <span class="math">∠GHK = 90°</span>），求证：点 <span class="math">D</span> 落在圆 <span class="math">O</span> 上。`
+  },
+  {
+    title: '完全四边形调和分割 ⇒ HK 平分 ∠BHC',
+    body: `考察完全四边形 <span class="math">ABEDCF</span>，其三条对角线分别为 <span class="math">BC, AD, EF</span>。<br>
+           对角线 <span class="math">BC</span> 分别与另两条对角线 <span class="math">AD, EF</span> 交于点 <span class="math">K</span> 和点 <span class="math">G</span>。<br>
+           根据完全四边形的调和分割性质：
+           <div class="formula-box">对角线 <span class="math">BC</span> 被调和分割，即 <span class="math">(G, K; B, C) = -1</span>，<span class="math">G, B, K, C</span> 构成<b>调和点列</b>。</div>
+           又已知 <span class="math">OK ⊥ EF</span>，即点 <span class="math">H</span> 对调和轭点张直角 <span class="math">∠GHK = 90°</span>。<br>
+           由阿波罗尼斯圆及调和线丛性质：两射线必分别为夹角及其外角的平分线！<br>
+           故 <span class="math" style="color:${RED};font-weight:bold;">HK 平分 ∠BHC</span>（即 <span class="math">∠BHO = ∠CHO</span>）。`
+  },
+  {
+    title: '外心等距性质 ⇒ O, B, H, C 四点共圆',
+    body: `因为点 <span class="math">O</span> 是 <span class="math">△ABC</span> 的外接圆圆心，所以有：
+           <div class="formula-box"><span class="math">OB = OC</span>，即点 <span class="math">O</span> 落在底边 <span class="math">BC</span> 的垂直平分线上。</div>
+           另一方面，由步骤 1 知，射线 <span class="math">HO</span> 是 <span class="math">△BHC</span> 的顶角平分线。<br>
+           在 <span class="math">△BHC</span> 中，底边 <span class="math">BC</span> 的垂直平分线与顶角平分线 <span class="math">HO</span> 的交点，必定是 <span class="math">△BHC</span> 外接圆上弧 <span class="math">BC</span> 的中点。<br>
+           而点 <span class="math">O</span> 满足 <span class="math">OB = OC</span> 且在 <span class="math">HO</span> 上，故点 <span class="math">O</span> 恰为此交点！<br>
+           因此，<span class="math" style="color:${GREEN};font-weight:bold;">O, B, H, C 四点共圆</span>！`
+  },
+  {
+    title: '圆周角转移 ⇒ A, B, H, F 与 A, E, H, C 共圆',
+    body: `由 <span class="math">O, B, H, C</span> 四点共圆，同弧圆周角相等可得 <span class="math">∠BHO = ∠BCO</span>。<br>
+           结合 <span class="math">OK ⊥ EF</span>（<span class="math">∠EHO = 90°</span>），推导外角：
+           <div class="formula-box">
+             <span class="math">∠EHB = 90° - ∠BHO = 90° - ∠BCO</span><br>
+             在外接圆中，<span class="math">∠BCO = 90° - ∠BAC</span>，代入即得：<br>
+             <span class="math">∠EHB = 90° - (90° - ∠BAC) = ∠BAC = ∠EAF</span>
+           </div>
+           四边形 <span class="math">ABHF</span> 外角等于内对角，故 <span class="math" style="color:${BLUE};font-weight:bold;">A, B, H, F 四点共圆</span>！<br>
+           同理完全对称可得：<span class="math" style="color:${PURPLE};font-weight:bold;">A, E, H, C 四点共圆</span>。`
+  },
+  {
+    title: '密克点定理 ⇒ C, D, H, F 与 B, D, H, E 共圆',
+    body: `考察完全四边形构型的四条边组成的四个三角形：<span class="math">△AEF, △ABC, △CDE, △BDF</span>。<br>
+           根据著名的<b>密克定理（Miquel's Theorem）</b>：完全四边形四个三角形的外接圆必共于一点，此点称为<b>密克点</b>。<br>
+           前步已证明点 <span class="math">H</span> 位于 <span class="math">△AEF</span> 外接圆及 <span class="math">△ABC</span> 相关圆的交汇处，因此：
+           <div class="formula-box"><span class="math">H</span> 恰为完全四边形的<b>密克点</b>！</div>
+           由密克点性质，其余两圆亦必过点 <span class="math">H</span>：<br>
+           即 <span class="math" style="color:${ORANGE};font-weight:bold;">C, D, H, F</span> 与 <span class="math" style="color:${CYAN};font-weight:bold;">B, D, H, E</span> 分别四点共圆！`
+  },
+  {
+    title: '同弧圆周角与外角相等 ⇒ D 在圆 O 上，命题得证',
+    body: `利用前面确立的密克共圆，进行角度归一：
+           <div class="formula-box">
+             在圆 <span class="math">⊙(BDHE)</span> 中，同弧 <span class="math">DE</span> 所对圆周角：<span class="math">∠ABD = ∠EHD</span><br>
+             在圆 <span class="math">⊙(CDHF)</span> 中，同弧 <span class="math">DF</span> 所对圆周角：<span class="math">∠EHD = ∠DCF</span><br>
+             因此：<span class="math" style="color:${RED};font-weight:bold;">∠ABD = ∠EHD = ∠DCF</span>
+           </div>
+           因为点 <span class="math">F</span> 在 <span class="math">AC</span> 的延长线上，四边形 <span class="math">ABDC</span> 的外角 <span class="math">∠DCF</span> 等于内对角 <span class="math">∠ABD</span>（即对角互补 <span class="math">∠ABD + ∠ACD = 180°</span>），判定 <span class="math">A, B, C, D</span> 四点共圆！<br>
+           由于过不共线三点 <span class="math">A, B, C</span> 的圆唯一（即外接圆 <span class="math">O</span>），故点 <span class="math" style="color:${RED};font-weight:bold;">D 必落在圆 O 上</span>。<br>
+           <b>证毕！</b>`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化静态图层与点
+drawBase();
+drawPoints();
+
+// 支持 URL 参数直达某步，默认第 0 步
+const urlStep = parseInt(new URLSearchParams(location.search).get('step'));
+goTo(!isNaN(urlStep) ? urlStep : 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

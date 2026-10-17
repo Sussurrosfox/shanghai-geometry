@@ -1,0 +1,71 @@
+---
+title: '练习 16：三角形垂足连线与角平分线充要条件'
+chapter: 5
+problem: 16
+source-chapter: '05'
+source-file: '05/16.md'
+id: 'ch05-p16'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+设 $D$ 是锐角 $\triangle {ABC}$ 的边 ${BC}$ 上一点,从点 $D$ 分别作 ${AC},{AB}$ 的垂线,垂足分别为 $E, F$ ,直线 ${BE}$ 和 ${CF}$ 交于点 $P$ . 证明: ${AP} \perp  {BC}$ 的充要条件是 ${AD}$ 平分 $\angle {BAC}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,设 $Q$ 是点 $A$ 在 ${BC}$ 上的投影,则由题设条件得 $\triangle {ABQ} \backsim  \triangle {DBF}$ ,于是 $\frac{BF}{DF} = \; \frac{BQ}{AQ}$ . 同理可得 $\frac{CE}{DE} = \frac{CQ}{AQ}$ ,于是 $\frac{CE}{BF} = \frac{DE}{DF} \cdot  \frac{CQ}{BQ}$ ,故
+
+$$
+\frac{BQ}{QC} \cdot  \frac{CE}{AE} \cdot  \frac{AF}{FB} = \frac{BQ}{CQ} \cdot  \frac{AF}{AE} \cdot  \frac{CE}{FB}
+$$
+
+$$
+= \frac{BQ}{CQ} \cdot  \frac{AF}{AE} \cdot  \frac{DE}{DF} \cdot  \frac{CQ}{BQ}
+$$
+
+$$
+= \frac{AF}{AE} \cdot  \frac{DE}{DF} = \frac{AF}{DF} \cdot  \frac{DE}{AE}.
+$$
+
+由塞瓦定理
+
+${AQ},{BE},{CF}$ 三线共点 $\Leftrightarrow  \frac{BQ}{QC} \cdot  \frac{CE}{AE} \cdot  \frac{AF}{FB} = 1$
+
+$$
+\Leftrightarrow  \frac{AF}{DF} \cdot  \frac{DE}{AE} = 1
+$$
+
+$$
+\Leftrightarrow  \frac{AF}{DF} = \frac{AE}{DE}
+$$
+
+$$
+\Leftrightarrow  \triangle {ADF} \backsim  \triangle {ADE}
+$$
+
+$$
+\Leftrightarrow  \angle {FAD} = \angle {EAD}
+$$
+
+$$
+\Leftrightarrow  {AD}\text{ 平分 }\angle {BAC}\text{ . }
+$$
+
+但 ${AP} \perp  {BC} \Leftrightarrow  A, P, Q$ 三点共线 $\Leftrightarrow  {AQ},{BE},{CF}$ 三线共点.
+
+故 ${AP} \perp  {BC} \Leftrightarrow  {AD}$ 平分 $\angle {BAC}$ . 原问题得证.
+
+![](../images/160_244_227_430_383_0.jpg)
+:::
+
+

@@ -1,0 +1,158 @@
+book:
+  author: 上海中学竞赛课程
+  chapters:
+  - index.qmd
+  - chapters:
+    - chapters/01/index.qmd
+    - chapters/01/problems/02.qmd
+    - chapters/01/problems/03.qmd
+    - chapters/01/problems/04.qmd
+    - chapters/01/problems/05.qmd
+    - chapters/01/problems/06.qmd
+    - chapters/01/problems/07.qmd
+    - chapters/01/problems/08.qmd
+    - chapters/01/problems/09.qmd
+    part: 第 1 讲 全等三角形
+  - chapters:
+    - chapters/02/index.qmd
+    - chapters/02/problems/02.qmd
+    - chapters/02/problems/03.qmd
+    - chapters/02/problems/04.qmd
+    - chapters/02/problems/05.qmd
+    - chapters/02/problems/06.qmd
+    - chapters/02/problems/07.qmd
+    - chapters/02/problems/08.qmd
+    part: 第 2 讲 相似三角形
+  - chapters:
+    - chapters/03/index.qmd
+    - chapters/03/problems/02.qmd
+    - chapters/03/problems/03.qmd
+    - chapters/03/problems/04.qmd
+    - chapters/03/problems/05.qmd
+    - chapters/03/problems/06.qmd
+    - chapters/03/problems/07.qmd
+    - chapters/03/problems/08.qmd
+    - chapters/03/problems/09.qmd
+    part: 第 3 讲 点共线与线共点
+  - chapters:
+    - chapters/04/index.qmd
+    - chapters/04/problems/02.qmd
+    - chapters/04/problems/03.qmd
+    - chapters/04/problems/04.qmd
+    - chapters/04/problems/05.qmd
+    - chapters/04/problems/06.qmd
+    - chapters/04/problems/07.qmd
+    - chapters/04/problems/08.qmd
+    - chapters/04/problems/09.qmd
+    part: 第 4 讲 平移、对称和旋转变换
+  - chapters:
+    - chapters/05/index.qmd
+    - chapters/05/problems/01.qmd
+    - chapters/05/problems/02.qmd
+    - chapters/05/problems/03.qmd
+    - chapters/05/problems/04.qmd
+    - chapters/05/problems/05.qmd
+    - chapters/05/problems/06.qmd
+    - chapters/05/problems/07.qmd
+    - chapters/05/problems/08.qmd
+    - chapters/05/problems/09.qmd
+    - chapters/05/problems/10.qmd
+    - chapters/05/problems/11.qmd
+    - chapters/05/problems/12.qmd
+    - chapters/05/problems/13.qmd
+    - chapters/05/problems/14.qmd
+    - chapters/05/problems/15.qmd
+    - chapters/05/problems/16.qmd
+    - chapters/05/problems/17.qmd
+    - chapters/05/problems/18.qmd
+    - chapters/05/problems/19.qmd
+    - chapters/05/problems/20.qmd
+    - chapters/05/problems/21.qmd
+    - chapters/05/problems/22.qmd
+    - chapters/05/problems/23.qmd
+    - chapters/05/problems/24.qmd
+    - chapters/05/problems/25.qmd
+    - chapters/05/problems/26.qmd
+    - chapters/05/problems/27.qmd
+    - chapters/05/problems/28.qmd
+    - chapters/05/problems/29.qmd
+    - chapters/05/problems/30.qmd
+    - chapters/05/problems/31.qmd
+    - chapters/05/problems/32.qmd
+    - chapters/05/problems/33.qmd
+    - chapters/05/problems/34.qmd
+    - chapters/05/problems/35.qmd
+    - chapters/05/problems/36.qmd
+    - chapters/05/problems/37.qmd
+    - chapters/05/problems/38.qmd
+    - chapters/05/problems/39.qmd
+    part: 练习一（综合习题）
+  - chapters:
+    - chapters/06/index.qmd
+    - chapters/06/problems/02.qmd
+    - chapters/06/problems/03.qmd
+    - chapters/06/problems/04.qmd
+    - chapters/06/problems/05.qmd
+    - chapters/06/problems/06.qmd
+    - chapters/06/problems/07.qmd
+    - chapters/06/problems/08.qmd
+    - chapters/06/problems/09.qmd
+    - chapters/06/problems/10.qmd
+    part: 第 5 讲 圆的基本性质
+  - chapters:
+    - chapters/07/index.qmd
+    - chapters/07/problems/02.qmd
+    - chapters/07/problems/03.qmd
+    - chapters/07/problems/04.qmd
+    - chapters/07/problems/05.qmd
+    - chapters/07/problems/06.qmd
+    - chapters/07/problems/07.qmd
+    - chapters/07/problems/08.qmd
+    - chapters/07/problems/09.qmd
+    - chapters/07/problems/10.qmd
+    part: 第 6 讲 圆幂与根轴
+  - chapters:
+    - chapters/08/index.qmd
+    - chapters/08/problems/02.qmd
+    - chapters/08/problems/03.qmd
+    - chapters/08/problems/04.qmd
+    - chapters/08/problems/05.qmd
+    - chapters/08/problems/06.qmd
+    - chapters/08/problems/07.qmd
+    - chapters/08/problems/08.qmd
+    part: 第 7 讲 反演与位似
+  language: zh
+  search: true
+  site-url: https://sussurrosfox.github.io/shanghai-geometry/
+  title: 上海中学竞赛课程：平面几何
+execute:
+  echo: false
+  freeze: true
+format:
+  html:
+    html-math-method: katex
+    include-in-header: assets/katex-macros.html
+    smooth-scroll: true
+    theme:
+    - cosmo
+    - assets/book.scss
+    toc: true
+    toc-depth: 3
+  pdf:
+    classoption:
+    - UTF8
+    - oneside
+    documentclass: ctexbook
+    geometry:
+    - a4paper
+    - margin=20mm
+    include-in-header: assets/macros.tex
+    pdf-engine: xelatex
+    toc: true
+lang: zh
+project:
+  output-dir: _site
+  resources:
+  - chapters/**/images/**
+  - chapters/**/demos/**
+  type: book

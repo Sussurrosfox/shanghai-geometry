@@ -1,0 +1,67 @@
+---
+title: '练习 35：外接圆中点与内切圆切点垂直证明'
+chapter: 5
+problem: 35
+source-chapter: '05'
+source-file: '05/35.md'
+id: 'ch05-p35'
+tags:
+- 练习一（综合习题）
+- 中点
+- 四点共圆
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">中点</span> <span class="problem-meta-badge badge-tag">四点共圆</span>
+:::
+
+## 题目
+
+设 $\triangle {ABC}$ 为锐角三角形满足 ${AB} < {AC}, M$ 为 ${BC}$ 的中点,点 $D$ 和 $E$ 分别为 $\triangle {ABC}$ 的外接圆弧 $\overset{\text{ ⏜ }}{BAC}$ 和弧 $\overset{\text{ ⏜ }}{BC}$ 的中点, $F$ 为 $\triangle {ABC}$ 的内切圆在 ${AB}$ 上的切点, $G$ 为 ${AE}$ 与 ${BC}$ 的交点, $N$ 在线段 ${EF}$ 上,满足 ${NB} \perp  {AB}$ . 证明: 若 ${BN} = \; {EM}$ ,则 ${DF} \perp  {FG}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,由 ${DE}$ 为 $\triangle {ABC}$ 的外接圆的直径,知 ${DE} \perp  {BC},{AE} \perp  {AD}$ . 设 $I$ 为 $\triangle {ABC}$ 的内心,则 $I$ 在 ${AE}$ 上,且 ${IF} \perp  {AB}$ .
+
+由 ${NB} \perp  {AB}$ 可知
+
+$$
+\angle {NBE} = \angle {ABE} - \angle {ABN}
+$$
+
+$$
+= {180}^{ \circ  } - \angle {ADE} - {90}^{ \circ  }
+$$
+
+$$
+= {90}^{ \circ  } - \angle {ADE} = \angle {MEI}\text{ . }
+$$
+
+①
+
+又
+
+$$
+\angle {EBI} = \angle {EBC} + \angle {CBI}
+$$
+
+$$
+= \angle {EAC} + \angle {ABI}
+$$
+
+$$
+= \angle {EAB} + \angle {ABI} = \angle {EIB},
+$$
+
+从而 ${BE} = {EI}$ .
+
+结合 ${BN} = {EM}$ 及①，知 $\triangle  {NBE} \cong   \triangle  {MEI}$ . 于是 $\angle {EMI} = \angle {BNE} = {90}^{ \circ  } + \; \angle {BFE} = {180}^{ \circ  } - \angle {EFI}$ ，故 $E$ ， $F$ ， $I$ ， $M$ 四点共圆，进而 $\angle {AFM} = {90}^{ \circ  } + \angle {IFM} = \; {90}^{ \circ  } + \angle {IEM} = \angle {AGM}$ ，从而， $A$ ， $F$ ， $G$ ， $M$ 四点共圆. 再由 $\angle {DAG} = \angle {DMG} = \; {90}^{ \circ  }$ ，知 $A$ ， $G$ ， $M$ ， $D$ 四点共圆，所以 $A$ ， $F$ ， $G$ ， $M$ ， $D$ 五点共圆，从而 $\angle {DFG} = \; \angle {DAG} = {90}^{ \circ  }$ ，即 ${DF}\perp {FG}$ . 原问题得证.
+
+![](../images/169_896_218_418_438_0.jpg)
+:::
+
+

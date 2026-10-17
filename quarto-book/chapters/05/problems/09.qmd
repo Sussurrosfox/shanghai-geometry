@@ -1,0 +1,32 @@
+---
+title: '练习 9：三个正三角形与正三角形构造'
+chapter: 5
+problem: 9
+source-chapter: '05'
+source-file: '05/9.md'
+id: 'ch05-p09'
+tags:
+- 练习一（综合习题）
+- 四点共圆
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">四点共圆</span>
+:::
+
+## 题目
+
+在平面上画三个正三角形 $\triangle {ABC},\triangle {CDE},\triangle {EKH}$ ,且 $A, D, K$ 三点共线, ${AD} = {DK}$ . 证明: $\triangle {HBD}$ 为正三角形.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，以 $C$ 为中心逆时针旋转 ${60}^{ \circ  }$ ，则 $\triangle  {ACD}$ 变到 $\triangle  {BCE}$ 的位置， ${AD}$ 变到 ${BE}$ ，故 ${BE} = {AD} = {DK}$ . 设 ${BE}$ 与 ${AD}$ 交于 $M$ ，则 $\angle {EMD} = {60}^{ \circ  }$ ，而 $\angle {EHK} = {60}^{ \circ  }$ ，故 $E, H$ ， $M$ ， $K$ 四点共圆，所以 $\angle {MEH} = \angle {MKH}$ . 又 ${EB} = {KD}$ ， ${EH} = {KH}$ ，故 $\triangle  {BEH} \cong \; \triangle {DKH}$ ，即 ${BH} = {DH}$ ， $\angle {BHE} = \angle {DHK}$ ，所以 $\angle {BHD} = \angle {EHD} + \angle {DHK} = \; {60}^{ \circ  }$ ，因此， $\triangle  {BHD}$ 为正三角形. 原问题得证.
+
+![](../images/156_823_1424_485_354_0.jpg)
+:::
+
+

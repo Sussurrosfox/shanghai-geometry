@@ -1,0 +1,528 @@
+
+/* ============ 精确几何解算 (由 Mathematica / 解析几何联合求得) ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 精确几何点坐标 (SVG 坐标系) */
+const A  = { x: 244.00, y: 104.05 };
+const B  = { x: 116.00, y: 430.45 };
+const C  = { x: 564.00, y: 430.45 };
+const O  = { x: 340.00, y: 330.00 };
+const I  = { x: 286.75, y: 314.00 };
+const Ip = { x: 393.25, y: 346.00 }; // I 关于 O 的对称点: 2*O - I
+const D  = { x: 329.25, y: 430.45 }; // 边 BC 上的点
+const E  = { x: 482.90, y: 347.73 }; // 边 CA 上的点
+const F  = { x: 205.03, y: 203.44 }; // 边 AB 上的点
+
+const Dp = { x: 393.25, y: 430.45 }; // I' 在 BC 的垂足
+const Ep = { x: 438.09, y: 302.03 }; // I' 在 CA 的垂足
+const Fp = { x: 181.66, y: 263.02 }; // I' 在 AB 的垂足
+
+const Ap = { x: 297.25, y: 365.54 }; // I' 在 IA 的垂足 (I'A' ⊥ IA)
+const Bp = { x: 344.55, y: 274.59 }; // I' 在 IB 的垂足 (I'B' ⊥ IB)
+const P  = { x: 355.04, y: 383.53 }; // ⊙(BFD) 与 ⊙(CDE) 的第二交点 (Miquel 点)
+
+/* 辅助圆参数 */
+const circ_O   = { c: { x: 340.00, y: 330.00 }, r: 245.49 }; // 外接圆 ⊙(ABC)
+const circ_BFD = { c: { x: 222.62, y: 341.30 }, r: 138.98 }; // ⊙(BFD)
+const circ_CDE = { c: { x: 446.62, y: 464.41 }, r: 122.19 }; // ⊙(CDE)
+const circ_AEF = { c: { x: 376.32, y: 213.28 }, r: 171.57 }; // ⊙(AEF)
+const circ_IIp = { c: { x: 340.00, y: 330.00 }, r: 55.60 };  // 以 II' 为直径的圆 (圆心 O, 半径 OI = 55.60)
+const circ_AIp = { c: { x: 318.62, y: 225.03 }, r: 142.14 }; // 以 AI' 为直径的圆
+const circ_BIp = { c: { x: 254.62, y: 388.23 }, r: 144.91 }; // 以 BI' 为直径的圆
+
+/* ============ SVG 基础绘图函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs = {}, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color='#64748b', w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#0f172a', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+/* 白底防遮挡高精度标签 */
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=15.5, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIXGeneral, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '500',
+    'style': 'paint-order: stroke fill; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round;'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 直角标记：顶点 v，两边分别指向 p1 和 p2 */
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s));
+  const b = add(add(v, mul(u1,s)), mul(u2,s));
+  const c = add(v, mul(u2,s));
+  return el('polyline', {
+    points: `${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill: 'none', stroke: color, 'stroke-width': 1.6
+  }, parent);
+}
+
+/* 等长双横杠刻度线 */
+function tickMark(p, q, color='#ea580c', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const gap = 2.5;
+  const c1 = add(m, mul(d, offset - gap));
+  const c2 = add(m, mul(d, offset + gap));
+  line(add(c1, mul(n,5)), add(c1, mul(n,-5)), {stroke:color, 'stroke-width':2.0}, parent);
+  line(add(c2, mul(n,5)), add(c2, mul(n,-5)), {stroke:color, 'stroke-width':2.0}, parent);
+}
+
+/* 高亮线段 (底层柔光+顶层实线) */
+function highlightSeg(p, q, color='#2563eb', parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 角弧标记：顶点 v，指向 p1 与 p2 */
+function angleArc(v, p1, p2, r=18, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#ea580c', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id:'gBase'}, stage); // 底层静态基准图元
+const gStep = el('g', {id:'gStep'}, stage); // 中间动态步骤图元
+const gPts  = el('g', {id:'gPts'},  stage); // 顶层点与防遮挡标签
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', PINK = '#e11d48';
+
+/* 绘制全程保留的基础图形 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 外接圆 ⊙(ABC)
+  circle(circ_O.c, circ_O.r, {stroke: '#94a3b8', 'stroke-width': 1.2, 'stroke-dasharray': '5 4'}, gBase);
+  // 三角形 ABC
+  polygon([A, B, C], {fill: 'rgba(248,250,252,0.6)', stroke: '#334155', 'stroke-width': 2.2, 'stroke-linejoin': 'round'}, gBase);
+}
+
+/* 绘制顶层点与标签 (支持按需显隐) */
+function drawPoints(showDp=false, showApBp=false, showP=true, showIp=false){
+  gPts.innerHTML = '';
+  
+  // 基础点 A, B, C
+  dot(A, '#1e293b', 5, gPts);
+  label(A, 'A', -4, -18, '#0f172a', gPts);
+
+  dot(B, '#1e293b', 5, gPts);
+  label(B, 'B', -18, 16, '#0f172a', gPts);
+
+  dot(C, '#1e293b', 5, gPts);
+  label(C, 'C', 18, 16, '#0f172a', gPts);
+
+  // 心点 O, I
+  dot(O, '#2563eb', 4.5, gPts);
+  label(O, 'O', 16, -14, '#2563eb', gPts);
+
+  dot(I, '#059669', 4.5, gPts);
+  label(I, 'I', -16, -13, '#059669', gPts);
+
+  // 分点 D, E, F
+  dot(D, '#d97706', 4.2, gPts);
+  label(D, 'D', -12, 18, '#d97706', gPts);
+
+  dot(E, '#d97706', 4.2, gPts);
+  label(E, 'E', 18, 10, '#d97706', gPts);
+
+  dot(F, '#d97706', 4.2, gPts);
+  label(F, 'F', -18, -10, '#d97706', gPts);
+
+  // 对称点 I'
+  if (showIp) {
+    dot(Ip, '#dc2626', 4.5, gPts);
+    label(Ip, "I'", 18, 14, '#dc2626', gPts);
+  }
+
+  // 垂足 D', E', F'
+  if (showDp) {
+    dot(Dp, '#dc2626', 4.0, gPts);
+    label(Dp, "D'", 14, 18, '#dc2626', gPts);
+
+    dot(Ep, '#dc2626', 4.0, gPts);
+    label(Ep, "E'", -16, -12, '#dc2626', gPts);
+
+    dot(Fp, '#dc2626', 4.0, gPts);
+    label(Fp, "F'", -18, 12, '#dc2626', gPts);
+  }
+
+  // 垂足 A', B'
+  if (showApBp) {
+    dot(Ap, '#7c3aed', 4.2, gPts);
+    label(Ap, "A'", -16, 12, '#7c3aed', gPts);
+
+    dot(Bp, '#059669', 4.2, gPts);
+    label(Bp, "B'", 4, -16, '#059669', gPts);
+  }
+
+  // 关键交点 P
+  if (showP) {
+    dot(P, '#e11d48', 5.5, gPts);
+    label(P, 'P', 16, 14, '#e11d48', gPts, 16.5, true);
+  }
+}
+
+/* ============ 各步骤动态渲染 (严格遵守辅助线随用随现用完即擦除) ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 步骤切换时彻底清空动态层
+  document.getElementById('stepIndicator').textContent = `步骤 ${s} / ${steps.length - 1}`;
+
+  switch(s){
+    case 0: { // ✦ 已知条件与几何构形
+      drawPoints(false, false, true, false);
+      // 绘制两外接圆 ⊙(BFD) 与 ⊙(CDE)
+      circle(circ_BFD.c, circ_BFD.r, {stroke: '#0284c7', 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      circle(circ_CDE.c, circ_CDE.r, {stroke: '#0d9488', 'stroke-width': 1.8, 'stroke-dasharray': '6 4'}, gStep);
+      // 高亮目标线段 OP 与 OI
+      segDashed(O, P, RED, 2.2, gStep);
+      segDashed(O, I, RED, 2.2, gStep);
+      break;
+    }
+
+    case 1: { // ① 构造对称点 I' 与边投影，导出 DD'=EE'=FF'
+      drawPoints(true, false, false, true);
+      // 中心对称连线 I - O - I'
+      highlightSeg(I, Ip, '#64748b', gStep, 1.8);
+      // 垂线段 I'D', I'E', I'F'
+      segDashed(Ip, Dp, RED, 1.8, gStep);
+      segDashed(Ip, Ep, RED, 1.8, gStep);
+      segDashed(Ip, Fp, RED, 1.8, gStep);
+      // 直角标记
+      rightAngleMark(Dp, Ip, C, 11, RED, gStep);
+      rightAngleMark(Ep, Ip, A, 11, RED, gStep);
+      rightAngleMark(Fp, Ip, A, 11, RED, gStep);
+      // 高亮等长线段 DD', EE', FF'
+      highlightSeg(D, Dp, ORANGE, gStep, 3.8);
+      highlightSeg(E, Ep, ORANGE, gStep, 3.8);
+      highlightSeg(F, Fp, ORANGE, gStep, 3.8);
+      tickMark(D, Dp, '#c2410c', gStep);
+      tickMark(E, Ep, '#c2410c', gStep);
+      tickMark(F, Fp, '#c2410c', gStep);
+      break;
+    }
+
+    case 2: { // ② 作 I'A' ⊥ IA，导出全等与四点共圆 A, E, A', F
+      drawPoints(true, false, false, true);
+      // 只保留本步所需的点 A'
+      dot(Ap, '#7c3aed', 4.5, gPts);
+      label(Ap, "A'", -16, 12, '#7c3aed', gPts);
+
+      // 角平分线 IA 与 垂线 I'A'
+      highlightSeg(A, Ap, '#94a3b8', gStep, 1.6);
+      segDashed(I, Ap, '#94a3b8', 1.6, gStep);
+      segDashed(Ip, Ap, PURPLE, 2.0, gStep);
+      rightAngleMark(Ap, Ip, A, 11, PURPLE, gStep);
+
+      // 以 AI' 为直径的辅助圆 ⊙(AF'A'E')
+      circle(circ_AIp.c, circ_AIp.r, {stroke: '#c084fc', 'stroke-width': 1.4, 'stroke-dasharray': '5 4'}, gStep);
+
+      // 弦 A'F' 与 A'E'
+      line(Ap, Fp, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      line(Ap, Ep, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+
+      // 全等直角三角形 △A'F'F 与 △A'E'E
+      polygon([Ap, Fp, F], {fill: 'rgba(6,182,212,0.22)', stroke: CYAN, 'stroke-width': 1.6}, gStep);
+      polygon([Ap, Ep, E], {fill: 'rgba(249,115,22,0.22)', stroke: ORANGE, 'stroke-width': 1.6}, gStep);
+
+      // 等长直角边 FF' 与 EE'
+      highlightSeg(F, Fp, ORANGE, gStep, 3.2);
+      highlightSeg(E, Ep, ORANGE, gStep, 3.2);
+
+      // 导出四点共圆 ⊙(AEA'F)
+      circle(circ_AEF.c, circ_AEF.r, {stroke: PURPLE, 'stroke-width': 2.0, 'stroke-dasharray': '7 5'}, gStep);
+      break;
+    }
+
+    case 3: { // ③ 同理作 I'B' ⊥ IB，导出四点共圆 B, D, B', F
+      drawPoints(true, false, false, true);
+      // 本步重点关注 B'
+      dot(Bp, '#059669', 4.5, gPts);
+      label(Bp, "B'", 4, -16, '#059669', gPts);
+
+      // 角平分线 IB 与 垂线 I'B'
+      highlightSeg(B, Bp, '#94a3b8', gStep, 1.6);
+      segDashed(I, Bp, '#94a3b8', 1.6, gStep);
+      segDashed(Ip, Bp, GREEN, 2.0, gStep);
+      rightAngleMark(Bp, Ip, B, 11, GREEN, gStep);
+
+      // 弦 B'F' 与 B'D'
+      line(Bp, Fp, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      line(Bp, Dp, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+
+      // 全等直角三角形 △B'F'F 与 △B'D'D
+      polygon([Bp, Fp, F], {fill: 'rgba(16,185,129,0.22)', stroke: GREEN, 'stroke-width': 1.6}, gStep);
+      polygon([Bp, Dp, D], {fill: 'rgba(14,165,233,0.22)', stroke: BLUE, 'stroke-width': 1.6}, gStep);
+
+      // 等长直角边 FF' 与 DD'
+      highlightSeg(F, Fp, ORANGE, gStep, 3.2);
+      highlightSeg(D, Dp, ORANGE, gStep, 3.2);
+
+      // 导出四点共圆 ⊙(BDB'F)
+      circle(circ_BFD.c, circ_BFD.r, {stroke: GREEN, 'stroke-width': 2.0, 'stroke-dasharray': '7 5'}, gStep);
+      break;
+    }
+
+    case 4: { // ④ Miquel 点 P 传递导出 A,F,A',P 与 B,F,B',P 共圆
+      drawPoints(false, true, true, false);
+      // 三个 Miquel 圆
+      circle(circ_BFD.c, circ_BFD.r, {stroke: '#0284c7', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      circle(circ_CDE.c, circ_CDE.r, {stroke: '#0d9488', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      circle(circ_AEF.c, circ_AEF.r, {stroke: '#7c3aed', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+
+      // 连结交点 P 到 D, E, F
+      line(P, D, {stroke: PINK, 'stroke-width': 1.8}, gStep);
+      line(P, E, {stroke: PINK, 'stroke-width': 1.8}, gStep);
+      line(P, F, {stroke: PINK, 'stroke-width': 2.0}, gStep);
+
+      // 等角弧 ∠PFA = ∠PDB = ∠PEC
+      angleArc(F, P, A, 18, {stroke: PINK, 'stroke-width': 2.0}, gStep);
+      angleArc(D, P, B, 18, {stroke: PINK, 'stroke-width': 2.0}, gStep);
+      angleArc(E, P, C, 18, {stroke: PINK, 'stroke-width': 2.0}, gStep);
+
+      // 强调 P 与 A', B' 在圆上
+      line(P, Ap, {stroke: PURPLE, 'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      line(P, Bp, {stroke: GREEN,  'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      break;
+    }
+
+    case 5: { // ⑤ 对角互补，导出 P, B', I, A' 四点共圆
+      drawPoints(false, true, true, false);
+      // 强调共线点 A, F, B 上的补角
+      highlightSeg(A, B, '#64748b', gStep, 2.2);
+      line(P, F, {stroke: '#475569', 'stroke-width': 2.0}, gStep);
+
+      // 互补圆周角对
+      // ∠PFB 与 ∠PB'B 相等
+      line(P, Bp, {stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      line(Bp, B, {stroke: CYAN, 'stroke-width': 1.8}, gStep);
+      angleArc(F, P, B, 18, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      angleArc(Bp, P, B, 18, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+
+      // ∠PFA 与 ∠PA'A 相等
+      line(P, Ap, {stroke: ORANGE, 'stroke-width': 2.0}, gStep);
+      line(Ap, A, {stroke: ORANGE, 'stroke-width': 1.8}, gStep);
+      angleArc(F, P, A, 22, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      angleArc(Ap, P, A, 22, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+
+      // 四边形 PA'IB' 的边
+      polygon([P, Bp, I, Ap], {fill: 'rgba(37,99,235,0.14)', stroke: BLUE, 'stroke-width': 2.2, 'stroke-linejoin':'round'}, gStep);
+      break;
+    }
+
+    case 6: { // ⑥ II' 直径圆覆盖点 P，得出最终结论 OP = OI
+      drawPoints(false, true, true, true);
+      // 直径线段 I - O - I'
+      highlightSeg(I, Ip, '#3b82f6', gStep, 2.2);
+
+      // 以 II' 为直径的圆 ⊙(II') (圆心 O, 半径 OI = OP)
+      circle(circ_IIp.c, circ_IIp.r, {
+        stroke: RED, 'stroke-width': 2.5, fill: 'rgba(239,68,68,0.08)'
+      }, gStep);
+
+      // 直角标记 ∠I'A'I = 90° 与 ∠I'B'I = 90°
+      line(Ip, Ap, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      line(I, Ap, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      rightAngleMark(Ap, Ip, I, 11, RED, gStep);
+
+      line(Ip, Bp, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      line(I, Bp, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3'}, gStep);
+      rightAngleMark(Bp, Ip, I, 11, RED, gStep);
+
+      // 最终等长半径线段 OP 与 OI
+      highlightSeg(O, P, RED, gStep, 4.0);
+      highlightSeg(O, I, RED, gStep, 4.0);
+      tickMark(O, P, '#991b1b', gStep);
+      tickMark(O, I, '#991b1b', gStep);
+      break;
+    }
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: `✦ 已知条件与几何构形`,
+    body: `给定 $\\triangle ABC$ 的外心 $O$、内心 $I$ 与外接圆 $\\odot(ABC)$。<br>
+点 $D, E, F$ 分别在边 $BC, CA, AB$ 上，满足：<br>
+<span class="tag tag-orange">条件</span> $BD + BF = CA = b,\\quad CD + CE = AB = c$。<br>
+作 $\\triangle BFD$ 与 $\\triangle CDE$ 的外接圆，两圆交于点 $D$ 与第二交点 <b style="color:${PINK}">P</b>。<br>
+<span class="tag tag-blue">求证</span> <b>$OP = OI$</b>。`
+  },
+  {
+    title: `① 对称点 $I'$ 投影，导出 $DD'=EE'=FF'$`,
+    body: `作内心 $I$ 关于外心 $O$ 的中心对称点 <b style="color:${RED}">I'</b>（$O$ 为 $II'$ 中点）。<br>
+过 $I'$ 分别向三边 $BC, CA, AB$ 作垂线，垂足为 $D', E', F'$。<br>
+因外心 $O$ 到各边的垂足为各边中点，由投影线段关系可证：<br>
+$BD' = s - c,\\quad BF' = s - a \\implies BF' + BD' = CA = b$；<br>
+$CD' = s - b,\\quad CE' = s - a \\implies CD' + CE' = AB = c$。<br>
+与已知条件 $BD+BF=CA, CD+CE=AB$ 相较，立即得出线段等长：<br>
+<b style="color:${ORANGE}">$DD' = EE' = FF'$</b>。`
+  },
+  {
+    title: '② 作 $I'A' \\perp IA$，导出全等与共圆 $A,E,A\',F$',
+    body: `连结角平分线 $IA$，过 $I'$ 作 $I'A' \\bot IA$ 于点 <b style="color:${PURPLE}">A'</b>。<br>
+因 $\\angle I'A'A = \\angle I'F'A = \\angle I'E'A = 90^\\circ$，故 $A, F', A', E'$ 四点共圆（以 $AI'$ 为直径）。<br>
+角平分线 $AA'$ 平分弧 $\\overset{\\frown}{F^{\\prime}E^{\\prime}}$，推得弦长 $A'F' = A'E'$。<br>
+由步骤 1 知 $FF' = EE'$，且夹角均为直角，故直角三角形全等：<br>
+<span class="tag tag-purple">全等</span> $\\bigtriangleup A'F'F \\cong \\bigtriangleup A'E'E$。<br>
+对应角 $\\angle A'FF' = \\angle A'EE'$，即四边形对角互补，导出：<br>
+<b style="color:${PURPLE}">$A, E, A', F$ 四点共圆</b>。`
+  },
+  {
+    title: '③ 作 $I'B' \\perp IB$，同理导出共圆 $B,D,B\',F$',
+    body: `连结角平分线 $IB$，过 $I'$ 作 $I'B' \\bot IB$ 于点 <b style="color:${GREEN}">B'</b>。<br>
+同理，$\\angle I'B'B = \\angle I'F'B = \\angle I'D'B = 90^\\circ$，点 $B, F', B', D'$ 四点共圆（以 $BI'$ 为直径）。<br>
+由角平分线平分弦弧得 $B'F' = B'D'$。<br>
+结合直角边 $FF' = DD'$，再次得到直角三角形全等：<br>
+<span class="tag tag-green">全等</span> $\\bigtriangleup B'F'F \\cong \\bigtriangleup B'D'D$。<br>
+从而对应角 $\\angle B'FF' = \\angle B'DD'$，立即导出：<br>
+<b style="color:${GREEN}">$B, D, B', F$ 四点共圆</b>。`
+  },
+  {
+    title: `④ Miquel 点传递，导出 $A,F,A',P$ 与 $B,F,B',P$ 共圆`,
+    body: `根据著名的 <b>Miquel 定理</b>，$\\triangle BFD$、$\\triangle CDE$ 的外接圆交点 <b style="color:${PINK}">P</b> 亦必落在 $\\triangle AEF$ 的外接圆 $\\odot(AEF)$ 上。<br>
+且由圆周角性质，点 $P$ 满足经典等角关系：<br>
+$\\angle PFA = \\angle PDB = \\angle PEC$。<br>
+由步骤 2 知 $A, E, A', F$ 四点共圆，故该圆正是 $\\odot(AEF)$，因此：<br>
+<b style="color:${PURPLE}">$A, F, A', P$ 四点共圆</b>；<br>
+同理，由步骤 3 知 $B, D, B', F$ 共圆与 $\\odot(BFD)$ 重合，因此：<br>
+<b style="color:${GREEN}">$B, F, B', P$ 四点共圆</b>。`
+  },
+  {
+    title: `⑤ 顶角对角互补，导出 $P, B', I, A'$ 四点共圆`,
+    body: `考查四边形 $PA'IB'$ 在顶点 $B'$ 与 $A'$ 处的角：<br>
+在圆 $\\odot(BFB'P)$ 中同弧圆周角：$\\angle PB'B = \\angle PFB$；<br>
+在圆 $\\odot(AFA'P)$ 中同弧圆周角：$\\angle PA'A = \\angle PFA$。<br>
+由于点 $A, F, B$ 在三角形边 $AB$ 上共线，两角互为邻补角：<br>
+$\\angle PFB + \\angle PFA = 180^\\circ$。<br>
+因 $A'$ 在直线 $IA$ 上、$B'$ 在直线 $IB$ 上，故：<br>
+$\\angle PB'I + \\angle PA'I = \\angle PB'B + \\angle PA'A = 180^\\circ$。<br>
+四边形对角互补，立即证明：<b style="color:${BLUE}">$P, B', I, A'$ 四点共圆</b>！`
+  },
+  {
+    title: `⑥ $II'$ 直径圆覆盖点 $P$，得出最终结论 $OP = OI$`,
+    body: `回顾点 $A'$ 与 $B'$ 的垂线定义：<br>
+$I'A' \\bot IA \\implies \\angle I'A'I = 90^\\circ$；<br>
+$I'B' \\bot IB \\implies \\angle I'B'I = 90^\\circ$。<br>
+这表明：点 $A'$ 和 $B'$ 均在以线段 $II'$ 为直径的圆上！<br>
+由步骤 5 知点 $P, B', I, A'$ 四点共圆，该外接圆必是以 $II'$ 为直径的圆。<br>
+因此：<b style="color:${RED}">点 P 落在以 II' 为直径的圆上</b>！<br>
+该直径圆的圆心即为 $II'$ 的中点——外心 $O$，其半径为 $\\frac{1}{2}II' = OI$。<br>
+既然 $P$ 在以 $O$ 为圆心、$OI$ 为半径的圆上，立即得出：<br>
+<div style="font-size:16px; font-weight:700; color:${RED}; margin-top:6px; text-align:center; padding:6px; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
+  $OP = OI$
+</div>
+全题得证！✦`
+  }
+];
+
+/* ============ 交互控制逻辑 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `
+    <div class="title"><span class="badge">${i === 0 ? '✦' : i}</span>${s.title}</div>
+    <div class="body">${s.body}</div>
+  `;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3000);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+// 初始化
+drawBase();
+const urlStep = parseInt(new URLSearchParams(location.search).get('step'));
+goTo(isNaN(urlStep) ? 0 : urlStep);

@@ -1,0 +1,260 @@
+---
+title: '例 7：凸六边形等长对边与旋转全等'
+chapter: 1
+problem: 7
+source-chapter: '01'
+source-file: '01/7.md'
+id: 'ch01-p07'
+tags:
+- 全等三角形
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">第 1 讲 全等三角形</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">全等三角形</span>
+:::
+
+## 题目
+
+在凸六边形 ${ABCDEF}$ 中， ${AB} = {CD} = {EF}$ ， ${BC} = {DE} = {FA}$ . 证明:若 $\angle {FAB} + \angle {ABC} = \angle {FAB} + \angle {EFA} = {240}^{ \circ  }$ ，则 $\angle {FAB} + \angle {CDE} = {240}^{ \circ  }$ .
+
+![10_1026_1806_455_306_0.jpg](../images/10_1026_1806_455_306_0.jpg)
+
+图 1-6
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图 1-6,连接 ${AC},{CE},{EA}$ .
+
+由 $\angle {ABC} = \angle {EFA},{AB} = {EF},{BC} = {FA}$ ，知
+
+$$
+\triangle {ABC} \cong  \triangle {EFA}.
+$$
+
+于是
+
+$$
+{AC} = {AE},\angle {BAC} = \angle {FEA}.
+$$
+
+$$
+\angle {EAC} = \angle {FAB} - \angle {FAE} - \angle {BAC}
+$$
+
+$$
+= \angle {FAB} - \angle {FAE} - \angle {FEA}
+$$
+
+$$
+= \angle {FAB} - \left( {{180}^{ \circ  } - \angle {EFA}}\right)
+$$
+
+$$
+= {240}^{ \circ  } - {180}^{ \circ  }
+$$
+
+$$
+= {60}^{ \circ  }\text{ . }
+$$
+
+结合 ${AC} = {AE}$ ,知 $\triangle {ACE}$ 是正三角形.
+
+由 ${AB} = {CD},{BC} = {DE},{AC} = {CE}$ ,知 $\triangle {ABC} \cong  \triangle {CDE}$ ,所以 $\angle {ABC} = \; \angle {CDE}$ .
+
+故
+
+$$
+\angle {FAB} + \angle {CDE} = \angle {FAB} + \angle {ABC} = {240}^{ \circ  }.
+$$
+
+所以，原问题得证.
+
+注:由题中的边角关系，可通过三角形全等实现条件转化.
+:::
+
+## 解题思路与分析
+
+::: {.callout-note title="思路还原与分析" collapse="false"}
+教材上的证明采用了“综合法”（从已知直接推到结论），隐去了中间试探和逆向分析的过程，因此读起来会有“神来之笔”的突兀感。如果顺着**“翻译条件 $\rightarrow$ 寻找辅助线 $\rightarrow$ 逆向搭桥 $\rightarrow$ 还原出题背景”**的思路拆解，每一步其实都是顺理成章的必然选择。
+
+---
+
+### 第一步：剥离伪装，看清真正的条件与目标
+
+题目给出了一个看似复杂的连等式和结论：
+* **已知：** $\angle FAB + \angle ABC = 240^\circ$，且 $\angle FAB + \angle EFA = 240^\circ$
+* **求证：** $\angle FAB + \angle CDE = 240^\circ$
+
+把这三个式子放在一起对比，你会发现 $\angle FAB$ 像是一个“公共挂件”：
+1. **从已知能直接推出什么？** 两个式子都含有 $\angle FAB$ 且和都为 $240^\circ$，两式相减，立刻得到 **$\angle ABC = \angle EFA$**（即 $\angle B = \angle F$）。
+2. **要证的目标等价于什么？** 已知 $\angle FAB + \angle ABC = 240^\circ$，要证 $\angle FAB + \angle CDE = 240^\circ$，其实就是要证 **$\angle CDE = \angle ABC$**（即 $\angle D = \angle B$）。
+
+> **思考转折点：** 既然如此，为什么题目不直接说“已知 $\angle B = \angle F$，求证 $\angle D = \angle B$”，非要把 $\angle A$（即 $\angle FAB$）和 $240^\circ$ 扯进来？
+> 因为如果只给 $\angle B = \angle F$，六边形是可以变形的，$\angle D$ 未必等于 $\angle B$。这意味着：**$240^\circ$ 这个具体数值是用来“锁死”图形形状的关键条件**，后面一定会在算角度时用到它。
+
+---
+
+### 第二步：为什么必然要连 $AC, CE, EA$？
+
+再看边长条件：$AB = CD = EF$（不妨记长度为 $a$），$BC = DE = FA$（不妨记长度为 $b$）。
+
+观察六边形的六个顶点，你会发现边长是 **$a, b, a, b, a, b$ 交替排列**的。再结合第一步整理出的三个角 $\angle B, \angle D, \angle F$：
+* 顶点 $B$ 的两侧是边 $AB(a)$ 和 $BC(b)$，夹角是 $\angle B$；
+* 顶点 $D$ 的两侧是边 $CD(a)$ 和 $DE(b)$，夹角是 $\angle D$；
+* 顶点 $F$ 的两侧是边 $EF(a)$ 和 $FA(b)$，夹角是 $\angle F$。
+
+在平面几何中，当你手里有**“两条已知边及其夹角”**（$a, b$ 与夹角）时，最本能的操作就是**把这两条边的端点连起来，构造三角形（利用 $\text{SAS}$ 全等）**。
+* 为了打包 $(AB, BC, \angle B)$，必须连接 $AC$，得到 $\triangle ABC$；
+* 为了打包 $(CD, DE, \angle D)$，必须连接 $CE$，得到 $\triangle CDE$；
+* 为了打包 $(EF, FA, \angle F)$，必须连接 $EA$，得到 $\triangle EFA$。
+
+这就是辅助线“连接 $AC, CE, EA$”的由来——它不是凭空猜出来的，而是为了把分散的边角条件装进三角形里，把六边形问题转化为三角形全等问题。
+
+---
+
+### 第三步：正向推进与逆向倒推（“正三角形”是怎么想到的？）
+
+辅助线画好后，图形变成了中间一个大三角形 $\triangle ACE$，外围贴着三个小三角形 $\triangle ABC, \triangle CDE, \triangle EFA$。这时候我们采用**“两头凑”**的策略：
+
+1. **从已知往前推（正向）：**
+在 $\triangle ABC$ 和 $\triangle EFA$ 中，两边分别为 $a, b$，且第一步已经推出了夹角 $\angle B = \angle F$。由 $\text{SAS}$ 立刻得到 $\triangle ABC \cong \triangle EFA$。
+全等能给中间的 $\triangle ACE$ 带来什么？带来两条边相等：**$AC = AE$**（即 $\triangle ACE$ 是等腰三角形）。
+
+2. **从结论往回推（逆向）：**
+我们的目标是证 $\angle D = \angle B$。放到 $\triangle CDE$ 和 $\triangle ABC$ 中看，它们已经有两条边对应相等了（都是 $a$ 和 $b$）。要让它们的夹角 $\angle D = \angle B$，只需要证明这两个三角形全等（$\text{SSS}$），也就是需要第三边相等：**$CE = AC$**。
+
+3. **在中间汇合：**
+* 正向推给了我们：$AC = AE$；
+* 逆向推需要我们证：$AC = CE$。
+合在一起，就是要证 **$AC = AE = CE$**，即**中间的 $\triangle ACE$ 是正三角形**！
+
+既然已经知道 $AC = AE$（等腰），要证它是正三角形，只需要证明它的顶角 **$\angle EAC = 60^\circ$**。
+
+4. **用掉还没出场的 $240^\circ$：**
+怎么算 $\angle EAC$？看图可知，在顶点 $A$ 处，大角 $\angle FAB$ 被分成了三个小角：
+$$\angle EAC = \angle FAB - (\angle FAE + \angle BAC)$$
+利用刚才的 $\triangle ABC \cong \triangle EFA$，把右侧的 $\angle BAC$ 偷梁换柱换成 $\angle FEA$，括号里就变成了 $(\angle FAE + \angle FEA)$——这正好是 $\triangle EFA$ 的两个底角之和！
+由三角形内角和，$\angle FAE + \angle FEA = 180^\circ - \angle EFA$。代入上式：
+$$\angle EAC = \angle FAB - (180^\circ - \angle EFA) = (\angle FAB + \angle EFA) - 180^\circ$$
+此时，题干中一直没用上的 $\angle FAB + \angle EFA = 240^\circ$ 终于派上用场，算出 $\angle EAC = 240^\circ - 180^\circ = 60^\circ$，整个逻辑链条彻底合拢。
+
+---
+
+### 第四步：上帝视角——命题人是怎么编出这道题的？
+
+如果反过来看命题人的出题过程，你会觉得这道题更加透明：
+
+1. 命题人先在纸上画了一个**正三角形 $\triangle ACE$**（所以天然有 $AC = CE = EA$，且每个内角都是 $60^\circ$）。
+2. 接着，命题人拿来三个**完全全等的普通三角形** $\triangle ABC \cong \triangle CDE \cong \triangle EFA$，按顺时针方向依次贴在正三角形的三条边上，拼成了六边形 $ABCDEF$。
+3. 既然三个小三角形全等，自然有 $AB = CD = EF$，$BC = DE = FA$，以及 $\angle B = \angle D = \angle F$。
+4. 这时命题人算了一下 $\angle FAB + \angle B$ 的度数：
+$$\angle FAB + \angle B = (\angle FAE + 60^\circ + \angle BAC) + \angle B$$
+因为 $\angle BAC = \angle FEA$，而 $\angle FAE + \angle FEA + \angle F = 180^\circ$（且 $\angle B = \angle F$），所以：
+$$\angle FAB + \angle B = 60^\circ + 180^\circ = 240^\circ$$
+5. 最后，命题人擦掉中间的正三角形连线 $AC, CE, EA$，把其中两个 $240^\circ$ 当作已知条件，让你去证第三个也是 $240^\circ$。
+
+看穿了“正三角形外贴三个全等三角形”的构造背景后，这道题的辅助线和倒角过程是不是就变得非常自然了？如果对其中某一步的转化还有疑问，我们可以继续探讨。
+:::
+
+## 分步证明
+
+::: {.callout-tip title="分步推理与几何步骤" collapse="false"}
+### 步骤 0：已知条件与凸六边形
+
+在凸六边形 ABCDEF 中，已知两组对应边相等：
+• AB = CD = EF（图中双杠标记）
+• BC = DE = FA（图中单杠标记）
+角满足和关系：
+
+∠FAB + ∠ABC = ∠FAB + ∠EFA = 240°
+
+求证：∠FAB + ∠CDE = 240°。
+
+### 步骤 1：① 连接对角线并导出 ∠ABC = ∠EFA
+
+连接三条对角线 AC, CE, EA（紫色虚线）。
+由题目已知条件：
+
+∠FAB + ∠ABC = 240°
+∠FAB + ∠EFA = 240°
+
+两式同时减去公共角 ∠FAB，立即可得：
+
+∠ABC = ∠EFA
+
+由此将两处顶角建立等量联系。
+
+### 步骤 2：② 证明 △ABC ≌ △EFA
+
+在 △ABC 与 △EFA 中：
+• AB = EF（已知对应边相等）
+• ∠ABC = ∠EFA（Step 1 已证）
+• BC = FA（已知对应边相等）
+由边角边（SAS）全等判定：
+
+△ABC ≌ △EFA
+
+由此得出对应边与对应角相等：
+
+AC = AE，且 ∠BAC = ∠FEA（记为 α）
+
+### 步骤 3：③ 角度代换求得 ∠EAC = 60°
+
+观察顶点 A 处的内角拆分：
+
+∠EAC = ∠FAB - ∠FAE - ∠BAC
+
+代入 Step 2 全等所得对应角 ∠BAC = ∠FEA：
+
+∠EAC = ∠FAB - (∠FAE + ∠FEA)
+
+在 △EFA 中，两内角和 ∠FAE + ∠FEA = 180° - ∠EFA，代入得：
+
+∠EAC = ∠FAB - (180° - ∠EFA)
+= (∠FAB + ∠EFA) - 180°
+= 240° - 180° = 60°
+
+### 步骤 4：④ 判定 △ACE 是正三角形
+
+综合前面的几何结论：
+• 由 Step 2 知：AC = AE（等腰）
+• 由 Step 3 算得顶角：∠EAC = 60°
+有一个角是 60° 的等腰三角形必为正三角形：
+
+△ACE 是正三角形（等边三角形）
+
+因此三边对角线完全等长：
+
+AC = CE = EA
+
+### 步骤 5：⑤ △ABC ≌ △CDE 推出最终结论
+
+比较 △ABC 与 △CDE 的三条边长：
+• AB = CD（已知条件）
+• BC = DE（已知条件）
+• AC = CE（Step 4 已证正三角形边长）
+由边边边（SSS）全等判定：
+
+△ABC ≌ △CDE
+
+从而对应角相等：∠ABC = ∠CDE。
+代入已知等式：
+
+∠FAB + ∠CDE = ∠FAB + ∠ABC = 240°
+
+原命题获证！
+:::
+
+## 动态演示
+
+::: {.demo-link-container}
+[在新窗口打开交互式分步演示](../demos/07.html){.demo-link target="_blank" rel="noopener"}
+:::
+
+<div class="demo-frame">
+  <iframe src="../demos/07.html" title="例 7：凸六边形等长对边与旋转全等 分步演示" loading="lazy"></iframe>
+</div>

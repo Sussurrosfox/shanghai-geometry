@@ -1,0 +1,69 @@
+---
+title: '练习 18：帕普斯定理（两直线上六点三点共线）'
+chapter: 5
+problem: 18
+source-chapter: '05'
+source-file: '05/18.md'
+id: 'ch05-p18'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+设 $A, C, E$ 为直线上三个点， $B, D, F$ 为另一直线上的三个点，直线 ${AB},{CD},{EF}$ 分别和 ${DE},{FA},{BC}$ 相交，交点分别为 $L, M, N$ . 证明: $L, M, N$ 三点共线.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，设直线 ${EF}$ 与 ${CD}$ 交于点 $U$ ，直线 ${EF}$ 与 ${AB}$ 交于点 $V$ ，直线 ${CD}$ 与 ${AB}$ 交于点 $W$ .
+
+对 $\triangle {UVW}$ 及直线 ${LDE}$ ， ${AMF}$ ， ${BCN}$ ， ${ACE}$ ， ${BDF}$ 应用梅涅劳斯定理，得
+
+$$
+\frac{VL}{LW} \cdot  \frac{WD}{DU} \cdot  \frac{UE}{EV} = 1
+$$
+
+①
+
+$$
+\frac{VA}{AW} \cdot  \frac{WM}{MU} \cdot  \frac{UF}{FV} = 1,
+$$
+
+②
+
+$$
+\frac{VB}{BW} \cdot  \frac{WC}{CU} \cdot  \frac{UN}{NV} = 1,
+$$
+
+③
+
+$$
+\frac{VA}{AW} \cdot  \frac{WC}{CU} \cdot  \frac{UE}{EV} = 1,
+$$
+
+④
+
+$$
+\frac{VB}{BW} \cdot  \frac{WD}{DU} \cdot  \frac{UF}{FV} = 1,
+$$
+
+⑤
+
+$$
+\frac{NV}{UN} \cdot  \frac{MU}{WM} \cdot  \frac{LW}{VL} = 1
+$$
+
+由梅涅劳斯定理的逆定理,知 $L, M, N$ 三点共线.
+
+![](../images/161_217_710_537_378_0.jpg)
+:::
+
+

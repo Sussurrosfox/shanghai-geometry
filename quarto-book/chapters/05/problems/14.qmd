@@ -1,0 +1,32 @@
+---
+title: '练习 14：两圆相交与中点垂直证明（直角）'
+chapter: 5
+problem: 14
+source-chapter: '05'
+source-file: '05/14.md'
+id: 'ch05-p14'
+tags:
+- 练习一（综合习题）
+- 中点
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">中点</span>
+:::
+
+## 题目
+
+两个圆交于 $A, B$ 两点,经过点 $A$ 的直线再次与第一个圆交于点 $C$ ,与第二个圆交于点 $D$ . 设 $M, N$ 分别为不包含点 $A$ 的弧 $\overset{\text{ ⏜ }}{BC}$ 和弧 $\overset{\text{ ⏜ }}{BD}$ 的中点,点 $K$ 是线段 ${CD}$ 的中点. 证明: $\angle {MKN} = {90}^{ \circ  }$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，设 ${N}_1$ 为 $N$ 关于点 $K$ 的对称点. 由 ${KN} = K{N}_1,{KC} = {KD}$ 及 $\angle {N}_1{KC} = \; \angle {NKD}$ ，知 $\triangle  {KC}{N}_1 \cong   \triangle  {KDN}$ ，因此， $C{N}_1 = {ND}$ ， $\angle {N}_1{CK} = \angle {NDK} = {180}^{ \circ  } - \; \angle {ABN}$ ，而 $\angle {MCK} = {180}^{ \circ  } - \angle {ABM}$ . 两式相加得 $\angle {N}_1{CM} = \angle {MBN}$ . 由题设条件，知 ${CM} = {MB},{BN} = {ND} = {CN}$ ，这说明 $\triangle  {MC}{N}_1 \cong   \triangle  {MBN}$ ，则 $M{N}_1 = {MN}$ ，而线段 ${MK}$ 是等腰三角形 $\triangle {MN}{N}_1$ 的中线，于是 $\angle {MKN} = {90}^{ \circ  }$ . 原问题得证.
+
+![](../images/158_271_1684_480_370_0.jpg)
+:::
+
+

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="data:,">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 3：两圆相交与内心反演 (SL = KL) — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14px; color: #475569; margin-top: 6px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.03)); user-select: none; }
+  .legend {
+    width: 100%; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+    padding-top: 10px; margin-top: 6px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-line { width: 16px; height: 3px; border-radius: 2px; }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 20px; display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; max-height: 60vh; margin-bottom: 14px; padding-right: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 11px 14px;
+    margin-bottom: 9px; cursor: pointer; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #ffffff; }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 9px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 9px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 10px rgba(37,99,235,.1); }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done { border-color: #e2e8f0; background: #ffffff; }
+  .step-item.done .badge { background: #93c5fd; color: #1e3a8a; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s ease; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1; box-shadow: 0 2px 6px rgba(37,99,235,0.2); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; color: #475569; }
+  .formula { font-family: "Times New Roman", "KaTeX_Math", serif; font-style: italic; }
+  .point-label {
+    font-family: "Times New Roman", "KaTeX_Math", serif;
+    font-style: italic;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 3 两圆相交与内心反演 (<span class="formula">SL = KL</span>) — 分步证明演示</h1>
+    <p><b>已知</b>：两圆 <span class="formula">⊙O</span> 与 <span class="formula">⊙Γ</span> 交于 <span class="formula">A, B</span> 两点，<span class="formula">O ∈ ⊙Γ</span> 且在 <span class="formula">AB</span> 上的正交投影为 <span class="formula">S</span>，直线 <span class="formula">OS</span> 与 <span class="formula">⊙Γ</span> 交于点 <span class="formula">P</span>；<span class="formula">∠ASP</span> 平分线交 <span class="formula">⊙O</span> 于 <span class="formula">L</span>（<span class="formula">A, L</span> 在 <span class="formula">OP</span> 同侧）；点 <span class="formula">K ∈ ⊙Γ</span> 满足 <span class="formula">PS = PK</span>（<span class="formula">A, K</span> 在 <span class="formula">OP</span> 同侧）。<br><b>求证</b>：<span class="formula">SL = KL</span>。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-line" style="background:#64748b;"></span>圆 Γ (灰)</div>
+        <div class="legend-item"><span class="legend-line" style="background:#3b82f6;"></span>圆 O (主蓝)</div>
+        <div class="legend-item"><span class="legend-line" style="background:#7c3aed; border:1px dashed #7c3aed;"></span>五点共圆 Γ' (紫虚)</div>
+        <div class="legend-item"><span class="legend-line" style="background:#059669;"></span>角平分线 (绿)</div>
+        <div class="legend-item"><span class="legend-line" style="background:#dc2626;"></span>目标结论/直角 (红)</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤，URL 参数 <kbd>?step=N</kbd> 自动双向绑定</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算与坐标映射 ============ */
+const sub = (p,q) => ({x: p.x - q.x, y: p.y - q.y});
+const add = (p,q) => ({x: p.x + q.x, y: p.y + q.y});
+const mul = (p,k) => ({x: p.x * k, y: p.y * k});
+const mid = (p,q) => ({x: (p.x + q.x)/2, y: (p.y + q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x: -d.y, y: d.x});
+
+/* 严格代数解析模型：
+   圆 Gamma: 心 (0, 1), 半径 1, 直径 OP = 2, O=(0,0), P=(0,2)
+   取 theta = 48°，消除视觉碰撞退化
+*/
+const theta = 48 * Math.PI / 180;
+const yS_m = 2 * (1 - Math.cos(theta));
+const PS_m = 2 - yS_m;
+const RO_m = Math.sqrt(2 * yS_m);
+const xA_m = Math.sqrt(2 * yS_m - yS_m * yS_m);
+const xQ_m = PS_m * Math.tan(theta);
+const K_m = { x: PS_m * Math.sin(theta), y: 2 - PS_m * Math.cos(theta) };
+const r_in_m = (PS_m + xQ_m - 2) / 2;
+const L_m = { x: r_in_m, y: yS_m + r_in_m };
+const S_m = { x: 0, y: yS_m };
+const P_m = { x: 0, y: 2 };
+const O_m = { x: 0, y: 0 };
+const A_m = { x: xA_m, y: yS_m };
+const B_m = { x: -xA_m, y: yS_m };
+const Q_m = { x: xQ_m, y: yS_m };
+const gammaPrimeCenter_m = { x: xQ_m / 2, y: yS_m / 2 };
+const gammaPrimeRadius_m = Math.hypot(xQ_m, yS_m) / 2;
+
+/* 映射至 SVG 画布 (viewBox 0 0 680 620, scale = 165) */
+const scale = 165.0;
+const X0 = 306.49;
+const Y0 = 380.09;
+const toSvg = p => ({ x: +(X0 + scale * p.x).toFixed(2), y: +(Y0 - scale * p.y).toFixed(2) });
+
+const P = toSvg(P_m);
+const O = toSvg(O_m);
+const S = toSvg(S_m);
+const A = toSvg(A_m);
+const B = toSvg(B_m);
+const Q = toSvg(Q_m);
+const K = toSvg(K_m);
+const L = toSvg(L_m);
+const centerGamma = toSvg({ x: 0, y: 1 });
+const radiusGamma = scale * 1.0;
+const radiusO = scale * RO_m;
+const centerGammaPrime = toSvg(gammaPrimeCenter_m);
+const radiusGammaPrime = scale * gammaPrimeRadius_m;
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs = {}, parent){
+  return el('line', { x1: p.x, y1: p.y, x2: q.x, y2: q.y, ...attrs }, parent);
+}
+
+function seg(p, q, color, w = 2, parent){
+  return line(p, q, { stroke: color, 'stroke-width': w, fill: 'none' }, parent);
+}
+
+function segDashed(p, q, color, w = 2, parent, dash = '6 4'){
+  return line(p, q, { stroke: color, 'stroke-width': w, 'stroke-dasharray': dash, fill: 'none' }, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', { cx: c.x, cy: c.y, r, fill: 'none', ...attrs }, parent);
+}
+
+function dot(p, color = '#1e293b', r = 4.5, parent){
+  return el('circle', { cx: p.x, cy: p.y, r, fill: color, stroke: '#ffffff', 'stroke-width': 1.8 }, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', { points: pts.map(p => `${p.x},${p.y}`).join(' '), ...attrs }, parent);
+}
+
+/* 顶层文字标签：带 4px 白色轮廓描边防遮挡 */
+function label(p, text, dx = 0, dy = 0, color = '#0f172a', parent, size = 16){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    class: 'point-label'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 直角标记：顶点 v，两边分别指向 p1, p2 */
+function rightAngleMark(v, p1, p2, s = 11, color = '#dc2626', parent){
+  const u1 = norm(sub(p1, v)), u2 = norm(sub(p2, v));
+  const a = add(v, mul(u1, s)), b = add(add(v, mul(u1, s)), mul(u2, s)), c = add(v, mul(u2, s));
+  return el('polyline', {
+    points: `${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill: 'none', stroke: color, 'stroke-width': 1.8
+  }, parent);
+}
+
+/* 等长刻度线：在 pq 中点处画横杠 */
+function tickMark(p, q, color = '#2563eb', parent, count = 1){
+  const m = mid(p, q), d = norm(sub(q, p)), n = perp(d);
+  const lenMark = 6;
+  if (count === 1) {
+    line(add(m, mul(n, lenMark)), add(m, mul(n, -lenMark)), { stroke: color, 'stroke-width': 2.2 }, parent);
+  } else if (count === 2) {
+    const sep = 3;
+    const m1 = add(m, mul(d, -sep)), m2 = add(m, mul(d, sep));
+    line(add(m1, mul(n, lenMark)), add(m1, mul(n, -lenMark)), { stroke: color, 'stroke-width': 2 }, parent);
+    line(add(m2, mul(n, lenMark)), add(m2, mul(n, -lenMark)), { stroke: color, 'stroke-width': 2 }, parent);
+  }
+}
+
+/* 高亮线段（底层宽半透明 + 顶层亮线） */
+function highlightSeg(p, q, color, parent, w = 3.5){
+  line(p, q, { stroke: color, 'stroke-width': w + 5, 'stroke-linecap': 'round', opacity: 0.22 }, parent);
+  line(p, q, { stroke: color, 'stroke-width': w, 'stroke-linecap': 'round' }, parent);
+}
+
+/* 绘制角弧线：顶点 v，两边分别指向 p1 和 p2 */
+function angleArc(v, p1, p2, r = 18, color = '#dc2626', attrs = {}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da >= Math.PI * 2) da -= Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: color, 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', { id: 'gBase' }, stage);
+const gStep = el('g', { id: 'gStep' }, stage);
+const gPts  = el('g', { id: 'gPts' }, stage);
+
+/* 颜色常量 */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      GRAY = '#64748b', LIGHT_GRAY = '#cbd5e1';
+
+/* 静态底层：全程保留的基础图元 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 圆 Gamma (以 OP 为直径)
+  circle(centerGamma, radiusGamma, { stroke: GRAY, 'stroke-width': 2, opacity: 0.8 }, gBase);
+  // 圆 O (交 Gamma 于 A, B)
+  circle(O, radiusO, { stroke: '#3b82f6', 'stroke-width': 2, opacity: 0.8 }, gBase);
+  
+  // 直径 OP 与 弦割线 AB
+  seg(O, P, '#475569', 2, gBase);
+  seg(B, A, '#475569', 2, gBase);
+
+  // S 处垂足直角标记 (OS ⊥ AB)
+  rightAngleMark(S, A, P, 11, '#64748b', gBase);
+}
+
+/* 顶层绘制点与文字标签 (防重叠白色轮廓描边) */
+function drawPoints(showQ = false, isLPrime = false){
+  gPts.innerHTML = '';
+  dot(O, '#1e293b', 4.5, gPts); label(O, 'O', 0, 18, '#0f172a', gPts);
+  dot(P, '#1e293b', 4.5, gPts); label(P, 'P', 0, -18, '#0f172a', gPts);
+  dot(S, '#1e293b', 4.5, gPts); label(S, 'S', -16, 15, '#0f172a', gPts);
+  dot(A, '#1e293b', 4.5, gPts); label(A, 'A', 14, 15, '#0f172a', gPts);
+  dot(B, '#1e293b', 4.5, gPts); label(B, 'B', -16, 15, '#0f172a', gPts);
+  dot(K, '#1e293b', 4.5, gPts); label(K, 'K', 16, -12, '#0f172a', gPts);
+
+  const lLabel = isLPrime ? "L'" : "L";
+  dot(L, '#2563eb', 5, gPts);
+  label(L, lLabel, -15, -12, '#1e3a8a', gPts, 17);
+
+  if (showQ) {
+    dot(Q, '#7c3aed', 4.5, gPts);
+    label(Q, 'Q', 18, 14, '#6b21a8', gPts);
+  }
+}
+
+/* ============ 各步骤动态层 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 关键：每步先清空动态单步层，自然擦除旧辅助线
+  
+  switch(s){
+    case 0: { // ✦ 已知条件与几何构型
+      drawPoints(false, false);
+      highlightSeg(P, S, BLUE, gStep, 3.5);
+      highlightSeg(P, K, BLUE, gStep, 3.5);
+      tickMark(P, S, BLUE, gStep, 1);
+      tickMark(P, K, BLUE, gStep, 1);
+      
+      // 角平分线 SL 与 待证线段 SL, KL
+      segDashed(S, L, GREEN, 2.2, gStep, '6 4');
+      segDashed(S, L, RED, 2, gStep, '4 3');
+      segDashed(K, L, RED, 2, gStep, '4 3');
+      break;
+    }
+
+    case 1: { // ① 延长割线相交，得出四点共圆 Q, K, S, O
+      drawPoints(true, false);
+      segDashed(A, Q, CYAN, 2, gStep, '5 4');
+      seg(P, Q, '#475569', 2, gStep);
+      seg(O, K, BLUE, 2, gStep);
+      segDashed(O, Q, PURPLE, 2, gStep, '6 4');
+
+      rightAngleMark(K, O, P, 11, RED, gStep);
+      rightAngleMark(S, Q, O, 11, RED, gStep);
+
+      // 外接圆 Gamma' (四点共圆 Q, K, S, O，直径 OQ)
+      circle(centerGammaPrime, radiusGammaPrime, {
+        stroke: PURPLE, 'stroke-width': 2.2, 'stroke-dasharray': '7 5', opacity: 0.95
+      }, gStep);
+      break;
+    }
+
+    case 2: { // ② 直角三角比导出等腰对称 PO = PQ
+      drawPoints(true, false);
+      seg(P, Q, '#475569', 2, gStep);
+      seg(A, Q, CYAN, 1.8, gStep);
+      seg(O, K, BLUE, 1.8, gStep);
+      
+      // 填充直角三角形 PSQ 与直角三角形 PKO
+      polygon([P, S, Q], { fill: '#3b82f6', opacity: 0.14 }, gStep);
+      polygon([P, K, O], { fill: '#f59e0b', opacity: 0.16 }, gStep);
+      
+      rightAngleMark(S, Q, P, 11, RED, gStep);
+      rightAngleMark(K, O, P, 11, RED, gStep);
+
+      // 公共角 ∠QPO 弧
+      angleArc(P, S, K, 24, ORANGE, {}, gStep);
+
+      // 高亮等长边 PS = PK 与 PO = PQ
+      highlightSeg(P, S, BLUE, gStep, 3);
+      highlightSeg(P, K, BLUE, gStep, 3);
+      tickMark(P, S, BLUE, gStep, 1);
+      tickMark(P, K, BLUE, gStep, 1);
+
+      highlightSeg(P, O, ORANGE, gStep, 3.5);
+      highlightSeg(P, Q, ORANGE, gStep, 3.5);
+      tickMark(P, O, ORANGE, gStep, 2);
+      tickMark(P, Q, ORANGE, gStep, 2);
+      break;
+    }
+
+    case 3: { // ③ 设内心 L'，证明 Q, K, L', S, O 五点共圆
+      drawPoints(true, true);
+      seg(P, Q, '#475569', 2, gStep);
+      seg(A, Q, CYAN, 1.8, gStep);
+      seg(O, Q, PURPLE, 2, gStep);
+
+      // 外接圆 Gamma'
+      circle(centerGammaPrime, radiusGammaPrime, {
+        stroke: PURPLE, 'stroke-width': 2.2, 'stroke-dasharray': '7 5', opacity: 0.95
+      }, gStep);
+
+      // 内心连线 QL', SL', PL'
+      segDashed(Q, L, PURPLE, 2, gStep, '5 4');
+      segDashed(S, L, GREEN, 2, gStep, '5 4');
+      segDashed(P, L, GREEN, 2, gStep, '5 4');
+
+      // 互补角弧: ∠QL'S 与 ∠QOS
+      angleArc(L, Q, S, 18, RED, {}, gStep);
+      angleArc(O, S, Q, 22, RED, {}, gStep);
+      break;
+    }
+
+    case 4: { // ④ 导角证明相似三角形 △QL'K ~ △QPL'
+      drawPoints(true, true);
+      seg(P, Q, '#475569', 2, gStep);
+      seg(A, Q, CYAN, 1.8, gStep);
+
+      circle(centerGammaPrime, radiusGammaPrime, {
+        stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '6 5', opacity: 0.6
+      }, gStep);
+
+      // 相似三角形高亮填充
+      polygon([Q, L, K], { fill: '#8b5cf6', opacity: 0.22, stroke: '#7c3aed', 'stroke-width': 1.5 }, gStep);
+      polygon([Q, P, L], { fill: '#06b6d4', opacity: 0.16, stroke: '#0891b2', 'stroke-width': 1.5 }, gStep);
+
+      seg(L, K, PURPLE, 2, gStep);
+      seg(L, P, CYAN, 2, gStep);
+      seg(Q, L, PURPLE, 2.2, gStep);
+
+      // 等角弧 ∠QL'K 与 ∠QPL'
+      angleArc(L, Q, K, 20, ORANGE, {}, gStep);
+      angleArc(P, Q, L, 24, ORANGE, {}, gStep);
+      angleArc(Q, K, L, 20, GREEN, {}, gStep);
+      break;
+    }
+
+    case 5: { // ⑤ 结合根轴圆幂与勾股定理，证明 L 与 L' 重合
+      drawPoints(true, true);
+      seg(P, Q, '#475569', 2, gStep);
+      seg(A, Q, CYAN, 2, gStep);
+      seg(O, Q, PURPLE, 2, gStep);
+
+      // 直角三角形 QL'O (直径 OQ 对应直角 ∠QL'O = 90°)
+      polygon([Q, L, O], { fill: '#3b82f6', opacity: 0.14 }, gStep);
+      seg(Q, L, PURPLE, 2, gStep);
+      seg(O, L, BLUE, 2.5, gStep);
+      rightAngleMark(L, Q, O, 11, RED, gStep);
+
+      // 圆 O 半径 OA 与 OL' 等长高亮
+      highlightSeg(O, A, BLUE, gStep, 3);
+      highlightSeg(O, L, BLUE, gStep, 3);
+      tickMark(O, A, BLUE, gStep, 2);
+      tickMark(O, L, BLUE, gStep, 2);
+
+      // 割线与根轴高亮
+      highlightSeg(B, Q, CYAN, gStep, 2.5);
+      highlightSeg(P, Q, GRAY, gStep, 2.5);
+      break;
+    }
+
+    case 6: { // ⑥ 等腰三角形顶角平分线即中垂线，证得 SL = KL
+      drawPoints(true, false);
+      seg(P, Q, LIGHT_GRAY, 1.5, gStep);
+      seg(A, Q, LIGHT_GRAY, 1.5, gStep);
+
+      // 等腰三角形 △PSK 底边 SK
+      seg(S, K, '#64748b', 2.2, gStep);
+      
+      const midSK = mid(S, K);
+      seg(P, L, GREEN, 2.5, gStep);
+      segDashed(L, midSK, GREEN, 2, gStep, '4 3');
+
+      // 垂足直角标记 (PL ⊥ SK)
+      rightAngleMark(midSK, S, P, 10, RED, gStep);
+      tickMark(S, midSK, GREEN, gStep, 1);
+      tickMark(K, midSK, GREEN, gStep, 1);
+
+      // 最终核心结论：高亮 SL 与 KL，并加双刻度标记
+      highlightSeg(S, L, RED, gStep, 4);
+      highlightSeg(K, L, RED, gStep, 4);
+      tickMark(S, L, RED, gStep, 2);
+      tickMark(K, L, RED, gStep, 2);
+
+      // 结论成就标语
+      const badgeG = el('g', { transform: 'translate(450, 480)' }, gStep);
+      el('rect', {
+        x: 0, y: 0, width: 190, height: 42, rx: 10,
+        fill: '#f0fdf4', stroke: '#16a34a', 'stroke-width': 1.5,
+        filter: 'drop-shadow(0 4px 12px rgba(22,163,74,0.15))'
+      }, badgeG);
+      const txt = el('text', {
+        x: 95, y: 22, 'font-size': 14, fill: '#15803d', 'font-weight': '700',
+        'text-anchor': 'middle', 'dominant-baseline': 'central',
+        'font-family': '-apple-system, BlinkMacSystemFont, sans-serif'
+      }, badgeG);
+      txt.textContent = '★ 结论证毕: SL = KL';
+      break;
+    }
+  }
+}
+
+/* ============ 步骤文本配置 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `已知两圆 <span class="formula">⊙O</span> 与 <span class="formula">⊙Γ</span> 相交于 <span class="formula">A, B</span> 两点，点 <span class="formula">O ∈ ⊙Γ</span> 且在弦 <span class="formula">AB</span> 上的垂足投影为 <span class="formula">S</span>。<br>直线 <span class="formula">OS</span> 与 <span class="formula">⊙Γ</span> 交于点 <span class="formula">P</span>，因此线段 <span class="formula">OP</span> 恰为 <span class="formula">⊙Γ</span> 的一条直径。<br><span class="formula">∠ASP</span> 的平分线与 <span class="formula">⊙O</span> 交于点 <span class="formula">L</span>（<span class="formula">A, L</span> 在 <span class="formula">OP</span> 同侧）。<br>点 <span class="formula">K ∈ ⊙Γ</span> 满足 <span class="formula">PS = PK</span>（<span class="formula">A, K</span> 在 <span class="formula">OP</span> 同侧）。<br><b>求证</b>：<span style="color:#dc2626; font-weight:700;">SL = KL</span>。`
+  },
+  {
+    title: '① 延长割线相交，得出四点共圆 Q, K, S, O',
+    body: `设直线 <span class="formula">PK</span> 与 <span class="formula">BA</span> 的延长线交于点 <span class="formula">Q</span>。<br>因为 <span class="formula">OP</span> 为圆 <span class="formula">Γ</span> 的直径，而点 <span class="formula">K</span> 在圆周上，所以直径所对圆周角 <b><span class="formula">∠OKP = 90°</span></b>（即 <span class="formula">OK ⊥ PQ</span>）。<br>又已知 <span class="formula">OS ⊥ AB</span> 于 <span class="formula">S</span>，故 <b><span class="formula">∠QSP = ∠QSO = 90°</span></b>。<br>由 <span class="formula">∠QSO = ∠QKO = 90°</span> 知四边形 <span class="formula">QSKO</span> 拥有公共斜边直角，故 <b><span class="formula">Q, K, S, O</span> 四点共圆于 <span class="formula">Γ'</span></b>，且 <b><span class="formula">OQ</span> 为其直径</b>。`
+  },
+  {
+    title: '② 利用直角三角比，导出等腰对称 PO = PQ',
+    body: `在直角 <span class="formula">△PSQ</span> 中（<span class="formula">∠PSQ = 90°</span>），由三角比：<br>$$\\cos\\angle QPO = \\frac{PS}{PQ}$$<br>在直角 <span class="formula">△PKO</span> 中（<span class="formula">∠PKO = 90°</span>），同理有：<br>$$\\cos\\angle QPO = \\frac{PK}{PO}$$<br>已知条件给定 <span class="formula">PS = PK</span>，分子相等则分母必相等：<b><span style="color:#ea580c; font-weight:700;">PO = PQ</span></b>！<br>这表明 <span class="formula">△PQO</span> 是以 <span class="formula">P</span> 为顶点的等腰三角形，两高线 <span class="formula">QS</span> 与 <span class="formula">OK</span> 呈对称结构。`
+  },
+  {
+    title: '③ 设内心 L\'，证明 Q, K, L\', S, O 五点共圆',
+    body: `设直角 <span class="formula">△QSP</span> 的内心为 <span class="formula">L'</span>。由内心经典角平分性质：<br>$$\\angle QL'S = 90° + \\frac{1}{2}\\angle QPS = 90° + \\frac{1}{2}\\angle QPO$$<br>又在等腰 <span class="formula">△PQO</span> 中，底角 <span class="formula">\\angle QOP = 90° - \\frac{1}{2}\\angle QPO</span>，从而：<br>$$\\angle QL'S = 180° - \\angle QOP = 180° - \\angle QOS$$<br>因此四边形 <span class="formula">QL'SO</span> 对角互补，点 <span class="formula">L'</span> 必在过 <span class="formula">Q, S, O</span> 的外接圆上。<br>综合前述，<b><span class="formula">Q, K, L', S, O</span> 五点共圆于 <span class="formula">Γ'</span></b>，且 <span class="formula">OQ</span> 为其直径。`
+  },
+  {
+    title: '④ 导角证明相似三角形 △QL\'K ∽ △QPL\'',
+    body: `在圆 <span class="formula">Γ'</span> 中，由同弧所对圆周角相等得 <span class="formula">\\angle QL'K = \\angle QSK</span>。<br>显然 <span class="formula">\\angle QSK = 90° - \\angle KSP</span>。<br>在等腰 <span class="formula">△PSK</span>（<span class="formula">PS = PK</span>）中，底角 <span class="formula">\\angle KSP = 90° - \\frac{1}{2}\\angle KPS</span>，<br>故 <span class="formula">\\angle QSK = \\frac{1}{2}\\angle KPS</span>。而 <span class="formula">PL'</span> 是内心角平分线，<span class="formula">\\frac{1}{2}\\angle KPS = \\angle KPL'</span>。<br>于是得到 <b><span class="formula">\\angle QL'K = \\angle QPL'</span></b>。结合公共角 <span class="formula">\\angle L'QK</span>，可得：<br><b><span class="formula">△QL'K ∽ △QPL'</span></b>，由此导出切割线式乘积：<br>$$\\frac{QL'}{QP} = \\frac{QK}{QL'} \\implies \\mathbf{QL'^2 = QK \\cdot QP}$$`
+  },
+  {
+    title: '⑤ 结合根轴圆幂与勾股定理，证明 L 与 L\' 重合',
+    body: `因为直线 <span class="formula">AB</span> 是圆 <span class="formula">O</span> 与圆 <span class="formula">Γ</span> 的根轴，点 <span class="formula">Q</span> 在其延长线上，由割线圆幂定理：<br>$$QK \\cdot QP = QA \\cdot QB = QO^2 - OA^2$$<br>由前一步知 <span class="formula">QL'^2 = QK \\cdot QP</span>，故 <span class="formula">QL'^2 = QO^2 - OA^2</span>。<br>又因 <span class="formula">OQ</span> 是圆 <span class="formula">Γ'</span> 的直径且 <span class="formula">L' ∈ Γ'</span>，故 <span class="formula">∠QL'O = 90°</span>。在直角 <span class="formula">△QL'O</span> 中由勾股定理：<br>$$QO^2 = QL'^2 + OL'^2$$<br>代入得：<span class="formula">QL'^2 = (QL'^2 + OL'^2) - OA^2 \\implies \\mathbf{OL' = OA}</span>！<br>这说明<b>内心 <span class="formula">L'</span> 落在圆 <span class="formula">O</span> 上</b>。由于点 <span class="formula">L'</span> 在 <span class="formula">∠ASP</span> 平分线上且在 <span class="formula">OP</span> 同侧，<b>点 <span class="formula">L'</span> 与点 <span class="formula">L</span> 严格重合</b>！`
+  },
+  {
+    title: '⑥ 等腰顶角平分线即中垂线，证得 SL = KL',
+    body: `既然点 <span class="formula">L</span> 就是 <span class="formula">△QSP</span> 的内心，射线 <span class="formula">PL</span> 即为 <span class="formula">∠KPS</span> 的角平分线。<br>在等腰三角形 <span class="formula">△PSK</span> 中（<span class="formula">PS = PK</span>），顶角平分线 <span class="formula">PL</span> 亦为底边 <span class="formula">SK</span> 的垂直平分线（三线合一）。<br>因为点 <span class="formula">L</span> 落在底边 <span class="formula">SK</span> 的垂直平分线上，由中垂线性质直接得出：<br>$$\\mathbf{SL = KL}$$<br>命题完整获证！∎`
+  }
+];
+
+/* ============ 交互与双向路由控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i === 0 ? '✦' : i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  // URL ?step=N 参数双向同步绑定
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('step') !== String(cur)) {
+    url.searchParams.set('step', cur);
+    window.history.replaceState({ step: cur }, '', url.toString());
+  }
+
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0);
+if (typeof renderMath === 'function') renderMath(); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+if (typeof renderMath === 'function') renderMath();
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+window.addEventListener('popstate', (e) => {
+  const step = e.state && e.state.step !== undefined ? e.state.step : (parseInt(new URLSearchParams(location.search).get('step')) || 0);
+  goTo(step);
+});
+
+// 初始化
+drawBase();
+const initStep = parseInt(new URLSearchParams(location.search).get('step')) || 0;
+goTo(initStep);
+if (typeof renderMath === 'function') renderMath();
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

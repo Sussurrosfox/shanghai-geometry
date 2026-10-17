@@ -1,0 +1,48 @@
+---
+title: '练习 12：凸五边形等角与对角线平分'
+chapter: 5
+problem: 12
+source-chapter: '05'
+source-file: '05/12.md'
+id: 'ch05-p12'
+tags:
+- 练习一（综合习题）
+- 相似
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">相似</span>
+:::
+
+## 题目
+
+设 ${ABCDE}$ 是凸五边形且满足 $\angle {BAC} = \angle {CAD} = \angle {DAE},\angle {ABC} = \; \angle {ACD} = \angle {ADE}$ . 对角线 ${BD}$ 和 ${CE}$ 交于点 $P$ . 证明: 射线 ${AP}$ 平分 ${CD}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,设 ${AC}$ 与 ${BD}$ 交于点 $X,{AD}$ 与 ${CE}$ 交于点 $Y$ . 由条件,知 $\triangle {ABC} \backsim  \triangle {ACD} \backsim \; \triangle {ADE}$ ,故四边形 ${ABCD}$ 和四边形 ${ACDE}$ 也相似,则
+
+$$
+\frac{AX}{XC} = \frac{AY}{YD}
+$$
+
+①
+
+设射线 ${AP}$ 与 ${CD}$ 交于点 $M$ . 对 $\triangle {ACD}$ 及点 $P$ ,由塞瓦定理,有
+
+$$
+\frac{AX}{XC} \cdot  \frac{CM}{MD} \cdot  \frac{DY}{YA} = 1.
+$$
+
+②
+
+由①,②,知 ${CM} = {MD}$ ，即 ${AP}$ 平分 ${CD}$ . 原问题得证.
+
+![](../images/158_317_507_462_355_0.jpg)
+:::
+
+

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="data:,">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 1：四点共圆的圆心在两圆根轴上 — 几何证明可视化</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .container { max-width: 1240px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex: 1; }
+  header { text-align: center; margin-bottom: 16px; flex-shrink: 0; }
+  header h1 { font-size: 22px; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  header p { font-size: 13.5px; color: #64748b; margin-top: 5px; line-height: 1.5; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex: 1; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; border: 1px solid #e2e8f0;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; user-select: none; }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,.08); padding: 18px 20px;
+    display: flex; flex-direction: column; border: 1px solid #e2e8f0;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; padding-right: 4px; display: flex; flex-direction: column; gap: 10px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    background: #f8fafc; cursor: pointer; transition: all .2s ease;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 4px 12px rgba(37,99,235,.08); }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 10px; align-items: center; color: #0f172a; }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .step-item .body { font-size: 13.5px; line-height: 1.7; color: #475569; margin-top: 8px; display: none; }
+  .step-item.active .body { display: block; color: #334155; }
+  .controls { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  button {
+    border: none; border-radius: 10px; padding: 9px 15px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s ease; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1.2; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; flex: 1; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; border-color: #cbd5e1; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 10px; flex-shrink: 0; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11px; font-family: inherit; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  
+  /* SVG 顶层点文字 4px 描边样式 */
+  .pt-lbl {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Times New Roman", serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    fill: #0f172a;
+    paint-order: stroke fill;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    text-anchor: middle;
+    dominant-baseline: central;
+    user-select: none;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1><span>📐</span> 例 1：四点共圆的圆心在两圆公共弦（根轴）上</h1>
+    <p><b>已知：</b>圆 ω₁ 与 ω₂ 交于 X, Y；割线 l₁ 过 O₁ 交 ω₂ 于 P, Q；割线 l₂ 过 O₂ 交 ω₁ 于 R, S。若 P, Q, R, S 共圆于 ω₃。<br><b>求证：</b>圆心 O₃ 在直线 XY 上。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 640 520" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：<kbd>←</kbd> <kbd>→</kbd> 翻步 | 支持 URL 参数 <kbd>?step=N</kbd></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何精确解算坐标体系 ============ */
+const O1 = { x: 210.00, y: 338.00, r: 130.00 };
+const O2 = { x: 410.00, y: 338.00, r: 150.00 };
+const O3 = { x: 296.00, y: 168.00, r: 137.10 };
+const X  = { x: 296.00, y: 240.51 };
+const Y  = { x: 296.00, y: 435.49 };
+const P  = { x: 264.52, y: 301.44 };
+const Q  = { x: 431.40, y: 189.53 };
+const R  = { x: 167.29, y: 215.22 };
+const S  = { x: 334.22, y: 299.66 };
+
+/* 色彩系统规范 */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const AMBER  = '#d97706';
+const SLATE  = '#64748b';
+
+/* ============ 基础向量与几何辅助工具 ============ */
+const sub = (p,q) => ({x: p.x - q.x, y: p.y - q.y});
+const add = (p,q) => ({x: p.x + q.x, y: p.y + q.y});
+const mul = (p,k) => ({x: p.x * k, y: p.y * k});
+const mid = (p,q) => ({x: (p.x + q.x)/2, y: (p.y + q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x: p.x/l, y: p.y/l}; };
+
+/* ============ SVG 构建工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1: p.x, y1: p.y, x2: q.x, y2: q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke: color, 'stroke-width': w, 'stroke-dasharray': '6 5', fill: 'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx: c.x, cy: c.y, r, fill: 'none', ...attrs}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx: p.x, cy: p.y, r, fill: color, stroke: '#ffffff', 'stroke-width': 1.6}, parent);
+}
+
+function extendedLine(p, q, extBefore, extAfter, attrs, parent){
+  const d = norm(sub(q, p));
+  const start = sub(p, mul(d, extBefore));
+  const end = add(q, mul(d, extAfter));
+  return line(start, end, attrs, parent);
+}
+
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke: color, 'stroke-width': w+6, 'stroke-linecap': 'round', opacity: .18}, parent);
+  line(p, q, {stroke: color, 'stroke-width': w, 'stroke-linecap': 'round'}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    class: 'pt-lbl',
+    fill: color
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* ============ 三层架构挂载 ============ */
+const gBase = el('g', {id: 'gBase'}, stage); // 底层静态基准
+const gStep = el('g', {id: 'gStep'}, stage); // 中层动态单步
+const gPts  = el('g', {id: 'gPts'}, stage);  // 顶层点与文字
+
+/* 渲染全程保留的静态底层 */
+function drawBase(){
+  gBase.innerHTML = '';
+
+  // 1. 圆 omega1 (蓝)
+  circle(O1, O1.r, {stroke: BLUE, 'stroke-width': 2, fill: BLUE, 'fill-opacity': 0.04}, gBase);
+
+  // 2. 圆 omega2 (绿)
+  circle(O2, O2.r, {stroke: GREEN, 'stroke-width': 2, fill: GREEN, 'fill-opacity': 0.04}, gBase);
+
+  // 3. 连心线 O1O2 (灰虚线)
+  line(O1, O2, {stroke: SLATE, 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: 0.65}, gBase);
+
+  // 4. 割线 l1 基准线 (过 O1, P, Q，两端适度延长)
+  extendedLine(O1, Q, 45, 40, {stroke: SLATE, 'stroke-width': 1.5, opacity: 0.45}, gBase);
+
+  // 5. 割线 l2 基准线 (过 O2, S, R，两端适度延长)
+  extendedLine(R, O2, 45, 40, {stroke: SLATE, 'stroke-width': 1.5, opacity: 0.45}, gBase);
+
+  // 6. 公共弦 XY 基准虚线 (浅灰)
+  line(X, Y, {stroke: SLATE, 'stroke-width': 1.5, 'stroke-dasharray': '4 4', opacity: 0.5}, gBase);
+}
+
+/* 渲染顶层点与文字标签 (带 4px 白色轮廓描边) */
+function drawPoints(){
+  gPts.innerHTML = '';
+  const pts = [
+    { p: O1, name: 'O₁', dx: -24, dy: 18, col: BLUE },
+    { p: O2, name: 'O₂', dx: 22,  dy: 18, col: GREEN },
+    { p: X,  name: 'X',  dx: 14,  dy: -6, col: '#0f172a' },
+    { p: Y,  name: 'Y',  dx: 14,  dy: 16, col: '#0f172a' },
+    { p: P,  name: 'P',  dx: -16, dy: -12, col: PURPLE },
+    { p: Q,  name: 'Q',  dx: 16,  dy: -8,  col: PURPLE },
+    { p: R,  name: 'R',  dx: -18, dy: -10, col: AMBER },
+    { p: S,  name: 'S',  dx: 16,  dy: -10, col: AMBER },
+    { p: O3, name: 'O₃', dx: 16,  dy: -6,  col: RED }
+  ];
+
+  pts.forEach(item => {
+    dot(item.p, item.col, 4.5, gPts);
+    label(item.p, item.name, item.dx, item.dy, item.col === RED ? RED : '#0f172a', gPts);
+  });
+}
+
+/* ============ 各步骤动态画面渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 切换时先清空动态单步层
+
+  switch(s){
+    case 0:
+      // Step 0: 题设构型 — 圆 omega3 浅紫虚线轮廓与四点微光
+      circle(O3, O3.r, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '6 5', fill: PURPLE, 'fill-opacity': 0.03}, gStep);
+      [P, Q, R, S].forEach(pt => {
+        circle(pt, 8, {stroke: PURPLE, 'stroke-width': 1.5, fill: 'none', opacity: 0.65}, gStep);
+      });
+      break;
+
+    case 1:
+      // Step 1: O1 关于 omega2 与 omega3 的圆幂等式
+      // 高亮割线 l1 (O1-P-Q)
+      extendedLine(O1, Q, 45, 40, {stroke: PURPLE, 'stroke-width': 3.2, 'stroke-linecap': 'round'}, gStep);
+      // 距离段 O1O2 (实线) 与 O1O3 (虚线)
+      line(O1, O2, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      segDashed(O1, O3, RED, 2.2, gStep);
+      // O1 焦点指示环
+      circle(O1, 9, {stroke: PURPLE, 'stroke-width': 2, fill: 'none'}, gStep);
+      circle(O1, 14, {stroke: PURPLE, 'stroke-width': 1.2, 'stroke-dasharray': '3 2', fill: 'none', opacity: 0.6}, gStep);
+      break;
+
+    case 2:
+      // Step 2: O2 关于 omega1 与 omega3 的圆幂等式
+      // 高亮割线 l2 (O2-S-R)
+      extendedLine(R, O2, 45, 40, {stroke: AMBER, 'stroke-width': 3.2, 'stroke-linecap': 'round'}, gStep);
+      // 距离段 O2O1 (实线) 与 O2O3 (虚线)
+      line(O2, O1, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      segDashed(O2, O3, RED, 2.2, gStep);
+      // O2 焦点指示环
+      circle(O2, 9, {stroke: AMBER, 'stroke-width': 2, fill: 'none'}, gStep);
+      circle(O2, 14, {stroke: AMBER, 'stroke-width': 1.2, 'stroke-dasharray': '3 2', fill: 'none', opacity: 0.6}, gStep);
+      break;
+
+    case 3:
+      // Step 3: 两式相减消去交叉项，对比 O1O3 与 O2O3
+      highlightSeg(O1, O3, BLUE, gStep, 3);
+      highlightSeg(O2, O3, GREEN, gStep, 3);
+      circle(O3, O3.r, {stroke: PURPLE, 'stroke-width': 1.5, 'stroke-dasharray': '4 4', opacity: 0.4}, gStep);
+      circle(O3, 8, {stroke: RED, 'stroke-width': 2, fill: 'none'}, gStep);
+      break;
+
+    case 4:
+      // Step 4: 点 O3 关于 omega1 与 omega2 的圆幂相等，必在两圆根轴上
+      // 根轴虚线延伸线，贯穿 O3 与公共弦
+      line({x: 296, y: 70}, {x: 296, y: 460}, {stroke: RED, 'stroke-width': 2.5, 'stroke-dasharray': '7 5'}, gStep);
+      circle(O3, 11, {stroke: RED, 'stroke-width': 2, fill: RED, 'fill-opacity': 0.15}, gStep);
+      circle(X, 7, {stroke: RED, 'stroke-width': 1.8, fill: 'none'}, gStep);
+      circle(Y, 7, {stroke: RED, 'stroke-width': 1.8, fill: 'none'}, gStep);
+      break;
+
+    case 5:
+      // Step 5: 命题得证 — 直线 XY 鲜红实线全线贯穿，O3 严格落在直线 XY 上
+      line({x: 296, y: 50}, {x: 296, y: 475}, {stroke: RED, 'stroke-width': 3.6, 'stroke-linecap': 'round'}, gStep);
+      // O3 胜利光晕
+      circle(O3, 13, {stroke: RED, 'stroke-width': 2.5, fill: RED, 'fill-opacity': 0.25}, gStep);
+      circle(O3, 18, {stroke: RED, 'stroke-width': 1.2, 'stroke-dasharray': '4 3', fill: 'none', opacity: 0.8}, gStep);
+      circle(X, 8, {stroke: RED, 'stroke-width': 2, fill: 'none'}, gStep);
+      circle(Y, 8, {stroke: RED, 'stroke-width': 2, fill: 'none'}, gStep);
+      // 显示完整辅助圆 omega3 闭环
+      circle(O3, O3.r, {stroke: PURPLE, 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: 0.75}, gStep);
+      break;
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: "题设构型与几何元素",
+    body: "圆 ω₁ 与圆 ω₂ 分别以 O₁、O₂ 为圆心相交于两点 X, Y。<br>直线 l₁ 过 O₁ 交 ω₂ 于 P, Q 两点；直线 l₂ 过 O₂ 交 ω₁ 于 R, S 两点。<br>已知点 P, Q, R, S 四点共圆于圆 ω₃（圆心为 O₃，半径为 r₃）。<br><b>目标求证：</b>圆心 O₃ 必然落在两圆的公共弦所在直线 XY（即 ω₁ 与 ω₂ 的根轴）上。"
+  },
+  {
+    title: "点 O₁ 关于圆 ω₂ 与 ω₃ 的圆幂等式",
+    body: "因为点 P, Q 是圆 ω₂ 与圆 ω₃ 的交点，割线 l₁（即直线 PQ）是两圆的<b>公共弦（根轴）</b>。<br>已知直线 l₁ 经过点 O₁，故点 O₁ 在圆 ω₂ 与 ω₃ 的根轴上。<br>由根轴的基本性质，点 O₁ 关于圆 ω₂ 与 ω₃ 的<b>圆幂相等</b>：<br><span style='color:#7c3aed; font-weight:600;'>O₁O₂² - r₂² = O₁O₃² - r₃²</span> &nbsp;&nbsp;…… ①"
+  },
+  {
+    title: "点 O₂ 关于圆 ω₁ 与 ω₃ 的圆幂等式",
+    body: "同理，点 R, S 是圆 ω₁ 与圆 ω₃ 的交点，割线 l₂（即直线 RS）是两圆的<b>公共弦（根轴）</b>。<br>已知直线 l₂ 经过点 O₂，故点 O₂ 在圆 ω₁ 与 ω₃ 的根轴上。<br>由根轴的基本性质，点 O₂ 关于圆 ω₁ 与 ω₃ 的<b>圆幂相等</b>：<br><span style='color:#d97706; font-weight:600;'>O₁O₂² - r₁² = O₂O₃² - r₃²</span> &nbsp;&nbsp;…… ②"
+  },
+  {
+    title: "作差消元，导出圆心距离平方关系",
+    body: "将 ① 式与 ② 式两端作差（① - ②）：<br>(O₁O₂² - r₂²) - (O₁O₂² - r₁²) = (O₁O₃² - r₃²) - (O₂O₃² - r₃²)<br>左端 O₁O₂² 相互抵消，右端半径平方 r₃² 相互抵消，整理得到：<br>r₁² - r₂² = O₁O₃² - O₂O₃²<br>移项即得：<br><span style='color:#2563eb; font-weight:600;'>O₂O₃² - r₂² = O₁O₃² - r₁²</span>"
+  },
+  {
+    title: "点 O₃ 关于圆 ω₁ 与 ω₂ 的圆幂相等",
+    body: "观察上式两端：<br>等号左端为点 O₃ 关于圆 ω₂ 的圆幂 Pow(O₃, ω₂)；<br>等号右端为点 O₃ 关于圆 ω₁ 的圆幂 Pow(O₃, ω₁)。<br>因此点 O₃ 对圆 ω₁ 与 ω₂ 的<b>圆幂严格相等</b>！<br>根据根轴判定定理，关于两圆圆幂相等的点的集合必为该两圆的根轴，故 <b>O₃ 必然落在圆 ω₁ 与 ω₂ 的根轴上</b>。"
+  },
+  {
+    title: "命题得证（圆心 O₃ 落在直线 XY 上）",
+    body: "因为圆 ω₁ 与圆 ω₂ 相交于点 X 与点 Y，它们的<b>根轴正是公共弦所在直线 XY</b>！<br>结合上一步的结论，圆心 O₃ 必然严格落在直线 XY 之上。<br><b>原命题完全得证！</b><br><span style='color:#64748b; font-size:12.5px;'>注：从深层几何看，l₁ 与 l₂ 交于根心 M，O₃ 恰为 △MO₁O₂ 的垂心，XY 为第三条高，三高共点天然闭合。</span>"
+  }
+];
+
+/* ============ 交互控制与状态机 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i === 0 ? '✦' : i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev  = document.getElementById('btnPrev');
+const btnNext  = document.getElementById('btnNext');
+const btnAuto  = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block: 'nearest', behavior: 'smooth'});
+  }
+  // URL 参数双向绑定
+  const url = new URL(window.location);
+  url.searchParams.set('step', cur);
+  window.history.replaceState({}, '', url);
+
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+btnReset.onclick = () => { stopAuto(); goTo(0);
+if (typeof renderMath === 'function') renderMath(); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+if (typeof renderMath === 'function') renderMath();
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight' || e.key === 'PageDown'){ stopAuto(); goTo(cur + 1); }
+});
+
+/* 初始化执行 */
+drawBase();
+drawPoints();
+const initStep = parseInt(new URLSearchParams(location.search).get('step'), 10);
+goTo(isNaN(initStep) ? 0 : initStep);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

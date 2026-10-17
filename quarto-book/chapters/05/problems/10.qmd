@@ -1,0 +1,33 @@
+---
+title: '练习 10：平行四边形高线与垂心距离计算'
+chapter: 5
+problem: 10
+source-chapter: '05'
+source-file: '05/10.md'
+id: 'ch05-p10'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+由平行四边形 ${ABCD}$ 的顶点引它的高 ${BK}$ 和 ${BH}$ ,已知 ${KH} = a,{BD} = \; b$ ,求点 $B$ 到 $\triangle {BKH}$ 的垂心 ${H}_1$ 的距离.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,因为 $K{H}_1 \perp  {BH},{DH} \perp  {BH}$ ,所以 $K{H}_1//{DH}$ ,又 $H{H}_1 \perp  {BK},{DK} \perp  {BK}$ , 故 $H{H}_1//{DK}$ ,于是四边形 ${KDH}{H}_1$ 为平行四边形.
+
+作平移变换 $T\left( \overrightarrow{{H}_{1}H}\right)$ ,则 $K$ 变到 $D,{H}_1$ 变到 $H, B$ 变到 ${BC}$ 上某点 $P$ ,故 ${PH} \perp  B{H}_1$ . 又 $B{H}_1 \perp  {KH}$ ,所以 ${PH} \perp  {KH}$ . 即在 Rt $\triangle {PHK}$ 中, ${PH} = \; \sqrt{P{K}^2 - K{H}^2}$ ,则四边形 ${BPDK}$ 为矩形,所以 ${PK} = {BD} = b$ ,故 ${PH} = \sqrt{{b}^2 - {a}^2}$ , 即 $B{H}_1 = \sqrt{{b}^2 - {a}^2}$ . 原问题得解.
+
+![](../images/157_301_796_470_252_0.jpg)
+:::
+
+

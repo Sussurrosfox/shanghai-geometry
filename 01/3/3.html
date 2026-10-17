@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 2：直线 KL 过线段 AJ 的中点 — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1220px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 13.5px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 600px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; display: block; }
+  .panel {
+    flex: 1 1 400px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 520px; padding-right: 4px; }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 11px 14px;
+    margin-bottom: 8px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 11.5px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,.1); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .hl-blue { color: #2563eb; font-weight: 600; }
+  .hl-orange { color: #ea580c; font-weight: 600; }
+  .hl-green { color: #059669; font-weight: 600; }
+  .hl-purple { color: #7c3aed; font-weight: 600; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\(', right: '\)', display: false},
+            {left: '\[', right: '\]', display: true}
+          ],
+          macros: {
+            '\parallel': '\mathbin{/\\!/}',
+            '\bigtriangleup': '\triangle',
+            '\triangle': '\triangle',
+            '\odot': '\odot',
+            '\ang': '\angle',
+            '\angmsd': '\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 2：证明直线 KL 过线段 AJ 的中点</h1>
+    <p>已知：△ABC 中 ∠C &lt; ∠A &lt; 90°，D 在 AC 上且 BD=BA；内切圆切 AB, AC 于 K, L；J 为 △BCD 的内心。求证：KL 平分 AJ。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 700 480" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：可用键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+/* 基准几何参数与点位计算 */
+const A = { x: 80.0, y: 400.0 };
+const C = { x: 620.0, y: 400.0 };
+const b = C.x - A.x; // 540
+const angA = 62 * Math.PI / 180;
+const angC = 36 * Math.PI / 180;
+const angB = Math.PI - angA - angC;
+
+const c = b * Math.sin(angC) / Math.sin(angB); // AB
+const a = b * Math.sin(angA) / Math.sin(angB); // BC
+
+const B = { x: A.x + c * Math.cos(angA), y: A.y - c * Math.sin(angA) };
+const S = { x: B.x, y: A.y };
+const D = { x: A.x + 2 * (B.x - A.x), y: A.y };
+
+/* 三角形 ABC 内切圆与切点 */
+const sABC = (a + b + c) / 2;
+const rABC = Math.sqrt((sABC - a) * (sABC - b) * (sABC - c) / sABC);
+const AL = sABC - a;
+const L = { x: A.x + AL, y: A.y };
+const K = add(A, mul(norm(sub(B, A)), AL));
+const I = { x: L.x, y: A.y - rABC };
+
+/* 直线 KL 与 BS 交点 H */
+const H = lineIntersect(K, sub(L, K), B, sub(S, B));
+
+/* 三角形 BCD 内心 J 与切点 R */
+const lenBC = a;
+const lenCD = C.x - D.x;
+const lenBD = c;
+const sBCD = (lenBC + lenCD + lenBD) / 2;
+const rBCD = Math.sqrt((sBCD - lenBC) * (sBCD - lenCD) * (sBCD - lenBD) / sBCD);
+const DR = sBCD - lenBC;
+const R = { x: D.x + DR, y: A.y };
+const J = { x: R.x, y: A.y - rBCD };
+
+/* 对角线交点 M (AJ 与 HL 的中点) */
+const M = mid(A, J);
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, dash='6 4', parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':dash, fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.2, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=15, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", "Cambria Math", serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '400'}, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=11, color='#ef4444', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color, parent, offset=0, len=5.5){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,len)), add(c, mul(n,-len)), {stroke:color, 'stroke-width':2.0}, parent);
+}
+function arrowMark(p, q, color, parent, offset=0){
+  const m = add(mid(p,q), mul(norm(sub(q,p)), offset)), d = norm(sub(q,p)), n = perp(d);
+  const tip = add(m, mul(d,7));
+  const p1 = add(add(m, mul(d,-5)), mul(n,4.5));
+  const p2 = add(add(m, mul(d,-5)), mul(n,-4.5));
+  el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+}
+function extendedLine(p, q, extP, extQ, attrs, parent){
+  const d = norm(sub(q,p));
+  return line(sub(p, mul(d, extP)), add(q, mul(d, extQ)), attrs, parent);
+}
+function highlightSeg(p, q, color, parent, w=3.8){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da > Math.PI * 2) da -= Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#ef4444', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+/* 全程保留的底图 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 三角形 ABC
+  polygon([A, B, C], {fill:'#f8fafc', stroke:'#334155', 'stroke-width':2.2}, gBase);
+  // 线段 BD (BD = BA)
+  line(B, D, {stroke:'#64748b', 'stroke-width':1.8}, gBase);
+  // △ABC 内切圆 (轻柔淡色虚线)
+  circle(I, rABC, {stroke:'#94a3b8', 'stroke-width':1.3, 'stroke-dasharray':'4 3'}, gBase);
+  // △BCD 内切圆 (轻柔淡色虚线)
+  circle(J, rBCD, {stroke:'#cbd5e1', 'stroke-width':1.1, 'stroke-dasharray':'3 3'}, gBase);
+}
+
+/* 绘制点与标签 */
+function drawPoints(s){
+  gPts.innerHTML = '';
+  // 常驻点: A, B, C, D, K, L, J
+  dot(A, '#0f172a', 4.5, gPts);
+  label(A, 'A', -16, 16, '#0f172a', gPts);
+
+  dot(B, '#0f172a', 4.5, gPts);
+  label(B, 'B', 0, -16, '#0f172a', gPts);
+
+  dot(C, '#0f172a', 4.5, gPts);
+  label(C, 'C', 16, 16, '#0f172a', gPts);
+
+  dot(D, '#0f172a', 4.2, gPts);
+  label(D, 'D', -8, 22, '#0f172a', gPts);
+
+  dot(K, '#2563eb', 4.2, gPts);
+  label(K, 'K', -18, -4, '#2563eb', gPts);
+
+  dot(L, '#2563eb', 4.2, gPts);
+  label(L, 'L', 8, 22, '#2563eb', gPts);
+
+  dot(J, '#7c3aed', 4.5, gPts);
+  label(J, 'J', 14, -12, '#7c3aed', gPts);
+
+  // 步骤 1 起出现的点: S, R, H
+  if (s >= 1){
+    dot(S, '#0284c7', 4.2, gPts);
+    label(S, 'S', -8, 22, '#0284c7', gPts);
+
+    dot(R, '#0284c7', 4.2, gPts);
+    label(R, 'R', 8, 22, '#0284c7', gPts);
+
+    dot(H, '#d97706', 4.2, gPts);
+    label(H, 'H', -15, -9, '#d97706', gPts);
+  }
+
+  // 步骤 6 出现的交点 M
+  if (s >= 6){
+    dot(M, '#dc2626', 4.8, gPts);
+    label(M, 'M', 15, -10, '#dc2626', gPts);
+  }
+}
+
+/* ============ 各步骤动态图元 ============ */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#ef4444',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', AMBER = '#f59e0b';
+
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0:
+      // Step 0: 展示已知条件，连结目标直线 KL 与目标线段 AJ
+      extendedLine(K, L, 25, 45, {stroke: PURPLE, 'stroke-width': 2.0}, gStep);
+      line(A, J, {stroke: '#475569', 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      // 等长标记 BA = BD
+      tickMark(A, B, '#64748b', gStep, 0);
+      tickMark(B, D, '#64748b', gStep, 0);
+      break;
+
+    case 1:
+      // Step 1: 作高 BS ⊥ AC 与 JR ⊥ AC，确定 AD 中点 S
+      extendedLine(K, L, 20, 35, {stroke: '#94a3b8', 'stroke-width': 1.5}, gStep);
+      line(B, S, {stroke: BLUE, 'stroke-width': 2.0}, gStep);
+      line(J, R, {stroke: BLUE, 'stroke-width': 2.0}, gStep);
+      rightAngleMark(S, B, C, 11, RED, gStep);
+      rightAngleMark(R, J, C, 11, RED, gStep);
+      // S 是 AD 中点: AS = SD
+      tickMark(A, S, ORANGE, gStep, 0, 6);
+      tickMark(S, D, ORANGE, gStep, 0, 6);
+      break;
+
+    case 2:
+      // Step 2: 切线长得出 AL = SR 与 SL = DR
+      extendedLine(K, L, 15, 25, {stroke: '#cbd5e1', 'stroke-width': 1.3}, gStep);
+      line(B, S, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      line(J, R, {stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray':'4 3'}, gStep);
+      // 高亮 AL 与 SR
+      highlightSeg(A, L, BLUE, gStep, 4);
+      highlightSeg(S, R, BLUE, gStep, 4);
+      // 稍作位移高亮 SL 与 DR (显示在线段上方小偏移)
+      line(S, L, {stroke: ORANGE, 'stroke-width': 5, 'stroke-linecap':'round'}, gStep);
+      line(D, R, {stroke: ORANGE, 'stroke-width': 5, 'stroke-linecap':'round'}, gStep);
+      tickMark(S, L, '#fff', gStep, 0, 4);
+      tickMark(D, R, '#fff', gStep, 0, 4);
+      break;
+
+    case 3:
+      // Step 3: 导角证明 ∠SLH = ∠RDJ
+      line(B, S, {stroke: '#94a3b8', 'stroke-width': 1.4}, gStep);
+      line(J, R, {stroke: '#94a3b8', 'stroke-width': 1.4}, gStep);
+      extendedLine(K, L, 15, 25, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      // 辅助连线 DJ
+      line(D, J, {stroke: RED, 'stroke-width': 1.8, 'stroke-dasharray':'5 4'}, gStep);
+      // 角弧 ∠SLH 与 ∠RDJ
+      angleArc(L, S, H, 24, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(D, R, J, 24, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 辅助弧 ∠ALK
+      angleArc(L, A, K, 30, {stroke: '#94a3b8', 'stroke-width': 1.2, 'stroke-dasharray':'3 2'}, gStep);
+      break;
+
+    case 4:
+      // Step 4: △LSH ≌ △DRJ 导出 SH = JR
+      extendedLine(K, L, 15, 25, {stroke: '#cbd5e1', 'stroke-width': 1.2}, gStep);
+      // 填充直角三角形 △LSH 与 △DRJ
+      polygon([L, S, H], {fill: GREEN, opacity: 0.22, stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      polygon([D, R, J], {fill: GREEN, opacity: 0.22, stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      line(D, J, {stroke: GREEN, 'stroke-width': 1.8}, gStep);
+      // 直角标记
+      rightAngleMark(S, H, L, 10, GREEN, gStep);
+      rightAngleMark(R, J, D, 10, GREEN, gStep);
+      // 高亮对应直角边 SH 与 JR
+      highlightSeg(S, H, GREEN, gStep, 3.8);
+      highlightSeg(R, J, GREEN, gStep, 3.8);
+      tickMark(S, H, GREEN, gStep, 0, 6);
+      tickMark(R, J, GREEN, gStep, 0, 6);
+      // 高亮底边 SL 与 DR
+      line(S, L, {stroke: ORANGE, 'stroke-width': 3.5}, gStep);
+      line(D, R, {stroke: ORANGE, 'stroke-width': 3.5}, gStep);
+      break;
+
+    case 5:
+      // Step 5: 矩形 HSRJ 导出 HJ ∥ AL 且 HJ = AL
+      extendedLine(K, L, 15, 20, {stroke: '#cbd5e1', 'stroke-width': 1.2}, gStep);
+      // 矩形 HSRJ
+      polygon([H, S, R, J], {fill: CYAN, opacity: 0.18, stroke: CYAN, 'stroke-width': 2.0}, gStep);
+      // 高亮对边 HJ 与 AL
+      highlightSeg(H, J, BLUE, gStep, 4);
+      highlightSeg(A, L, BLUE, gStep, 4);
+      // 平行箭头与等长刻度
+      arrowMark(H, J, BLUE, gStep, 0);
+      arrowMark(A, L, BLUE, gStep, 0);
+      tickMark(H, J, BLUE, gStep, -15, 6);
+      tickMark(A, L, BLUE, gStep, -15, 6);
+      break;
+
+    case 6:
+      // Step 6: 平行四边形 ALJH 导出 KL 平分 AJ
+      // 平行四边形 ALJH 填充与边框
+      polygon([A, L, J, H], {fill: AMBER, opacity: 0.22, stroke: AMBER, 'stroke-width': 2.2}, gStep);
+      line(A, H, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray':'5 4'}, gStep);
+      line(L, J, {stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray':'5 4'}, gStep);
+      // 对角线 HL (直线 KL 的一段) 与 AJ
+      extendedLine(K, L, 25, 30, {stroke: RED, 'stroke-width': 2.4}, gStep);
+      line(A, J, {stroke: PURPLE, 'stroke-width': 2.4}, gStep);
+      // 中点 M 处等长标记
+      tickMark(A, M, RED, gStep, 0, 5);
+      tickMark(M, J, RED, gStep, 0, 5);
+      tickMark(A, M, RED, gStep, -3, 5);
+      tickMark(M, J, RED, gStep, -3, 5);
+      break;
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '已知条件与图形架构',
+    body: `在 $\\triangle ABC$ 中，$\\angle C < \\angle A < 90^\\circ$。<br>
+点 $D$ 位于边 $AC$ 上且满足 $BD = BA$。<br>
+$\\triangle ABC$ 的内切圆分别切边 $AB, AC$ 于点 $K, L$；点 $J$ 为 $\\triangle BCD$ 的内心。<br>
+连结直线 <span class="hl-purple">KL</span> 与线段 $AJ$，求证：直线 <span class="hl-purple">KL</span> 经过线段 $AJ$ 的中点。`
+  },
+  {
+    title: '① 作垂线 BS 与 JR，确定 AD 中点 S',
+    body: `过点 $B$ 作 <span class="hl-blue">BS ⊥ AC</span> 于点 $S$，直线 $BS$ 与 $KL$ 交于点 $H$。<br>
+过内心 $J$ 作 <span class="hl-blue">JR ⊥ AC</span> 于点 $R$（$R$ 即为 $\\triangle BCD$ 内切圆在边 $AC$ 上的切点）。<br>
+在等腰 $\\triangle BAD$ 中，因 $BA = BD$，高 $BS$ 亦为底边中线，故 $S$ 为 $AD$ 的中点，即：<br>
+<center><span class="math hl-orange">AS = SD = ½ AD</span></center>`
+  },
+  {
+    title: '② 利用切线长导出 AL = SR 与 SL = DR',
+    body: `由切线长定理，$AL = \\frac{1}{2}(AB + AC - BC)$。<br>
+在 $\\triangle BCD$ 中，切点 $R$ 满足 $DR = \\frac{1}{2}(BD + CD - BC)$。<br>
+代入 $BD = BA$ 与 $CD = AC - AD$，相减得：<br>
+<center>$AL - DR = \\frac{1}{2} AD = AS = SD$</center>
+在直线 $AC$ 上计算：<br>
+$LR = AD + DR - AL = AD - (AL - DR) = \\frac{1}{2} AD = AS$。<br>
+由此导出：<br>
+<center><span class="math hl-blue">AL = SR</span> 且 <span class="math hl-orange">SL = DR</span></center>`
+  },
+  {
+    title: '③ 由外角与角平分线性质导出 ∠SLH = ∠RDJ',
+    body: `在等腰 $\\triangle AKL$ 中（$AK = AL$），底角 $\\angle ALK = 90^\\circ - \\frac{1}{2}\\angle A$。<br>
+又在等腰 $\\triangle BAD$ 中，外角 $\\angle CDB = 180^\\circ - \\angle A$。<br>
+因 $J$ 是 $\\triangle BCD$ 的内心，$DJ$ 平分 $\\angle CDB$，故：<br>
+<center>$\\angle CDJ = \\frac{1}{2}\\angle CDB = 90^\\circ - \\frac{1}{2}\\angle A$</center>
+由点 $A, S, L$ 共线知 $\\angle SLH = \\angle ALK$；由点 $D, R, C$ 共线知 $\\angle RDJ = \\angle CDJ$。<br>
+因此得出关键角相等：<span class="math hl-purple">∠SLH = ∠RDJ</span>。`
+  },
+  {
+    title: '④ △LSH ≌ △DRJ 导出对应边 SH = JR',
+    body: `考察直角三角形 $\\triangle LSH$ 与 $\\triangle DRJ$：<br>
+1. $\\angle LSH = \\angle DRJ = 90^\\circ$（垂直于边 $AC$）；<br>
+2. 直角边 <span class="math hl-orange">SL = DR</span>（由步骤 ②）；<br>
+3. 锐角 <span class="math hl-purple">∠SLH = ∠RDJ</span>（由步骤 ③）。<br>
+根据直角三角形全等判定（ASA），得：<br>
+<center><span class="math hl-green">△LSH ≌ △DRJ</span></center>
+从而对应直角边相等：<span class="math hl-green">SH = JR</span>。`
+  },
+  {
+    title: '⑤ 判定 HSRJ 为矩形，导出 HJ ∥ AL 且 HJ = AL',
+    body: `因为 $HS \\perp AC$ 且 $JR \\perp AC$，所以 $HS ∥ JR$。<br>
+又 $SH = JR$（步骤 ④），故四边形 $HSRJ$ 为平行四边形；<br>
+再结合 $\\angle HSR = 90^\\circ$，知 <span class="math hl-blue">HSRJ 为矩形</span>！<br>
+由矩形性质，对边平行且相等：$HJ ∥ SR$ 且 $HJ = SR$。<br>
+结合步骤 ② 中已证的 $SR = AL$ 及 $A, S, R$ 共线，立即得出：<br>
+<center><span class="math hl-blue">HJ ∥ AL</span> 且 <span class="math hl-blue">HJ = AL</span></center>`
+  },
+  {
+    title: '⑥ 判定 ALJH 为平行四边形，KL 平分 AJ',
+    body: `在四边形 $ALJH$ 中：<br>
+因 $HJ ∥ AL$ 且 $HJ = AL$，一组对边平行且相等，故 <span class="hl-purple">ALJH 为平行四边形</span>！<br>
+在平行四边形中，对角线互相平分，因此对角线 $HL$ 与 $AJ$ 互相平分。<br>
+设其交点为 <span class="math hl-blue">M</span>，则 $M$ 为线段 $AJ$ 的中点。<br>
+又因点 $H, L$ 均在直线 $KL$ 上，直线 $HL$ 即为直线 $KL$。<br>
+<center><b>由此证明：直线 <span class="math hl-blue">KL</span> 经过线段 $AJ$ 的中点 $M$！</b></center>`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (typeof window.renderMath === 'function') window.renderMath(listEl);
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2600);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

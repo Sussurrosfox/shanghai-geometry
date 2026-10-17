@@ -1,0 +1,43 @@
+---
+title: '练习 26：相似三角形构型与三点共线证明'
+chapter: 5
+problem: 26
+source-chapter: '05'
+source-file: '05/26.md'
+id: 'ch05-p26'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+设 $X$ 为 $\triangle {ABC}$ 内一点, $P$ 为 ${BC}$ 边上一点,点 $Y, Z$ 满足 $\triangle {ZAB} \backsim \; \triangle {XCP},\triangle {YAC} \backsim  \triangle {XBP}$ . 证明: $X, Y, Z$ 三点共线.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,过点 $X$ 作 ${XD}$ 交 $\triangle {BXC}$ 的外接圆于另一点 $D$ ,使得 $\angle {BXD} = \angle {CXP}$ ,连接 ${AD},{BD},{CD},{ZX},{XY}$ . 由条件
+
+$$
+\angle {BXD} = \angle {CXP} = \angle {AZB},
+$$
+
+$$
+\angle {BDX} = \angle {PCX} = \angle {ZAB},
+$$
+
+于是 $\triangle {ZAB} \backsim  \triangle {XDB}$ ,故 $\frac{BZ}{BX} = \frac{AB}{DB},\angle {XBD} = \angle {ZBA}$ ,从而 $\triangle {BXZ} \backsim  \triangle {BAD}$ , 则 $\angle {ZXB} = \angle {ADB}$ .
+
+同理可得 $\angle {YXC} = \angle {ADC}$ . 结合 $\angle {BDC} + \angle {BXC} = {180}^{ \circ  }$ ，知 $\angle {ZXB} + \angle {BXC} + \; \angle {YXC} = {180}^{ \circ  }$ ，即 $X, Y, Z$ 三点共线. 原问题得证.
+
+![](../images/165_242_510_506_458_0.jpg)
+:::
+
+

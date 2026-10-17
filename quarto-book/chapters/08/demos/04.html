@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 3：圆内接四边形中点与四圆共点问题（反演与牛顿定理）— 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1220px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; }
+  .panel {
+    flex: 1 1 380px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 64vh; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>四边形中点与四圆共点问题（反演与牛顿定理）</h1>
+    <p><b>已知：</b>四边形 <span class="math">ABCD</span> 内接于圆 <span class="math">O</span>，<span class="math">W, X, Y, Z</span> 分别为边 <span class="math">AB, BC, CD, DA</span> 的中点。&nbsp;&nbsp;<b>求证：</b><span class="math">△AOC, △BOD, △WOY, △XOZ</span> 的外接圆除了点 <span class="math">O</span> 外还有一个公共点 <span class="math">M</span>。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// KaTeX 数学公式渲染定义
+function renderMath() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\\parallel': '\\mathbin{/\\!/}',
+        '\\bigtriangleup': '\\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+window.renderMath = renderMath;
+
+/* ============ 几何定义与高精度坐标解算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 圆心 O 与反演半径 R */
+const O = { x: 320.00, y: 260.00 };
+const R = 110.00;
+
+/* 圆内接四边形 ABCD 顶点坐标（基于高精度算法求解） */
+const A = { x: 216.63, y: 222.38 };
+const B = { x: 390.71, y: 175.74 };
+const C = { x: 366.49, y: 359.69 };
+const D = { x: 282.38, y: 363.37 };
+
+/* 四边中点 W, X, Y, Z */
+const W = mid(A, B); // (303.67, 199.06)
+const X = mid(B, C); // (378.60, 267.71)
+const Y = mid(C, D); // (324.43, 361.53)
+const Z = mid(D, A); // (249.51, 292.87)
+
+/* 反演函数：以 O 为中心，R 为反演半径 */
+function invert(p) {
+  const dx = p.x - O.x, dy = p.y - O.y;
+  const d2 = dx * dx + dy * dy;
+  const scale = (R * R) / d2;
+  return { x: O.x + dx * scale, y: O.y + dy * scale };
+}
+
+/* 中点 W, X, Y, Z 的反演像 W', X', Y', Z' */
+const W_prime = invert(W); // (270.36, 74.76)
+const X_prime = invert(X); // (522.98, 286.72)
+const Y_prime = invert(Y); // (325.19, 378.95)
+const Z_prime = invert(Z); // (179.01, 325.74)
+
+/* 直线交点函数 */
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x * (-d2.y) - (-d2.x) * d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x - p1.x) * (-d2.y) - (-d2.x) * (p2.y - p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+/* 对角线与切线连线交点 M' (牛顿定理：AC, BD, W'Y', X'Z' 四线共点) */
+const M_prime = lineIntersect(A, sub(C, A), B, sub(D, B)); // (312.87, 310.56)
+
+/* M' 的反演点 M */
+const M = invert(M_prime); // (286.89, 494.65)
+
+/* 外接圆圆心与半径求解 */
+function circumcircle(p1, p2, p3){
+  const ax = p1.x, ay = p1.y;
+  const bx = p2.x, by = p2.y;
+  const cx = p3.x, cy = p3.y;
+  const d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+  const ux = ((ax*ax + ay*ay)*(by - cy) + (bx*bx + by*by)*(cy - ay) + (cx*cx + cy*cy)*(ay - by)) / d;
+  const uy = ((ax*ax + ay*ay)*(cx - bx) + (bx*bx + by*by)*(ax - cx) + (cx*cx + cy*cy)*(bx - ax)) / d;
+  const rad = Math.hypot(ux - ax, uy - ay);
+  return { center: { x: ux, y: uy }, r: rad };
+}
+
+const circAOC = circumcircle(A, O, C);
+const circBOD = circumcircle(B, O, D);
+const circWOY = circumcircle(W, O, Y);
+const circXOZ = circumcircle(X, O, Z);
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs = {}, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r:r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#2563eb', r=4.5, parent, stroke='#ffffff'){
+  return el('circle', {cx:p.x, cy:p.y, r:r, fill:color, stroke:stroke, 'stroke-width':1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+/* 文字标签带白色轮廓描边防遮挡 */
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", "Cambria Math", serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    'paint-order': 'stroke fill',
+    'stroke': '#ffffff',
+    'stroke-width': '3.5px',
+    'stroke-linejoin': 'round',
+    'stroke-linecap': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 直角标记 */
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.2}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage); // 底层：基准图形（全程保留）
+const gStep = el('g', {id: 'gStep'}, stage); // 动态步骤层（按步清空绘制）
+const gPts  = el('g', {id: 'gPts'}, stage);  // 顶层：点与文本标签
+
+/* 颜色常量定义 */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const CYAN   = '#0891b2';
+const ORANGE = '#ea580c';
+const SLATE  = '#475569';
+
+/* 基础图形绘制 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 浅色网格/背景虚化圆
+  circle(O, R, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: .7}, gBase);
+  // 四边形 ABCD
+  polygon([A, B, C, D], {fill: 'rgba(37,99,235,0.03)', stroke: SLATE, 'stroke-width': 1.8}, gBase);
+  // 中点四边形 WXYZ（轻量展示）
+  polygon([W, X, Y, Z], {fill: 'none', stroke: '#cbd5e1', 'stroke-width': 1.2, 'stroke-dasharray': '4 4'}, gBase);
+}
+
+/* 绘制顶层点与标签 */
+function drawPoints(step){
+  gPts.innerHTML = '';
+  
+  // 原点 O 与基本顶点 A, B, C, D
+  dot(O, '#0f172a', 4, gPts);
+  label(O, 'O', 14, -12, '#0f172a', gPts);
+  
+  dot(A, BLUE, 4.5, gPts);
+  label(A, 'A', -16, -10, '#1e293b', gPts);
+  
+  dot(B, BLUE, 4.5, gPts);
+  label(B, 'B', 14, -12, '#1e293b', gPts);
+  
+  dot(C, BLUE, 4.5, gPts);
+  label(C, 'C', 14, 14, '#1e293b', gPts);
+  
+  dot(D, BLUE, 4.5, gPts);
+  label(D, 'D', -14, 14, '#1e293b', gPts);
+  
+  // 中点 W, X, Y, Z
+  dot(W, GREEN, 4, gPts);
+  label(W, 'W', -12, -12, GREEN, gPts);
+  
+  dot(X, GREEN, 4, gPts);
+  label(X, 'X', 14, 0, GREEN, gPts);
+  
+  dot(Y, GREEN, 4, gPts);
+  label(Y, 'Y', -14, -12, GREEN, gPts);
+  
+  dot(Z, GREEN, 4, gPts);
+  label(Z, 'Z', -14, 2, GREEN, gPts);
+
+  // 反演点 W', X', Y', Z'（在 Step 1 及之后显示）
+  if (step >= 1) {
+    dot(W_prime, PURPLE, 4.5, gPts);
+    label(W_prime, "W'", 0, -16, PURPLE, gPts);
+
+    dot(X_prime, PURPLE, 4.5, gPts);
+    label(X_prime, "X'", 18, 0, PURPLE, gPts);
+
+    dot(Y_prime, PURPLE, 4.5, gPts);
+    label(Y_prime, "Y'", 0, 18, PURPLE, gPts);
+
+    dot(Z_prime, PURPLE, 4.5, gPts);
+    label(Z_prime, "Z'", -18, 0, PURPLE, gPts);
+  }
+
+  // 四线交点 M'（在 Step 3 及之后显示）
+  if (step >= 3) {
+    dot(M_prime, ORANGE, 5, gPts);
+    label(M_prime, "M'", 16, -10, ORANGE, gPts);
+  }
+
+  // 反演交点 M（在 Step 4 及之后显示）
+  if (step >= 4) {
+    dot(M, RED, 5.5, gPts, '#fef08a');
+    label(M, 'M', 0, 18, RED, gPts, 18);
+  }
+}
+
+/* ============ 各步骤画面动态绘制 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0:
+      // Step 0: 展示题意构型与连线
+      segDashed(A, C, '#94a3b8', 1.4, gStep);
+      segDashed(B, D, '#94a3b8', 1.4, gStep);
+      segDashed(W, Y, '#94a3b8', 1.4, gStep);
+      segDashed(X, Z, '#94a3b8', 1.4, gStep);
+      line(O, W, {stroke: GREEN, 'stroke-width': 1.3, opacity: .7}, gStep);
+      line(O, X, {stroke: GREEN, 'stroke-width': 1.3, opacity: .7}, gStep);
+      line(O, Y, {stroke: GREEN, 'stroke-width': 1.3, opacity: .7}, gStep);
+      line(O, Z, {stroke: GREEN, 'stroke-width': 1.3, opacity: .7}, gStep);
+      break;
+
+    case 1:
+      // Step 1: 以 O 为中心的反演变换，OW·OW' = R^2
+      // 突出反演圆 O
+      circle(O, R, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      // 射线 OW->W', OX->X', OY->Y', OZ->Z'
+      line(O, W_prime, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      line(O, X_prime, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      line(O, Y_prime, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      line(O, Z_prime, {stroke: PURPLE, 'stroke-width': 1.8}, gStep);
+      // 高亮反演半径 OA
+      line(O, A, {stroke: BLUE, 'stroke-width': 1.6, 'stroke-dasharray':'4 3'}, gStep);
+      break;
+
+    case 2:
+      // Step 2: 证明外切四边形 W'X'Y'Z' 与切线
+      circle(O, R, {stroke: '#94a3b8', 'stroke-width': 1.5}, gStep);
+      // 切线四边形各边
+      line(W_prime, X_prime, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(X_prime, Y_prime, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(Y_prime, Z_prime, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      line(Z_prime, W_prime, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      // 垂径垂直与切线垂直标记
+      line(O, W_prime, {stroke: '#94a3b8', 'stroke-width': 1.2, 'stroke-dasharray':'4 4'}, gStep);
+      line(O, A, {stroke: BLUE, 'stroke-width': 1.5}, gStep);
+      line(W_prime, A, {stroke: RED, 'stroke-width': 1.8}, gStep);
+      rightAngleMark(W, O, A, 10, GREEN, gStep);
+      rightAngleMark(A, O, W_prime, 11, RED, gStep);
+      break;
+
+    case 3:
+      // Step 3: 牛顿定理：AC, BD, W'Y', X'Z' 四线共点于 M'
+      // 外切四边形边框淡显
+      polygon([W_prime, X_prime, Y_prime, Z_prime], {fill:'rgba(124,58,237,0.03)', stroke: '#cbd5e1', 'stroke-width': 1.5}, gStep);
+      // 四条共点线高亮
+      highlightSeg(A, C, BLUE, gStep, 2.5);
+      highlightSeg(B, D, GREEN, gStep, 2.5);
+      highlightSeg(W_prime, Y_prime, PURPLE, gStep, 2.5);
+      highlightSeg(X_prime, Z_prime, ORANGE, gStep, 2.5);
+      break;
+
+    case 4:
+      // Step 4: 将 M' 反演为点 M，直线反演为过 O 的圆
+      // 外切四边形与四线虚化
+      segDashed(A, C, '#cbd5e1', 1.2, gStep);
+      segDashed(B, D, '#cbd5e1', 1.2, gStep);
+      segDashed(W_prime, Y_prime, '#cbd5e1', 1.2, gStep);
+      segDashed(X_prime, Z_prime, '#cbd5e1', 1.2, gStep);
+      // 射线 OM' 延长到 M
+      line(O, M, {stroke: RED, 'stroke-width': 2.2, 'stroke-dasharray':'6 4'}, gStep);
+      // 显示反演圆
+      circle(O, R, {stroke: BLUE, 'stroke-width': 1.6, 'stroke-dasharray':'5 4'}, gStep);
+      // 说明直线反演对应圆
+      circle(circAOC.center, circAOC.r, {stroke: BLUE, 'stroke-width': 1.4, 'stroke-dasharray':'4 4', opacity:.6}, gStep);
+      circle(circXOZ.center, circXOZ.r, {stroke: CYAN, 'stroke-width': 1.4, 'stroke-dasharray':'4 4', opacity:.6}, gStep);
+      break;
+
+    case 5:
+      // Step 5: 四圆齐聚于点 M，命题得证
+      // 四条共点直线极淡背景
+      segDashed(A, C, '#e2e8f0', 1, gStep);
+      segDashed(B, D, '#e2e8f0', 1, gStep);
+      // 绘制四个外接圆（各用专属颜色优雅展现）
+      circle(circAOC.center, circAOC.r, {stroke: BLUE, 'stroke-width': 2.4, opacity: .9}, gStep);
+      circle(circBOD.center, circBOD.r, {stroke: GREEN, 'stroke-width': 2.4, opacity: .9}, gStep);
+      circle(circWOY.center, circWOY.r, {stroke: PURPLE, 'stroke-width': 2.4, opacity: .9}, gStep);
+      circle(circXOZ.center, circXOZ.r, {stroke: CYAN, 'stroke-width': 2.4, opacity: .9}, gStep);
+      // 两公共交点 O 与 M 强烈高亮光圈
+      circle(O, 8, {stroke: '#0f172a', 'stroke-width': 1.8, fill: 'none'}, gStep);
+      circle(M, 9, {stroke: RED, 'stroke-width': 2.2, fill: 'rgba(220,38,38,0.2)'}, gStep);
+      break;
+  }
+  if (window.renderMath) window.renderMath();
+}
+
+/* ============ 步骤文本配置 ============ */
+const steps = [
+  {
+    title: "已知条件与构型",
+    body: `设凸四边形 <span class="math">ABCD</span> 内接于圆 <span class="math">O</span>。<br>
+取各边中点分别记为 <span class="math">W</span> (<span class="math">AB</span> 中点)、<span class="math">X</span> (<span class="math">BC</span> 中点)、<span class="math">Y</span> (<span class="math">CD</span> 中点)、<span class="math">Z</span> (<span class="math">DA</span> 中点)。<br>
+目标是证明：<span style="color:${BLUE};font-weight:600">△AOC</span>、<span style="color:${GREEN};font-weight:600">△BOD</span>、<span style="color:${PURPLE};font-weight:600">△WOY</span>、<span style="color:${CYAN};font-weight:600">△XOZ</span> 的四个外接圆除了点 <span class="math">O</span> 之外，还有一个公共点 <span class="math">M</span>。`
+  },
+  {
+    title: "以 O 为中心建立反演变换",
+    body: `以圆心 <span class="math">O</span> 为反演中心、圆 <span class="math">O</span> 的半径 <span class="math">R</span> 为反演半径作反演变换。<br>
+对于任意点 <span class="math">P (P &ne; O)</span>，其反演点 <span class="math">P'</span> 位于射线 <span class="math">OP</span> 上，满足：<br>
+<center><span class="math">OP &middot; OP' = R<sup>2</sup></span></center><br>
+在此变换下，四边形顶点 <span class="math">A, B, C, D</span> 均在反演圆上，故其反演像为自身（<span class="math">A'=A, B'=B, C'=C, D'=D</span>）；<br>
+中点 <span class="math">W, X, Y, Z</span> 的反演像分别记为 <span style="color:${PURPLE};font-weight:600">W', X', Y', Z'</span>。`
+  },
+  {
+    title: "证明 W'X'Y'Z' 为圆 O 的外切四边形",
+    body: `以弦 <span class="math">AB</span> 及其反演点 <span class="math">W'</span> 为例：<br>
+因为 <span class="math">W</span> 是 <span class="math">AB</span> 的中点，由垂径定理知 <span class="math">OW &perp; AB</span>，即 <span class="math">&ang;OWA = 90&deg;</span>。<br>
+由反演定义，<span class="math">OW &middot; OW' = R<sup>2</sup> = OA<sup>2</sup></span>，得到 <span class="math">OW / OA = OA / OW'</span>。<br>
+结合公共角 <span class="math">&ang;AOW = &ang;W'OA</span>，可得 <span class="math">&Delta;OWA &sim; &Delta;OAW'</span>。<br>
+因此 <span style="color:${RED};font-weight:600">&ang;W'AO = &ang;OWA = 90&deg;</span>，即 <span class="math">W'A</span> 与圆 <span class="math">O</span> 相切于点 <span class="math">A</span>！<br>
+同理，<span class="math">W'B, X'B, X'C, Y'C, Y'D, Z'D, Z'A</span> 均与圆 <span class="math">O</span> 相切。<br>
+于是四边形 <span style="color:${PURPLE};font-weight:600">W'X'Y'Z'</span> 为圆 <span class="math">O</span> 的<b>外切四边形</b>，切点顺次为 <span class="math">B, C, D, A</span>。`
+  },
+  {
+    title: "牛顿定理：四线共点于 M'",
+    body: `在圆外切四边形 <span class="math">W'X'Y'Z'</span> 中：<br>
+• 两组对边切点的连线分别为弦 <span style="color:${BLUE};font-weight:600">AC</span> 与弦 <span style="color:${GREEN};font-weight:600">BD</span>；<br>
+• 两条对角线分别为 <span style="color:${PURPLE};font-weight:600">W'Y'</span> 与 <span style="color:${ORANGE};font-weight:600">X'Z'</span>。<br>
+根据<b>牛顿定理（Newton's Theorem）</b>：圆外切四边形的两条对角线与两对边切点连线这四条线共点！<br>
+因此，直线 <span class="math">AC, BD, W'Y', X'Z'</span> 严格共点于 <span style="color:${ORANGE};font-weight:700">M'</span>。`
+  },
+  {
+    title: "直线反演为圆与反演像点 M",
+    body: `由反演几何基本定理：<b>不过反演中心 O 的直线，其反演像为经过反演中心 O 的圆</b>。<br>
+考察 Step 3 中的四条直线：<br>
+1. 直线 <span class="math">AC</span> 经过反演圆上点 <span class="math">A, C</span>，其反演像为过 <span class="math">O, A, C</span> 的圆，即 <span style="color:${BLUE};font-weight:600">△AOC 的外接圆</span>；<br>
+2. 直线 <span class="math">BD</span> 的反演像为过 <span class="math">O, B, D</span> 的圆，即 <span style="color:${GREEN};font-weight:600">△BOD 的外接圆</span>；<br>
+3. 直线 <span class="math">W'Y'</span> 的反演像为过 <span class="math">O, W, Y</span> 的圆，即 <span style="color:${PURPLE};font-weight:600">△WOY 的外接圆</span>；<br>
+4. 直线 <span class="math">X'Z'</span> 的反演像为过 <span class="math">O, X, Z</span> 的圆，即 <span style="color:${CYAN};font-weight:600">△XOZ 的外接圆</span>。<br>
+四线交点 <span class="math">M'</span> 在反演下的像点为 <span style="color:${RED};font-weight:700">M</span>（满足 <span class="math">OM &middot; OM' = R<sup>2</sup></span>）。`
+  },
+  {
+    title: "四圆交于公共点 M，命题得证",
+    body: `因为点 <span class="math">M'</span> 是四条直线 <span class="math">AC, BD, W'Y', X'Z'</span> 的公共交点，<br>
+所以根据反演变换的点线对应性质，点 <span style="color:${RED};font-weight:700">M</span> 必定同时落在上述四条直线的反演像上！<br>
+即：<br>
+• <span class="math">M &isin; &odot;(AOC)</span><br>
+• <span class="math">M &isin; &odot;(BOD)</span><br>
+• <span class="math">M &isin; &odot;(WOY)</span><br>
+• <span class="math">M &isin; &odot;(XOZ)</span><br>
+又因 <span class="math">M' &ne; O</span>，反演点 <span class="math">M</span> 亦为一个异于 <span class="math">O</span> 的唯一点。<br>
+从而 <span style="color:${BLUE}">△AOC</span>, <span style="color:${GREEN}">△BOD</span>, <span style="color:${PURPLE}">△WOY</span>, <span style="color:${CYAN}">△XOZ</span> 的外接圆除了点 <span class="math">O</span> 之外，还有一个公共点 <span style="color:${RED};font-weight:700">M</span>！<b>命题得证。</b>`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (window.renderMath) window.renderMath();
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  const url = new URL(location.href);
+  url.searchParams.set('step', cur);
+  history.replaceState(null, '', url.toString());
+  if (window.renderMath) window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2600);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

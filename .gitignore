@@ -1,0 +1,19 @@
+# Dependencies & virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Quarto build artifacts
+.quarto/
+quarto-book/.quarto/
+
+# Large archives and temporary tools
+*.zip
+*.tar.gz
+D:/tools/
+deploy_github.py
+
+# OS specific files
+.DS_Store
+Thumbs.db

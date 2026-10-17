@@ -1,0 +1,49 @@
+---
+title: '练习 7：中线割线截线段倒数和比例关系'
+chapter: 5
+problem: 7
+source-chapter: '05'
+source-file: '05/7.md'
+id: 'ch05-p07'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+在 $\triangle {ABC}$ 中, ${AM}$ 是 ${BC}$ 边上的中线,任作一条直线分别交 ${AB},{AC}$ , ${AM}$ 于点 $P, Q, N$ . 证明: $\frac{AB}{AP} + \frac{AC}{AQ} = \frac{2AM}{AN}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，过 $C$ ， $B$ 作 ${PQ}$ 的平行线分别交 ${AM}$ 及其延长线于 $S$ ， $R$ ，则 $\triangle  {RBM} \cong$
+
+$\triangle {SCM}$ ,于是 ${RM} = {SM}$ .
+
+因为 ${PN}//{BR}$ ,所以 $\frac{AB}{AP} = \frac{AR}{AN}$ . 同理,有 $\frac{AC}{AQ} = \frac{AS}{AN}$ . 两式相加,得
+
+$$
+\frac{AB}{AP} + \frac{AC}{AQ} = \frac{AR}{AN} + \frac{AS}{AN}
+$$
+
+$$
+= \frac{\left( {{AM} + {MR}}\right)  + \left( {{AM} - {SM}}\right) }{AN}
+$$
+
+$$
+= \frac{2AM}{AN}\text{ . }
+$$
+
+原问题得证.
+
+![](../images/155_887_1610_394_390_0.jpg)
+:::
+
+

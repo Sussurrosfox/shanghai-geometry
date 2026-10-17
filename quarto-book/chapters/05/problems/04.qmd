@@ -1,0 +1,37 @@
+---
+title: '练习 4：角平分线与外接圆比例线段'
+chapter: 5
+problem: 4
+source-chapter: '05'
+source-file: '05/4.md'
+id: 'ch05-p04'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+在 $\triangle {ABC}$ 的边 ${BC},{CA}$ 上取点 $D\text{ 、 }E$ ,使得 ${AD}$ 平分 $\angle {BAC},{BE}$ 平分 $\angle {ABC}$ . 点 $F, G$ 在 $\triangle {ABC}$ 的外接圆上,满足 ${AF}//{DE},{FG}//{BC}$ . 证明: $\frac{AG}{BG} = \; \frac{{AB} + {AC}}{{AB} + {BC}}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，因为 ${AF}//{DE}$ ， ${FG}//{BC}$ ，所以 $\angle {AFG} = \angle {EDC}$ . 故 $\angle {ABG} = \angle {AFG} = \; \angle {EDC}$ . 又 $\angle {AGB} = \angle {ACB} = \angle {ECD}$ ，所以， $\triangle  {ABG} \backsim   \triangle  {EDC}$ ，因此 $\frac{AG}{BG} = \frac{EC}{DC}$ . 又
+
+$$
+\frac{CE}{CD} = \frac{{AC} \times  \frac{BC}{{AB} + {BC}}}{{BC} \times  \frac{AC}{{AB} + {AC}}} = \frac{{AB} + {AC}}{{AB} + {BC}}.
+$$
+
+所以原问题得证.
+
+![](../images/154_983_177_400_365_0.jpg)
+:::
+
+

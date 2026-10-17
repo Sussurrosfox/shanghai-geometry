@@ -1,0 +1,33 @@
+---
+title: '练习 2：等腰三角形内角与线段等长证明'
+chapter: 5
+problem: 2
+source-chapter: '05'
+source-file: '05/2.md'
+id: 'ch05-p02'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+在等腰 $\triangle {ABC}$ 中, ${AB} = {BC}$ . 在其内部选取一点 $M$ ,使得 $\angle {AMC} = \; 2\angle {ABC}$ . 在线段 ${AM}$ 上取一点 $K$ ，使得 $\angle {BKM} = \angle {ABC}$ . 证明: ${BK} = {MK} + {CM}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，延长 ${CM}$ 与 ${BK}$ 交于点 $L$ ，则 $\angle {KLM} = \angle {KMC} - \angle {LKM} = \angle {AMC} - \; \angle {BKM} = 2\angle {ABC} - \angle {BKM} = \angle {LKM}$ ，即 $\triangle  {MLK}$ 是等腰三角形，故 ${MK} = {ML}$ . 所以， ${MK} + {CM} = {ML} + {CM} = {CL}$ ，故只需证明 ${BK} = {CL}$ .
+
+因为 $\angle {BAK} = \angle {BKM} - \angle {ABK} = \angle {ABC} - \angle {ABK} = \angle {CBK}$ ， $\angle {ABK} = \; \angle {ABC} - \angle {KBC} = \angle {KLM} - \angle {KBC} = \angle {BCL}$ ，结合 ${AB} = {BC}$ ，知 $\triangle  {ABK} \cong \; \triangle  {BCL}$ . 所以 ${BK} = {CL}$ ,命题得证.
+
+![](../images/153_892_926_385_351_0.jpg)
+:::
+
+

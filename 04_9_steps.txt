@@ -1,0 +1,67 @@
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `在直角 <span class="math">Rt △ABC</span> 中，<span class="math">∠C = 90°</span>，<span class="math">CD ⊥ AB</span> 于垂足 <span class="math">D</span>。<br>
+    记两个直角子三角形 <span class="math">△ACD</span> 与 <span class="math">△BCD</span> 的内心分别为 <span class="math hl-purple">I₁</span> 和 <span class="math hl-purple">I₂</span>。<br>
+    连接两内心得直线 <span class="math hl-purple">I₁I₂</span>，与两直角边 <span class="math">CA, CB</span> 分别交于点 <span class="math hl-green">M</span> 与 <span class="math hl-green">N</span>。<br>
+    <b>目标</b>：定量研究两三角形面积之比，证明不等式 <span class="formula-box"><span class="math">S<sub>△ABC</sub> ≥ 2 S<sub>△CMN</sub></span></span>`
+  },
+  {
+    title: '母子直角三角形相似与旋转',
+    body: `在直角三角形中，高线将原三角形分成两个与自身均相似的直角三角形：<br>
+    易知 <span class="math">∠CAD = 90° - ∠ACD = ∠BCD</span>，故有
+    <div class="formula-box"><span class="math">Rt △DAC ∼ Rt △DCB</span></div>
+    对应边成比例：<span class="math">AD / CD = CD / BD = AC / BC</span>。<br>
+    以高线垂足 <span class="math">D</span> 为旋转中心：<br>
+    将 <span class="math hl-orange">△DCB</span> 绕点 <span class="math">D</span> <b>逆时针旋转 90°</b> 并进行比例伸缩，即可与 <span class="math hl-blue">△DAC</span> 完全重合。`
+  },
+  {
+    title: '内心相似导出夹角 45°',
+    body: `因为 <span class="math">I₁, I₂</span> 分别为直角 <span class="math">∠ADC, ∠BDC</span> 的内角平分线上的点：<br>
+    <div class="formula-box"><span class="math">∠CDI₁ = 45°,&nbsp; ∠CDI₂ = 45° ⟹ ∠I₁DI₂ = 90° = ∠BDC</span></div>
+    由母子三角形相似，内心的相对位置完全对应，故对应边成比例：
+    <div class="formula-box"><span class="math">I₂D / I₁D = BD / CD</span></div>
+    由两边成比例且夹角为直角，得 <b><span class="math">△DCB ∼ △DI₁I₂</span></b>！<br>
+    由于 <span class="math">∠CDI₂ = 45°</span>，此相似相当于将 <span class="math">△DCB</span> 绕点 <span class="math">D</span> <b>逆时针旋转 45°</b>。<br>
+    因此，对应直线 <span class="math hl-purple">I₁I₂</span> 与 <span class="math">CB</span> 的夹角即为该旋转角，故 <b><span class="math hl-green">∠CNM = 45°</span></b>。`
+  },
+  {
+    title: '确定 △CMN 为等腰直角三角形',
+    body: `在 <span class="math">△CMN</span> 中，已知顶点角 <span class="math">∠C = 90°</span>（即 <span class="math">CA ⊥ CB</span>）。<br>
+    由上一步推导已知割线与直角边的夹角：
+    <div class="formula-box"><span class="math">∠CNM = 45°</span></div>
+    从而在直角 <span class="math">Rt △CMN</span> 中，另一个锐角为：
+    <div class="formula-box"><span class="math">∠CMN = 90° - ∠CNM = 45°</span></div>
+    两底角相等且均为 <span class="math">45°</span>，因此 <b><span class="math hl-green">△CMN</span> 是等腰直角三角形</b>，得出对应直角边相等：
+    <div class="formula-box"><span class="math hl-green">CM = CN</span></div>`
+  },
+  {
+    title: '全等判定导出 CM = CN = CD',
+    body: `连接辅助线 <span class="math hl-red">CI₂</span>，考察 <span class="math hl-purple">△I₂CD</span> 与 <span class="math hl-blue">△I₂CN</span>：<br>
+    ① <span class="math">CI₂</span> 为 <span class="math">△BCD</span> 的内角平分线 ⟹ <b><span class="math">∠I₂CD = ∠I₂CN</span></b>；<br>
+    ② <span class="math hl-red">CI₂</span> 为两三角形的公共边；<br>
+    ③ 由内心性质 <span class="math">∠CDI₂ = 45°</span>，由前一步 <span class="math">∠CNI₂ = ∠CNM = 45°</span>，故 <b><span class="math">∠CDI₂ = ∠CNI₂ = 45°</span></b>。<br>
+    由 AAS（角-角-边）全等判据，立得：
+    <div class="formula-box"><span class="math hl-purple">△I₂CD</span> ≅ <span class="math hl-blue">△I₂CN</span></div>
+    因此对应边相等：<b><span class="math">CD = CN</span></b>。<br>
+    结合上一步的 <span class="math">CM = CN</span>，立即得到关键等长链条：
+    <div class="formula-box"><span class="math hl-purple" style="font-size:15px;font-weight:bold;">CM = CN = CD</span></div>`
+  },
+  {
+    title: '面积比化简与均值不等式',
+    body: `计算两个三角形的面积：<br>
+    <span class="math">S<sub>△ABC</sub> = ½ · AB · CD</span>，<br>
+    <span class="math">S<sub>△CMN</sub> = ½ · CM · CN = ½ · CD²</span>。<br>
+    两面积相比，可消去高 <span class="math">CD</span>：
+    <div class="formula-box"><span class="math">S<sub>△ABC</sub> / S<sub>△CMN</sub> = (AB · CD) / (CM · CN) = <b>AB / CD</b></span></div>
+    在直角 <span class="math">Rt △ABC</span> 中，取斜边中点 <span class="math hl-orange">O</span>（外心），斜边中线长为 <span class="math">CO = ½ AB</span>。<br>
+    由垂线段最短（或均值不等式 <span class="math">AB = AD + BD ≥ 2√(AD · BD) = 2CD</span>）：
+    <div class="formula-box"><span class="math">CD ≤ CO = ½ AB &nbsp;⟹&nbsp; <b>AB / CD ≥ 2</b></span></div>
+    因此：
+    <div class="formula-box" style="background:#eff6ff;border-color:#2563eb;color:#1d4ed8;font-weight:bold;font-size:15px;">
+      <span class="math">S<sub>△ABC</sub> ≥ 2 S<sub>△CMN</sub></span>
+    </div>
+    等号成立当且仅当 <span class="math">AD = BD</span>（即 <span class="math">Rt △ABC</span> 为等腰直角三角形）。证明完毕！`
+  }
+];
+

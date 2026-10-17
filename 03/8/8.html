@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外心与垂心的对称折线与塞瓦共点 — 分步几何证明</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+  header p { font-size: 14.5px; color: #475569; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 75vh; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.03)); }
+  .panel {
+    flex: 1 1 420px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 22px; display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; max-height: 60vh; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 12px 16px;
+    margin-bottom: 10px; cursor: pointer; transition: all .22s ease-in-out;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item .title { font-weight: 700; font-size: 14.5px; display: flex; gap: 10px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 800;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 10px;
+    display: none; border-top: 1px dashed #cbd5e1; padding-top: 8px;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 4px 12px rgba(37,99,235,.12); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 10px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 11px 18px; font-size: 14px;
+    cursor: pointer; font-weight: 700; transition: all .18s ease; font-family: inherit;
+  }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; transform: translateY(-1px); }
+  .btn-ghost { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; color: #0f172a; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 12px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 6px; font-size:11px; font-family: monospace; }
+  .legend-box {
+    margin-top: 10px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px;
+    padding: 8px 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 7：外心与垂心的对称折线与塞瓦共点</h1>
+    <p>已知锐角 $\triangle ABC$ 的外心 $O$ 与垂心 $H$。证明：存在 $D, E, F$，使 $OD+DH = OE+EH = OF+FH = R$ 且 $AD, BE, CF$ 三线共点。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="30 20 570 545" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend-box">
+        <div class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span>外心 O / 半径 R</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#dc2626;"></span>垂心 H</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#7c3aed;"></span>垂心对称点 A', B', C'</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#059669;"></span>分点 D, E, F</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#ea580c;"></span>外心射线交点 D', E', F'</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#e11d48;"></span>塞瓦共点 K</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何精准计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+function foot(P, P1, P2){
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+function reflect(P, P1, P2){
+  const f = foot(P, P1, P2);
+  return sub(mul(f, 2), P);
+}
+
+// 几何参数设定
+const O = { x: 320, y: 310 };
+const R = 210;
+
+// 笛卡尔角 (逆时针)：A=108°, B=215°, C=335°
+const thA = 108.0 * Math.PI / 180.0;
+const thB = 215.0 * Math.PI / 180.0;
+const thC = 335.0 * Math.PI / 180.0;
+
+const A = { x: O.x + R * Math.cos(thA), y: O.y - R * Math.sin(thA) };
+const B = { x: O.x + R * Math.cos(thB), y: O.y - R * Math.sin(thB) };
+const C = { x: O.x + R * Math.cos(thC), y: O.y - R * Math.sin(thC) };
+
+// 垂心 H: 欧拉线性质 (H - O) = (A - O) + (B - O) + (C - O)
+const H = {
+  x: A.x + B.x + C.x - 2 * O.x,
+  y: A.y + B.y + C.y - 2 * O.y
+};
+
+// 垂心关于三边的对称点 A', B', C'
+const Ap = reflect(H, B, C);
+const Bp = reflect(H, C, A);
+const Cp = reflect(H, A, B);
+
+// 垂足
+const footA = foot(A, B, C);
+const footB = foot(B, C, A);
+const footC = foot(C, A, B);
+
+const footHA = foot(H, B, C);
+const footHB = foot(H, C, A);
+const footHC = foot(H, A, B);
+
+// 射线 OA', OB', OC' 与对边交点 D, E, F
+const D = lineIntersect(O, sub(Ap, O), B, sub(C, B));
+const E = lineIntersect(O, sub(Bp, O), C, sub(A, C));
+const F = lineIntersect(O, sub(Cp, O), A, sub(B, A));
+
+// 外心射线 AO, BO, CO 与对边交点 D', E', F'
+const Dp = lineIntersect(A, sub(O, A), B, sub(C, B));
+const Ep = lineIntersect(B, sub(O, B), C, sub(A, C));
+const Fp = lineIntersect(C, sub(O, C), A, sub(B, A));
+
+// 塞瓦共点 K: AD 与 BE 的交点
+const K = lineIntersect(A, sub(D, A), B, sub(E, B));
+
+/* ============ SVG 渲染底层 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'5 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", serif', 'font-style': 'italic',
+    'font-weight': bold ? '700' : '400'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color, parent, offset=0, count=1){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  if (count === 1) {
+    const c = add(m, mul(d, offset));
+    line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2}, parent);
+  } else if (count === 2) {
+    [-3.5, 3.5].forEach(o => {
+      const c = add(m, mul(d, offset + o));
+      line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2}, parent);
+    });
+  }
+}
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+6, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层绘制架构 ============ */
+const gBase = el('g', {}, stage);      // 底层：原始图形（全程保留）
+const gStep = el('g', {}, stage);      // 动态步骤层（每步清空重画）
+const gPts  = el('g', {}, stage);      // 顶层：点与标签
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', PINK = '#e11d48';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 绘制外接圆 O
+  circle(O, R, {stroke: '#94a3b8', 'stroke-width': 1.6, opacity: 0.8}, gBase);
+  // 绘制基准三角形 ABC
+  polygon([A, B, C], {stroke: '#1e293b', 'stroke-width': 2.4, fill: '#f8fafc', 'fill-opacity': 0.4}, gBase);
+}
+
+function drawPoints(step){
+  gPts.innerHTML = '';
+
+  // 基础点 A, B, C（全程常驻）
+  dot(A, '#0f172a', 5, gPts);
+  label(A, 'A', -4, -20, '#0f172a', gPts);
+
+  dot(B, '#0f172a', 5, gPts);
+  label(B, 'B', -20, 16, '#0f172a', gPts);
+
+  dot(C, '#0f172a', 5, gPts);
+  label(C, 'C', 22, 6, '#0f172a', gPts);
+
+  // 外心 O: Step 0, 1, 2, 3, 4 出现
+  if (step <= 4) {
+    dot(O, BLUE, 5.5, gPts);
+    label(O, 'O', 18, -14, BLUE, gPts);
+  }
+
+  // 垂心 H: Step 0, 1, 2 出现
+  if (step <= 2) {
+    dot(H, RED, 5.5, gPts);
+    label(H, 'H', -20, -14, RED, gPts);
+  }
+
+  // 对称点 A', B', C': Step 1, 2 出现
+  if (step === 1 || step === 2) {
+    dot(Ap, PURPLE, 5, gPts);
+    label(Ap, "A'", 0, 20, PURPLE, gPts);
+
+    dot(Bp, PURPLE, 5, gPts);
+    label(Bp, "B'", 22, -10, PURPLE, gPts);
+
+    dot(Cp, PURPLE, 5, gPts);
+    label(Cp, "C'", -24, 0, PURPLE, gPts);
+  }
+
+  // 分点 D, E, F: Step 2, 3, 4, 5 出现
+  if (step >= 2) {
+    dot(D, GREEN, 5.5, gPts);
+    label(D, 'D', -16, 20, GREEN, gPts);
+
+    dot(E, GREEN, 5.5, gPts);
+    label(E, 'E', -18, -14, GREEN, gPts); // 内侧偏上
+
+    dot(F, GREEN, 5.5, gPts);
+    label(F, 'F', -24, 14, GREEN, gPts);  // 外侧偏下
+  }
+
+  // 外心射线交点 D', E', F': Step 3, 4 出现
+  if (step === 3 || step === 4) {
+    dot(Dp, ORANGE, 5, gPts);
+    label(Dp, "D'", 20, 20, ORANGE, gPts);
+
+    dot(Ep, ORANGE, 5, gPts);
+    label(Ep, "E'", 22, 12, ORANGE, gPts); // 外侧偏下
+
+    dot(Fp, ORANGE, 5, gPts);
+    label(Fp, "F'", -22, -16, ORANGE, gPts); // 外侧偏上
+  }
+
+  // 塞瓦共点 K: Step 5 出现
+  if (step === 5) {
+    // 华丽双层同心光环
+    el('circle', {cx:K.x, cy:K.y, r:16, fill:PINK, opacity:0.2}, gPts);
+    el('circle', {cx:K.x, cy:K.y, r:10, fill:PINK, opacity:0.4}, gPts);
+    dot(K, PINK, 6, gPts);
+    label(K, 'K', 18, -16, PINK, gPts, 18, true);
+  }
+}
+
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0:
+      // Step 0: 构型与外心/垂心
+      segDashed(A, footA, '#94a3b8', 1.5, gStep);
+      segDashed(B, footB, '#94a3b8', 1.5, gStep);
+      segDashed(C, footC, '#94a3b8', 1.5, gStep);
+      rightAngleMark(footA, A, C, 10, '#94a3b8', gStep);
+      rightAngleMark(footB, B, A, 10, '#94a3b8', gStep);
+      rightAngleMark(footC, C, B, 10, '#94a3b8', gStep);
+
+      // 外接圆半径 OA 示意
+      line(O, A, {stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+      line(O, B, {stroke: BLUE, 'stroke-width': 1.2, 'stroke-dasharray': '4 4', opacity: 0.6}, gStep);
+      line(O, C, {stroke: BLUE, 'stroke-width': 1.2, 'stroke-dasharray': '4 4', opacity: 0.6}, gStep);
+      break;
+
+    case 1:
+      // Step 1: 垂心对称点落在外接圆上
+      segDashed(H, Ap, PURPLE, 1.8, gStep);
+      segDashed(H, Bp, PURPLE, 1.8, gStep);
+      segDashed(H, Cp, PURPLE, 1.8, gStep);
+
+      rightAngleMark(footHA, H, C, 10, PURPLE, gStep);
+      rightAngleMark(footHB, H, A, 10, PURPLE, gStep);
+      rightAngleMark(footHC, H, B, 10, PURPLE, gStep);
+
+      tickMark(H, footHA, PURPLE, gStep);
+      tickMark(footHA, Ap, PURPLE, gStep);
+
+      // 连结外接圆上的弦，突出四边形 ABA'C
+      line(B, Ap, {stroke: '#a855f7', 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+      line(C, Ap, {stroke: '#a855f7', 'stroke-width': 1.8, 'stroke-dasharray': '4 4'}, gStep);
+      line(B, H, {stroke: '#f43f5e', 'stroke-width': 1.5, opacity: 0.7}, gStep);
+      line(C, H, {stroke: '#f43f5e', 'stroke-width': 1.5, opacity: 0.7}, gStep);
+
+      angleArc(Ap, B, C, 24, {stroke: PURPLE, 'stroke-width': 2}, gStep);
+      angleArc(H, B, C, 16, {stroke: RED, 'stroke-width': 2}, gStep);
+      break;
+
+    case 2:
+      // Step 2: 射线确定点 D, E, F 且折线长恒等于 R
+      line(O, Ap, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      line(O, Bp, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+      line(O, Cp, {stroke: CYAN, 'stroke-width': 2.2}, gStep);
+
+      segDashed(D, Ap, GREEN, 2, gStep);
+      segDashed(E, Bp, GREEN, 2, gStep);
+      segDashed(F, Cp, GREEN, 2, gStep);
+
+      // 高亮折线 OD 与 DH
+      highlightSeg(O, D, GREEN, gStep, 3.8);
+      highlightSeg(D, H, GREEN, gStep, 3.8);
+
+      line(O, E, {stroke: GREEN, 'stroke-width': 3, 'stroke-linecap':'round'}, gStep);
+      line(E, H, {stroke: GREEN, 'stroke-width': 3, 'stroke-linecap':'round'}, gStep);
+      line(O, F, {stroke: GREEN, 'stroke-width': 3, 'stroke-linecap':'round'}, gStep);
+      line(F, H, {stroke: GREEN, 'stroke-width': 3, 'stroke-linecap':'round'}, gStep);
+
+      tickMark(D, H, GREEN, gStep, 0, 1);
+      tickMark(D, Ap, GREEN, gStep, 0, 1);
+      break;
+
+    case 3:
+      // Step 3: 外心射线交点与全等对称关系
+      line(A, Dp, {stroke: ORANGE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      line(B, Ep, {stroke: ORANGE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      line(C, Fp, {stroke: ORANGE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+
+      line(O, D, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      line(O, Dp, {stroke: ORANGE, 'stroke-width': 2}, gStep);
+      line(O, B, {stroke: '#64748b', 'stroke-width': 1.6}, gStep);
+      line(O, C, {stroke: '#64748b', 'stroke-width': 1.6}, gStep);
+
+      // 高亮全等三角形
+      polygon([O, B, Dp], {fill: ORANGE, 'fill-opacity': 0.22, stroke: ORANGE, 'stroke-width': 1.8}, gStep);
+      polygon([O, C, D], {fill: GREEN, 'fill-opacity': 0.22, stroke: GREEN, 'stroke-width': 1.8}, gStep);
+
+      angleArc(O, B, Dp, 28, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      angleArc(O, C, D, 34, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+
+      angleArc(B, O, C, 22, {stroke: '#3b82f6', 'stroke-width': 1.8}, gStep);
+      angleArc(C, O, B, 22, {stroke: '#3b82f6', 'stroke-width': 1.8}, gStep);
+
+      tickMark(B, Dp, ORANGE, gStep, 0, 2);
+      tickMark(C, D, GREEN, gStep, 0, 2);
+      break;
+
+    case 4:
+      // Step 4: 塞瓦定理比值代换
+      highlightSeg(C, D, BLUE, gStep, 4);
+      highlightSeg(D, B, PURPLE, gStep, 4);
+
+      highlightSeg(A, E, BLUE, gStep, 4);
+      highlightSeg(E, C, PURPLE, gStep, 4);
+
+      highlightSeg(B, F, BLUE, gStep, 4);
+      highlightSeg(F, A, PURPLE, gStep, 4);
+
+      line(A, Dp, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      line(B, Ep, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      line(C, Fp, {stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      break;
+
+    case 5:
+      // Step 5: 逆定理得证三线共点
+      highlightSeg(A, D, PINK, gStep, 4);
+      highlightSeg(B, E, PINK, gStep, 4);
+      highlightSeg(C, F, PINK, gStep, 4);
+
+      line(O, D, {stroke: GREEN, 'stroke-width': 1.5, opacity: 0.4}, gStep);
+      line(O, E, {stroke: GREEN, 'stroke-width': 1.5, opacity: 0.4}, gStep);
+      line(O, F, {stroke: GREEN, 'stroke-width': 1.5, opacity: 0.4}, gStep);
+      break;
+  }
+}
+
+/* ============ 步骤文本说明 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `给定锐角 $\\triangle ABC$，其外心为 <b><span style="color:#2563eb;">$O$</span></b>（外接圆半径为 $R$），垂心为 <b><span style="color:#dc2626;">$H$</span></b>（三条高线的交点）。<br>
+           <b>求证：</b>在边 $BC, CA, AB$ 上分别存在点 $D, E, F$，满足：<br>
+           1. <b>折线长恒等：</b>$OD + DH = OE + EH = OF + FH$<br>
+           2. <b>连线共点：</b>$AD, BE, CF$ 三线共点。`
+  },
+  {
+    title: '垂心对称点落在外接圆上',
+    body: `设垂心 $H$ 关于三边 $BC, CA, AB$ 的对称点分别为 <b><span style="color:#7c3aed;">$A', B', C'$</span></b>。<br>
+           <b>垂心经典性质：</b><br>
+           $\\angle BHC = 180^\\circ - \\angle A$。<br>
+           因为 $A'$ 与 $H$ 关于 $BC$ 对称，所以 $\\triangle B A' C \\cong \\triangle BHC$，从而：<br>
+           $\\angle B A' C = \\angle BHC = 180^\\circ - \\angle A$。<br>
+           由于四边形 $A B A' C$ 对角互补，<b>$A'$ 必落在 $\\triangle ABC$ 的外接圆 $\\odot O$ 上！</b><br>
+           同理，$B', C'$ 亦均落在外接圆 $\\odot O$ 上。`
+  },
+  {
+    title: '射线确定点 D, E, F 且折线长恒等于 R',
+    body: `连结圆心 $O$ 与外接圆上的对称点：<br>
+           设线段 $OA'$ 与 $BC$ 交于 <b><span style="color:#059669;">$D$</span></b>；$OB'$ 与 $CA$ 交于 <b><span style="color:#059669;">$E$</span></b>；$OC'$ 与 $AB$ 交于 <b><span style="color:#059669;">$F$</span></b>。<br>
+           由轴对称性知 $DH = DA'$，因此折线长可直接拉直：<br>
+           <span style="color:#059669; font-weight:700;">$OD + DH = OD + DA' = OA' = R$</span>（外接圆半径）！<br>
+           同理有：<br>
+           <span style="color:#059669; font-weight:700;">$OE + EH = OB' = R$</span>，<span style="color:#059669; font-weight:700;">$OF + FH = OC' = R$</span>。<br>
+           第一组等式条件天然获证！`
+  },
+  {
+    title: '外心射线交点与全等对称关系',
+    body: `设直线 $AO, BO, CO$ 与三边分别交于 <b><span style="color:#ea580c;">$D', E', F'$</span></b>。<br>
+           在圆周角与圆心角关系中：<br>
+           $\\angle BAO = 90^\\circ - \\angle ACB = \\angle CAA'$，由此可得顶角：<br>
+           <span style="color:#ea580c; font-weight:700;">$\\angle BOD' = \\angle COD$</span>。<br>
+           又在等腰 $\\triangle OBC$ 中 $OB = OC$，底角 $\\angle OBD' = \\angle OCD = 90^\\circ - \\angle A$。<br>
+           由角边角 (ASA) 判定得全等：<br>
+           <span style="color:#ea580c; font-weight:700;">$\\triangle OBD' \\cong \\triangle OCD$</span>！<br>
+           由此得对应边等长：<b><span style="color:#ea580c;">$BD' = CD$</span></b>。<br>
+           同理可证：<b><span style="color:#ea580c;">$CE' = AE$</span></b>，<b><span style="color:#ea580c;">$AF' = BF$</span></b>。`
+  },
+  {
+    title: '塞瓦定理比值代换',
+    body: `因为直线 $AD', BE', CF'$ 共点于外心 $O$，对 $\\triangle ABC$ 应用<b>塞瓦定理</b>：<br>
+           $$\\frac{BD'}{D'C} \\cdot \\frac{CE'}{E'A} \\cdot \\frac{AF'}{F'B} = 1$$<br>
+           利用 Step 3 证得的等长关系：<br>
+           $BD' = CD$（故分母 $D'C = a - BD' = a - CD = DB$）；<br>
+           同理 $CE' = AE, E'A = EC$ 以及 $AF' = BF, F'B = FA$。<br>
+           将等长对应代换入塞瓦式，即得：<br>
+           <span style="color:#2563eb; font-weight:700;">$$\\frac{CD}{DB} \\cdot \\frac{AE}{EC} \\cdot \\frac{BF}{FA} = 1$$</span>`
+  },
+  {
+    title: '塞瓦定理逆定理得证三线共点',
+    body: `将比值等式整理为逆时针顺序：<br>
+           $$\\frac{BD}{DC} \\cdot \\frac{CE}{EA} \\cdot \\frac{AF}{FB} = 1$$<br>
+           由<b>塞瓦定理逆定理</b>：<br>
+           直线 <b><span style="color:#e11d48; font-size:15px;">$AD, BE, CF$ 必三线共点于点 $K$</span></b>！<br>
+           至此，点 $D, E, F$ 不仅满足折线长恒等于外接圆半径 $R$，且连线三线共点全部获证。`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>Step ${i}：${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 关键：步骤切换后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 暴露全局 goTo 给截图工具使用
+window.goTo = goTo;
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+{
+  "04/2/2.html": {
+    "total_steps": 6,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 85,
+        "mathjax_elements": 85,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 85,
+        "mathjax_elements": 170,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 85,
+        "mathjax_elements": 255,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 85,
+        "mathjax_elements": 340,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 85,
+        "mathjax_elements": 425,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 85,
+        "mathjax_elements": 510,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/3/3.html": {
+    "total_steps": 7,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 6,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/4/4.html": {
+    "total_steps": 7,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 6,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/5/5.html": {
+    "total_steps": 7,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 6,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/6/6.html": {
+    "total_steps": 6,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/7/7.html": {
+    "total_steps": 6,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 0,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/8/8.html": {
+    "total_steps": 6,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 6,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  },
+  "04/9/9.html": {
+    "total_steps": 6,
+    "step_reports": [
+      {
+        "step": 0,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 1,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 2,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 3,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 4,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      },
+      {
+        "step": 5,
+        "katex_elements": 14,
+        "mathjax_elements": 0,
+        "katex_errors": [],
+        "unrendered_dollars": []
+      }
+    ],
+    "console_errors": [],
+    "page_errors": []
+  }
+}

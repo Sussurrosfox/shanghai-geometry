@@ -1,0 +1,53 @@
+---
+title: '练习 11：直角三角形等角与线段二倍关系'
+chapter: 5
+problem: 11
+source-chapter: '05'
+source-file: '05/11.md'
+id: 'ch05-p11'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+已知 $\triangle {ABC}$ 中, $\angle C = {90}^{ \circ  }, D$ 为 ${AC}$ 上一点, $K$ 为 ${BD}$ 上一点,且 $\angle {ABC} = \; \angle {KAD} = \angle {AKD}$ . 证明: ${BK} = {2DC}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,在 ${BD}$ 的延长线上取点 $E$ ,使得 ${KD} = {DE}$ ,结合题设条件,有 $\triangle {KAE}$ 是直角三角形,又 $\angle {EKA} = \angle {ABC}$ ,则 $\triangle {AKE} \backsim  \triangle {CBA}$ ,因此
+
+$$
+\frac{AE}{KE} = \frac{CA}{BA},
+$$
+
+①
+
+$\angle {BAD} = \angle {BEA}$ . 又 $\angle {DBA} = \angle {EBA}$ ,所以 $\triangle {ABD} \backsim  \triangle {EBA}$ ,则
+
+$$
+\frac{AB}{AD} = \frac{EB}{EA}.
+$$
+
+②
+
+将①，②两式相乘，得 $\frac{AC}{AD} = \frac{BE}{KE}$ ，所以 ${BE} = {2AC}$ ，因此
+
+$$
+{BK} = {BE} - {KE} = {2AC} - {2AD} = {2CD}.
+$$
+
+原问题得证.
+
+![](../images/157_983_620_247_428_0.jpg)
+:::
+
+

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三心共线与同一法：I, G, M 共线证明 — 分步几何演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 16px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 13.5px; color: #475569; margin-top: 5px; line-height: 1.5; }
+  .main { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 640px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,.07); padding: 10px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; display: block; }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15,23,42,.07); padding: 18px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; padding-right: 4px; }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px;
+    margin-bottom: 8px; cursor: pointer; transition: all .2s ease;
+  }
+  .step-item:hover { border-color: #93c5fd; background: #f8fafc; }
+  .step-item .title { font-weight: 600; font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 11.5px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13px; line-height: 1.7; color: #334155; margin-top: 8px; display: none;
+    padding-top: 6px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,.1); }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #bfdbfe; color: #1e3a8a; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 9px 14px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #64748b; margin-top: 10px; }
+  kbd { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11.5px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .highlight-badge {
+    display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>三心共线与同一法：I, G, M 三点共线证明</h1>
+    <p><b>已知：</b>$\triangle ABC$ 的外心 $O$、内心 $I$、重心 $G$。$BP \bot OI$ 交 $AI$ 延长线于 $P$，$PM \parallel AC$ 交 $BC$ 于 $M$。 &nbsp;|&nbsp; <b>求证：</b>$I, G, M$ 三点共线。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="50 70 670 630" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何解算（高精度几何基准） ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const dot = (p,q) => p.x*q.x + p.y*q.y;
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function foot(P, P1, P2){
+  const d = sub(P2, P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+
+// 严选基准几何坐标 (A, B, C)
+const A = { x: 340.0, y: 220.0 };
+const B = { x: 100.0, y: 440.0 };
+const C = { x: 500.0, y: 440.0 };
+
+// 外心 O
+function calcCircumcenter(pA, pB, pC){
+  const D = 2 * (pA.x*(pB.y-pC.y) + pB.x*(pC.y-pA.y) + pC.x*(pA.y-pB.y));
+  const Ux = ((pA.x**2 + pA.y**2)*(pB.y-pC.y) + (pB.x**2 + pB.y**2)*(pC.y-pA.y) + (pC.x**2 + pC.y**2)*(pA.y-pB.y)) / D;
+  const Uy = ((pA.x**2 + pA.y**2)*(pC.x-pB.x) + (pB.x**2 + pB.y**2)*(pA.x-pC.x) + (pC.x**2 + pC.y**2)*(pB.x-pA.x)) / D;
+  return { x: Ux, y: Uy };
+}
+const O = calcCircumcenter(A, B, C);
+const R = dist(O, A);
+
+// 内心 I
+function calcIncenter(pA, pB, pC){
+  const a = dist(pB, pC), b = dist(pA, pC), c = dist(pA, pB);
+  const p = a + b + c;
+  return { x: (a*pA.x + b*pB.x + c*pC.x)/p, y: (a*pA.y + b*pB.y + c*pC.y)/p };
+}
+const I = calcIncenter(A, B, C);
+
+// 重心 G
+const G = { x: (A.x + B.x + C.x)/3, y: (A.y + B.y + C.y)/3 };
+
+// 中点 E (BC 中点)
+const E = mid(B, C);
+
+// 角平分线交点 D = AI ∩ BC
+const D = lineIntersect(A, sub(I, A), B, sub(C, B));
+
+// BP ⊥ OI 交 AI 延长线于 P
+const dOI = sub(I, O);
+const dBP = perp(dOI); // 垂直于 OI
+const P = lineIntersect(B, dBP, A, sub(I, A));
+
+// PM // AC 交 BC 于 M
+const dAC = sub(C, A);
+const M = lineIntersect(P, dAC, B, sub(C, B));
+
+// F: PE 与 AC 延长线交点 (CF = BC)
+const F = lineIntersect(P, sub(E, P), A, dAC);
+
+// S: CI 延长线与外接圆交点 (弧 AB 中点)
+const dCI = sub(I, C);
+const CO = sub(C, O);
+const tS = -2 * dot(CO, dCI) / dot(dCI, dCI);
+const S = add(C, mul(dCI, tS));
+
+// T: AT ⊥ CI 交 BP 延长线于 T
+const dAT = perp(dCI);
+const T = lineIntersect(A, dAT, B, sub(P, B));
+
+// X: BP 延长线与 AC 延长线交点
+const X = lineIntersect(B, sub(P, B), A, dAC);
+
+// 垂足与关键点
+const H_OI = foot(O, B, P);        // BP ⊥ OI 垂足
+const H_AT = foot(A, C, S);        // AT ⊥ CI 垂足 (在 CI 上)
+const M_AB = mid(A, B);            // SO ⊥ AB 垂足 (AB 中点)
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color='#64748b', w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dotNode(p, color='#0f172a', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=15, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", "Cambria Math", serif',
+    'font-style': 'italic', 'font-weight': bold ? '700' : '400',
+    'filter': 'drop-shadow(0 1px 2px rgba(255,255,255,0.9))'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+function rightAngleMark(v, p1, p2, s=11, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+function tickMark(p, q, color='#059669', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,5.5)), add(c, mul(n,-5.5)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function arrowMark(p, q, color='#059669', parent){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const tip = add(m, mul(d,7));
+  const p1 = add(add(m, mul(d,-5)), mul(n,4.5));
+  const p2 = add(add(m, mul(d,-5)), mul(n,-4.5));
+  el('polygon', {points:`${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill:color}, parent);
+}
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.2}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+function angleArc(v, p1, p2, r=18, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${r} ${r} 0 0 ${sweep} ${e.x.toFixed(2)} ${e.y.toFixed(2)}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层容器 ============ */
+const gBase = el('g', { id: 'gBase' }, stage);
+const gStep = el('g', { id: 'gStep' }, stage);
+const gPts  = el('g', { id: 'gPts' }, stage);
+
+/* 基础图形：△ABC 全程保留 */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 三角形填充浅底色
+  polygon([A, B, C], { fill: '#f8fafc', stroke: '#334155', 'stroke-width': 2.2 }, gBase);
+}
+
+/* 点与标签绘制函数（可根据各步骤开启/隐藏） */
+function drawPoints(stepIdx){
+  gPts.innerHTML = '';
+  // 基础三顶点 A, B, C 全程显示
+  dotNode(A, '#1e293b', 4.5, gPts); label(A, 'A', -16, -12, '#0f172a', gPts);
+  dotNode(B, '#1e293b', 4.5, gPts); label(B, 'B', -18, 14, '#0f172a', gPts);
+  dotNode(C, '#1e293b', 4.5, gPts); label(C, 'C', 18, 14, '#0f172a', gPts);
+
+  // 外心 O, 内心 I, 重心 G
+  dotNode(O, '#2563eb', 4.5, gPts); label(O, 'O', -16, 12, '#2563eb', gPts);
+  dotNode(I, '#7c3aed', 4.5, gPts); label(I, 'I', 18, -4, '#7c3aed', gPts);
+  dotNode(G, '#ea580c', 4.5, gPts); label(G, 'G', -16, -10, '#ea580c', gPts);
+
+  // D, E 在步骤 >= 1 时常驻
+  if (stepIdx >= 1){
+    dotNode(D, '#475569', 3.5, gPts); label(D, 'D', 14, 18, '#475569', gPts);
+    dotNode(E, '#475569', 3.5, gPts); label(E, 'E', -14, 18, '#475569', gPts);
+  }
+
+  // P, M
+  if (stepIdx === 0 || stepIdx === 1 || stepIdx === 2 || stepIdx === 6){
+    dotNode(P, '#dc2626', 4.5, gPts); label(P, 'P', 16, 16, '#dc2626', gPts);
+    dotNode(M, '#059669', 4.5, gPts); label(M, 'M', -16, 18, '#059669', gPts);
+  }
+
+  // F (同一法构造点)
+  if (stepIdx >= 2 && stepIdx <= 6){
+    dotNode(F, '#2563eb', 4.5, gPts); label(F, 'F', -18, -14, '#2563eb', gPts);
+  }
+
+  // P' (同一法未确定重合前使用 P')
+  if (stepIdx >= 3 && stepIdx <= 5){
+    dotNode(P, '#dc2626', 4.5, gPts); label(P, "P'", 16, 16, '#dc2626', gPts);
+  }
+
+  // S (外接圆弧中点)
+  if (stepIdx >= 3 && stepIdx <= 6){
+    dotNode(S, '#0284c7', 4.5, gPts); label(S, 'S', -18, -10, '#0284c7', gPts);
+  }
+
+  // T, X
+  if (stepIdx === 5 || stepIdx === 6){
+    dotNode(T, '#9333ea', 4, gPts); label(T, 'T', -18, 14, '#9333ea', gPts);
+    dotNode(X, '#059669', 4, gPts); label(X, 'X', 18, 14, '#059669', gPts);
+  }
+}
+
+/* ============ 各步骤动态画面渲染 ============ */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c';
+
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0: { // 步骤 0：已知条件与图形
+      // OI 线段
+      line(O, I, { stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      // AI 延长至 P
+      line(A, P, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      // BP ⊥ OI 连线
+      line(B, P, { stroke: RED, 'stroke-width': 2.2 }, gStep);
+      // 垂足与直角标记
+      line(H_OI, O, { stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '3 3' }, gStep);
+      rightAngleMark(H_OI, B, I, 10, RED, gStep);
+      // PM // AC
+      line(P, M, { stroke: GREEN, 'stroke-width': 2.2 }, gStep);
+      arrowMark(A, C, GREEN, gStep);
+      arrowMark(M, P, GREEN, gStep);
+      // 待证 I, G, M 虚线贯穿
+      segDashed(I, M, '#f97316', 2.5, gStep);
+      break;
+    }
+
+    case 1: { // 步骤 1：梅涅劳斯定理：共线目标转化
+      // 高亮 △ADE 区域
+      polygon([A, D, E], { fill: '#eff6ff', stroke: BLUE, 'stroke-width': 2 }, gStep);
+      // AI 与 AG 中线
+      line(A, D, { stroke: '#3b82f6', 'stroke-width': 2 }, gStep);
+      line(A, E, { stroke: '#f59e0b', 'stroke-width': 2 }, gStep);
+      // 底边延长线至 M
+      line(E, M, { stroke: '#64748b', 'stroke-width': 1.8 }, gStep);
+      // 截线 I - G - M 鲜明高亮
+      highlightSeg(I, M, RED, gStep, 3.2);
+      break;
+    }
+
+    case 2: { // 步骤 2：代数化简：目标归结为 FC = BC
+      // PM // AC (延长线 AC 至 F)
+      line(A, F, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      line(P, F, { stroke: BLUE, 'stroke-width': 2 }, gStep);
+      line(P, M, { stroke: GREEN, 'stroke-width': 2.2 }, gStep);
+      arrowMark(F, C, GREEN, gStep);
+      arrowMark(M, P, GREEN, gStep);
+      // 对顶相似三角形 △PME 与 △FCE 填充
+      polygon([P, M, E], { fill: 'rgba(5,150,105,0.12)', stroke: GREEN, 'stroke-width': 1.8 }, gStep);
+      polygon([F, C, E], { fill: 'rgba(37,99,235,0.12)', stroke: BLUE, 'stroke-width': 1.8 }, gStep);
+      // 中点刻度 CE = EB
+      tickMark(B, E, '#64748b', gStep);
+      tickMark(E, C, '#64748b', gStep);
+      // 高亮目标等长：FC 与 BC
+      highlightSeg(F, C, BLUE, gStep, 3.5);
+      highlightSeg(B, C, ORANGE, gStep, 3.5);
+      break;
+    }
+
+    case 3: { // 步骤 3：同一法构造：辅助点 P' 与外接圆弧中点 S
+      // 外接圆
+      circle(O, R, { stroke: '#38bdf8', 'stroke-width': 1.8, 'stroke-dasharray': '6 4' }, gStep);
+      line(O, I, { stroke: PURPLE, 'stroke-width': 1.8 }, gStep);
+      // 作 CF = BC
+      line(A, F, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      tickMark(F, C, '#0284c7', gStep, 0);
+      tickMark(B, C, '#0284c7', gStep, 0);
+      // FE 交 AD 于 P'
+      line(F, P, { stroke: BLUE, 'stroke-width': 2 }, gStep);
+      line(A, P, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      // CI 延长线交外接圆于 S
+      line(C, S, { stroke: '#0284c7', 'stroke-width': 2 }, gStep);
+      // SO ⊥ AB
+      line(S, O, { stroke: '#0284c7', 'stroke-width': 1.8 }, gStep);
+      rightAngleMark(M_AB, S, A, 11, RED, gStep);
+      // 鸡爪定理等长 SA = SI = SB
+      line(S, A, { stroke: '#0284c7', 'stroke-width': 1.8 }, gStep);
+      line(S, I, { stroke: '#7c3aed', 'stroke-width': 2 }, gStep);
+      tickMark(S, A, '#7c3aed', gStep, 6);
+      tickMark(S, I, '#7c3aed', gStep, 6);
+      break;
+    }
+
+    case 4: { // 步骤 4：等腰相似：导出 SO/SI = FC/FB
+      // 外接圆
+      circle(O, R, { stroke: '#bae6fd', 'stroke-width': 1.5, 'stroke-dasharray': '6 4' }, gStep);
+      // 连结 FB
+      line(F, B, { stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      // △AOS 等腰高亮
+      polygon([A, O, S], { fill: 'rgba(2,132,199,0.15)', stroke: '#0284c7', 'stroke-width': 2 }, gStep);
+      // △FCB 等腰高亮
+      polygon([F, C, B], { fill: 'rgba(124,58,237,0.15)', stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      // 顶角弧线：∠SOA 与 ∠FCB (即 ∠ACB)
+      angleArc(O, S, A, 20, { stroke: RED, 'stroke-width': 2 }, gStep);
+      angleArc(C, A, B, 24, { stroke: RED, 'stroke-width': 2 }, gStep);
+      // 鸡爪边 SI
+      line(S, I, { stroke: '#7c3aed', 'stroke-width': 2.2, 'stroke-dasharray': '4 3' }, gStep);
+      // 高亮对应边
+      highlightSeg(S, O, '#0284c7', gStep, 3);
+      highlightSeg(F, C, PURPLE, gStep, 3);
+      break;
+    }
+
+    case 5: { // 步骤 5：平行线 AT 与梅氏定理：导出 FC/FB = BA/AT
+      // 连结 CI 与 FB
+      line(C, S, { stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, gStep);
+      line(F, B, { stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      // AT ⊥ CI
+      line(A, T, { stroke: GREEN, 'stroke-width': 2.2 }, gStep);
+      line(A, H_AT, { stroke: GREEN, 'stroke-width': 1.5, 'stroke-dasharray': '3 3' }, gStep);
+      rightAngleMark(H_AT, A, S, 10, RED, gStep);
+      // 延长 BP' 至 T 和 X
+      line(T, X, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      line(C, X, { stroke: '#64748b', 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, gStep);
+      // 平行箭头 AT // FB
+      arrowMark(A, T, GREEN, gStep);
+      arrowMark(F, B, GREEN, gStep);
+      // 梅涅劳斯定理截线 F - P' - E
+      line(F, E, { stroke: BLUE, 'stroke-width': 2 }, gStep);
+      // 等角标记 ∠OSI = ∠BAT
+      line(S, O, { stroke: '#0284c7', 'stroke-width': 1.5 }, gStep);
+      line(S, I, { stroke: '#0284c7', 'stroke-width': 1.5 }, gStep);
+      angleArc(S, O, I, 20, { stroke: '#ea580c', 'stroke-width': 2 }, gStep);
+      angleArc(A, B, T, 22, { stroke: '#ea580c', 'stroke-width': 2 }, gStep);
+      break;
+    }
+
+    case 6: { // 步骤 6：相似判定与垂直归宿：证明完成
+      // 高亮 △OSI 与 △BAT 相似
+      polygon([O, S, I], { fill: 'rgba(37,99,235,0.18)', stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+      polygon([B, A, T], { fill: 'rgba(234,88,12,0.18)', stroke: ORANGE, 'stroke-width': 2.2 }, gStep);
+      // OI 与 BP 垂线
+      line(O, I, { stroke: PURPLE, 'stroke-width': 2.5 }, gStep);
+      line(B, P, { stroke: RED, 'stroke-width': 2.5 }, gStep);
+      line(H_OI, O, { stroke: PURPLE, 'stroke-width': 1.8, 'stroke-dasharray': '3 3' }, gStep);
+      rightAngleMark(H_OI, B, I, 12, RED, gStep);
+      // 强化结论：I, G, M 严格三点共线
+      line(M, I, { stroke: RED, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, gStep);
+      line(M, I, { stroke: '#facc15', 'stroke-width': 2, 'stroke-linecap': 'round' }, gStep);
+      // PM // AC 保持闭环展示
+      line(P, M, { stroke: GREEN, 'stroke-width': 2 }, gStep);
+      break;
+    }
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '已知条件与图形构型',
+    body: `设 $\\triangle ABC$ 的外心为 <span style="color:#2563eb;font-weight:700;">$O$</span>、内心为 <span style="color:#7c3aed;font-weight:700;">$I$</span>、重心为 <span style="color:#ea580c;font-weight:700;">$G$</span>。<br>
+           过点 $B$ 作 <span style="color:#dc2626;font-weight:700;">$BP \\bot OI$</span> 交 $AI$ 的延长线于点 $P$。<br>
+           过点 $P$ 作 <span style="color:#059669;font-weight:700;">$PM \\parallel AC$</span> 交 $BC$ 于点 $M$。<br>
+           <b>求证目标：</b>证明 $I, G, M$ 三点共线。`
+  },
+  {
+    title: '梅涅劳斯定理：共线目标转化',
+    body: `连结 $AI$ 交 $BC$ 于点 $D$，$AG$ 延长线交 $BC$ 于中点 $E$。<br>
+           在 $\\triangle ADE$ 中，待证三点 $I, G, M$ 分别位于三边所在的直线上：<br>
+           • $I$ 在边 $AD$ 上，内分比为 $\\frac{AI}{ID}$；<br>
+           • $G$ 在边 $AE$ 上，内分比为 $\\frac{EG}{GA}$；<br>
+           • $M$ 在边 $DE$ 延长线上，外分比为 $\\frac{DM}{ME}$。<br>
+           由<b>梅涅劳斯定理</b>，要证 $I, G, M$ 共线，充要条件是：<br>
+           <center><b>$\\frac{AI}{ID} \\cdot \\frac{DM}{ME} \\cdot \\frac{EG}{GA} = 1$ &nbsp; ①</b></center>`
+  },
+  {
+    title: '代数化简：目标归结为 FC = BC',
+    body: `由角平分线性质知 $\\frac{AI}{ID} = \\frac{AC}{CD}$ ②；<br>
+           由平行线 $PM \\parallel AC$ 得 $\\frac{AC}{CD} = \\frac{PM}{MD}$ ③；<br>
+           由重心性质知 $\\frac{EG}{GA} = \\frac{1}{2}$ ④。<br>
+           将②、③、④代入①式化简，只需证明：<b>$PM = 2ME$</b>。<br>
+           延长 $PE$ 交 $AC$ 延长线于点 $F$。由于 $PM \\parallel FC$，由相似三角形 $\\triangle PME \\sim \\triangle FCE$ 得 $\\frac{PM}{FC} = \\frac{ME}{CE}$，故只需证明：<br>
+           <center><b>$FC = 2CE = BC$</b></center>`
+  },
+  {
+    title: '同一法构造：辅助点 P\' 与外接圆中点 S',
+    body: `采用<b>同一法</b>证明：在射线 $CA$ 上截取点 $F$，使得 <b>$CF = BC$</b>。<br>
+           设 $FE$ 交角平分线 $AD$ 于点 $P'$。若能证明 <b>$BP' \\bot OI$</b>，由垂线交点的唯一性，即得 <b>$P' = P$</b>！<br>
+           作外接圆 $\\odot O$。连结 $CI$ 并延长交外接圆于点 $S$。<br>
+           因 $CI$ 平分 $\\angle C$，$S$ 为弧 $AB$ 中点，故 $SO \\bot AB$。<br>
+           由<b>鸡爪定理</b>（圆幂内心性质），弧中点到内心及两顶点等距：<br>
+           <center><b>$SI = SA = SB$</b></center>`
+  },
+  {
+    title: '等腰相似：导出 SO/SI = FC/FB',
+    body: `在等腰 $\\triangle AOS$ 中，$OA = OS = R$，其顶角所对弧为弧 $AS = \\frac{1}{2}\\text{弧}AB$：<br>
+           <center>$\\angle SOA = \\frac{1}{2}\\angle BOA = \\angle ACB$</center><br>
+           在等腰 $\\triangle FCB$ 中，作法已知 $CF = CB$，顶角 $\\angle FCB = \\angle ACB$。<br>
+           两等腰三角形顶角相等，故两三角形相似：<b>$\\triangle AOS \\sim \\triangle FCB$</b>。<br>
+           由对应边成比例：$\\frac{SO}{SA} = \\frac{FC}{FB}$，以 $SA = SI$ 替换底边得：<br>
+           <center><b>$\\frac{SO}{SI} = \\frac{FC}{FB}$ &nbsp; ⑤</b></center>`
+  },
+  {
+    title: '平行线 AT 与梅氏定理：导出 FC/FB = BA/AT',
+    body: `作 $AT \\bot CI$ 交 $P'B$ 延长线于 $T$。<br>
+           因等腰 $\\triangle FCB$ 顶角平分线 $CI \\bot FB$，故 <b>$AT \\parallel FB$</b>，且易得 $\\angle OSI = \\angle BAT$。<br>
+           延长 $BP'$ 交直线 $AC$ 于点 $X$。对 $\\triangle XCB$ 及截线 $F-P'-E$ 应用梅涅劳斯定理：<br>
+           <center>$\\frac{XF}{FC} \\cdot \\frac{CE}{EB} \\cdot \\frac{BP'}{P'X} = 1$</center><br>
+           由 $CE = EB$ 及角平分线性质 $\\frac{BP'}{P'X} = \\frac{BA}{AX}$，结合平行线 $\\frac{XF}{AX} = \\frac{FB}{AT}$，整理得：<br>
+           <center><b>$\\frac{FC}{FB} = \\frac{BA}{AT}$ &nbsp; ⑥</b></center>`
+  },
+  {
+    title: '相似判定与垂直归宿：证明完成',
+    body: `综合⑤、⑥两式得：$\\frac{SO}{SI} = \\frac{BA}{AT}$。<br>
+           结合夹角相等 $\\angle OSI = \\angle BAT$，两边成比例且夹角相等：<br>
+           <center><b>$\\triangle OSI \\sim \\triangle BAT$</b></center><br>
+           由两三角形对应边位置垂直关系：$SO \\bot BA, SI \\bot AT$，则第三边必互相垂直：<br>
+           <center><b>$OI \\bot BT \\implies BP' \\bot OI$</b></center><br>
+           从而辅助点 $P'$ 与题目中的点 $P$ 必然重合！<br>
+           由此 $PM = 2ME$ 成立，逆推回①式，<b>$I, G, M$ 严格三点共线</b>，命题得证！`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 关键：步骤切换后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+// 初始化
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

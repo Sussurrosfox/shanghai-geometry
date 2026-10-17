@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 4：角平分线与射影全等 — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 600px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 78vh; }
+  .panel {
+    flex: 1 1 420px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 60vh; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 8px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .formula-box {
+    background: rgba(255, 255, 255, 0.7);
+    border-left: 3px solid #2563eb;
+    padding: 6px 10px;
+    margin: 6px 0;
+    border-radius: 4px;
+    font-family: "Times New Roman", serif;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\(', right: '\)', display: false},
+            {left: '\[', right: '\]', display: true}
+          ],
+          macros: {
+            '\parallel': '\mathbin{/\\!/}',
+            '\bigtriangleup': '\triangle',
+            '\triangle': '\triangle',
+            '\odot': '\odot',
+            '\ang': '\angle',
+            '\angmsd': '\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 4：角平分线与射影全等证明</h1>
+    <p>已知：$\triangle ABC$ 满足 $AB > AC$，外接圆为 $\Gamma$，内、外角平分线交 $\Gamma$ 于 $M, D$，$D$ 在 $AB$ 上射影为 $E$，$N$ 为 $AM$ 中点，$M$ 在 $AC$ 上射影为 $K$。求证：$\angle NEA = \angle NCK$</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 680 580" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何辅助函数与坐标解算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+const rot = (p, rad) => ({x: p.x*Math.cos(rad) - p.y*Math.sin(rad), y: p.x*Math.sin(rad) + p.y*Math.cos(rad)});
+const rotAround = (p, c, rad) => add(c, rot(sub(p,c), rad));
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+function foot(P, P1, P2){   // P 到直线 P1P2 的垂足
+  const d = sub(P2,P1);
+  const denom = d.x*d.x + d.y*d.y;
+  if (denom < 1e-9) return P1;
+  const t = ((P.x-P1.x)*d.x + (P.y-P1.y)*d.y) / denom;
+  return add(P1, mul(d, t));
+}
+
+/* ============ 精确几何基准点计算 ============ */
+// 外接圆参数：圆心 O(340, 280)，半径 R = 200
+const O = { x: 340, y: 280 };
+const R = 200;
+
+// 角平分线在圆上的交点：
+// M 为劣弧 BC 中点（正下方）：角度 -90° (SVG: y 增加)
+// D 为优弧 BAC 中点（正上方）：角度 90° (与 M 构成直径)
+const D = { x: O.x, y: O.y - R }; // (340, 80)
+const M = { x: O.x, y: O.y + R }; // (340, 480)
+
+// A, B, C 圆周角（数学极坐标，SVG y 取负）：
+// thA = 55°（右上），thB = 205°（左下），thC = 335°（右下）
+const thA = 55 * Math.PI / 180;
+const thB = 205 * Math.PI / 180;
+const thC = 335 * Math.PI / 180;
+
+const A = { x: O.x + R * Math.cos(thA), y: O.y - R * Math.sin(thA) }; // (454.7, 116.2)
+const B = { x: O.x + R * Math.cos(thB), y: O.y - R * Math.sin(thB) }; // (158.7, 364.5)
+const C = { x: O.x + R * Math.cos(thC), y: O.y - R * Math.sin(thC) }; // (521.3, 364.5)
+
+// 关键衍生点计算：
+const E = foot(D, A, B); // D 到 AB 的垂足 (405.2, 157.7)
+const T = foot(D, A, C); // D 到 AC 的垂足 (438.0, 53.7)
+const K = foot(M, A, C); // M 到 AC 的垂足 (538.0, 426.9)
+const N = mid(A, M);     // AM 的中点 (397.4, 298.1)
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '400'}, parent);
+  t.textContent = text;
+  return t;
+}
+/* 直角标记：顶点 v，两边指向 p1、p2 */
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+/* 等长刻度线：在 pq 中点处画横杠；offset 用于双杠 */
+function tickMark(p, q, color, parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,5.5)), add(c, mul(n,-5.5)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+function doubleTickMark(p, q, color, parent){
+  tickMark(p, q, color, parent, -3);
+  tickMark(p, q, color, parent, 3);
+}
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+/* 绘制角弧线：顶点 v，两边分别指向 p1 和 p2 */
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da > Math.PI * 2) da -= Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：原始基础图形
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层（每步清空重画）
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与标签
+
+/* 颜色常量 */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      GRAY = '#64748b', DARK = '#0f172a';
+
+function drawBase(){
+  // 1. 外接圆 Γ 轮廓
+  circle(O, R, {stroke: '#94a3b8', 'stroke-width': 1.6, 'stroke-dasharray': '5 3'}, gBase);
+  el('text', {x: O.x - R + 18, y: O.y - 12, fill: '#94a3b8', 'font-size': 18,
+    'font-family': '"Times New Roman", serif', 'font-style': 'italic'}, gBase).textContent = 'Γ';
+
+  // 2. 三角形 ABC
+  polygon([A, B, C], {stroke: DARK, 'stroke-width': 2.2, fill: 'none'}, gBase);
+
+  // 3. 内、外角平分线
+  line(A, M, {stroke: '#475569', 'stroke-width': 1.8}, gBase); // 内角平分线 AM
+  line(A, D, {stroke: '#475569', 'stroke-width': 1.8}, gBase); // 外角平分线 AD
+
+  // 4. 垂线 DE 与垂足 E
+  line(D, E, {stroke: '#475569', 'stroke-width': 1.8}, gBase);
+  rightAngleMark(E, D, B, 11, '#dc2626', gBase);
+
+  // 5. 边 AC 延长线至 K 与 垂线 MK
+  line(C, K, {stroke: '#94a3b8', 'stroke-width': 1.6, 'stroke-dasharray': '4 4'}, gBase);
+  line(M, K, {stroke: '#475569', 'stroke-width': 1.8}, gBase);
+  rightAngleMark(K, M, A, 11, '#dc2626', gBase);
+}
+
+function drawPoints(showT = false){
+  gPts.innerHTML = '';
+
+  // 优化后的点标签与偏移配置（经几何无冲突验证）
+  const pts = [
+    { p: A, name: 'A', dx: 18, dy: -12, color: DARK },
+    { p: B, name: 'B', dx: -18, dy: 16, color: DARK },
+    { p: C, name: 'C', dx: 18, dy: -6, color: DARK },
+    { p: D, name: 'D', dx: -8, dy: -18, color: BLUE },
+    { p: M, name: 'M', dx: 0, dy: 20, color: PURPLE },
+    { p: E, name: 'E', dx: 16, dy: 8, color: RED },     // 优化为 dx=16, dy=8 彻底避开连线 DC 与 DE
+    { p: K, name: 'K', dx: 18, dy: 14, color: GREEN },
+    { p: N, name: 'N', dx: -18, dy: 0, color: ORANGE },
+  ];
+
+  if (showT) {
+    pts.push({ p: T, name: 'T', dx: 16, dy: -14, color: BLUE });
+  }
+
+  pts.forEach(item => {
+    dot(item.p, item.color, 4.5, gPts);
+    label(item.p, item.name, item.dx, item.dy, item.color, gPts);
+  });
+}
+
+/* ============ 各步骤渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 动态图元清空，实现纯净切换
+
+  switch(s){
+    case 0: { // 已知条件与几何构型
+      drawPoints(false);
+      // 预连 NE 与 NC（虚线提示待证角）
+      segDashed(N, E, '#93c5fd', 1.6, gStep);
+      segDashed(N, C, '#c4b5fd', 1.6, gStep);
+      // 标记 N 是 AM 的中点
+      doubleTickMark(A, N, '#94a3b8', gStep);
+      doubleTickMark(N, M, '#94a3b8', gStep);
+      break;
+    }
+
+    case 1: { // 作辅助垂线 DT ⊥ AC，证 △AED ≅ △ATD
+      drawPoints(true);
+      // AC 向上延长至 T
+      line(A, T, {stroke: '#2563eb', 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      // 垂线 DT
+      line(D, T, {stroke: '#2563eb', 'stroke-width': 2.2}, gStep);
+      rightAngleMark(T, D, A, 11, '#dc2626', gStep);
+
+      // 高亮全等直角三角形 △AED 与 △ATD
+      polygon([A, E, D], {fill: 'rgba(37,99,235,0.14)', stroke: '#2563eb', 'stroke-width': 1.6}, gStep);
+      polygon([A, T, D], {fill: 'rgba(37,99,235,0.14)', stroke: '#2563eb', 'stroke-width': 1.6}, gStep);
+
+      // 公共斜边 AD 高亮
+      highlightSeg(A, D, '#2563eb', gStep, 3.5);
+
+      // 对应直角边等长标记
+      tickMark(D, E, '#2563eb', gStep);
+      tickMark(D, T, '#2563eb', gStep);
+      doubleTickMark(A, E, '#2563eb', gStep);
+      doubleTickMark(A, T, '#2563eb', gStep);
+
+      // 等角弧线 ∠EAD = ∠TAD
+      angleArc(A, D, E, 26, {stroke: '#dc2626'}, gStep);
+      angleArc(A, T, D, 26, {stroke: '#dc2626'}, gStep);
+      break;
+    }
+
+    case 2: { // 圆内接性质与弦长，证 Rt△DEB ≅ Rt△DTC
+      drawPoints(true);
+      // 保留辅助线 DT 与延长线 AT
+      line(A, T, {stroke: '#94a3b8', 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(D, T, {stroke: '#94a3b8', 'stroke-width': 1.8}, gStep);
+      rightAngleMark(T, D, A, 11, '#dc2626', gStep);
+
+      // 连接 DB 与 DC
+      line(D, B, {stroke: '#ea580c', 'stroke-width': 2.2}, gStep);
+      line(D, C, {stroke: '#ea580c', 'stroke-width': 2.2}, gStep);
+
+      // 高亮 Rt△DEB 与 Rt△DTC
+      polygon([D, E, B], {fill: 'rgba(234,88,12,0.15)', stroke: '#ea580c', 'stroke-width': 1.6}, gStep);
+      polygon([D, T, C], {fill: 'rgba(234,88,12,0.15)', stroke: '#ea580c', 'stroke-width': 1.6}, gStep);
+
+      // 斜边 DB = DC
+      doubleTickMark(D, B, '#ea580c', gStep);
+      doubleTickMark(D, C, '#ea580c', gStep);
+
+      // 直角边 DE = DT
+      tickMark(D, E, '#2563eb', gStep);
+      tickMark(D, T, '#2563eb', gStep);
+
+      // 导出对应边 BE = CT 高亮
+      highlightSeg(B, E, '#059669', gStep, 3);
+      highlightSeg(C, T, '#059669', gStep, 3);
+      break;
+    }
+
+    case 3: { // 折弦推导得 AE = CK = 1/2(AB - AC)
+      drawPoints(true);
+      // 保留辅助线 DT 与 AC 延长线
+      line(A, T, {stroke: '#cbd5e1', 'stroke-width': 1.4, 'stroke-dasharray': '5 4'}, gStep);
+      line(D, T, {stroke: '#cbd5e1', 'stroke-width': 1.4}, gStep);
+
+      // 高亮线段 AE 与 CK
+      highlightSeg(A, E, '#059669', gStep, 4);
+      highlightSeg(C, K, '#059669', gStep, 4);
+
+      // 标记等长刻度
+      tickMark(A, E, '#059669', gStep);
+      tickMark(C, K, '#059669', gStep);
+
+      // 线段标注文字提示
+      el('text', {x: (A.x+E.x)/2 - 16, y: (A.y+E.y)/2 + 2, fill: '#059669', 'font-size': 13,
+        'font-family': 'sans-serif', 'font-weight': '700'}, gStep).textContent = 'AE';
+      el('text', {x: (C.x+K.x)/2 + 16, y: (C.y+K.y)/2 - 6, fill: '#059669', 'font-size': 13,
+        'font-family': 'sans-serif', 'font-weight': '700'}, gStep).textContent = 'CK';
+      break;
+    }
+
+    case 4: { // Rt△AKM 斜边中线性质：NK = NA 且 ∠NKC = ∠EAN
+      drawPoints(false);
+      // 高亮 Rt△AKM
+      polygon([A, K, M], {fill: 'rgba(124,58,237,0.12)', stroke: '#7c3aed', 'stroke-width': 1.6}, gStep);
+
+      // 连接斜边中线 NK
+      line(N, K, {stroke: '#7c3aed', 'stroke-width': 2.5}, gStep);
+
+      // 标记 NA = NK = NM（双刻度）
+      doubleTickMark(A, N, '#7c3aed', gStep);
+      doubleTickMark(N, K, '#7c3aed', gStep);
+      doubleTickMark(N, M, '#7c3aed', gStep);
+
+      // 高亮边 AE 与 CK（保持前面推导出的等长）
+      highlightSeg(A, E, '#059669', gStep, 3);
+      highlightSeg(C, K, '#059669', gStep, 3);
+
+      // 等角弧线：∠NKC = ∠EAN
+      // ∠EAN 即 ∠BAM（顶点 A，边指向 E 与 N）
+      angleArc(A, E, N, 30, {stroke: '#dc2626', 'stroke-width': 2.2}, gStep);
+      // ∠NKC（顶点 K，边指向 N 与 C）
+      angleArc(K, N, C, 30, {stroke: '#dc2626', 'stroke-width': 2.2}, gStep);
+      break;
+    }
+
+    case 5: { // SAS 全等 △CKN ≅ △EAN 导出 ∠NEA = ∠NCK
+      drawPoints(false);
+      // 连线 NE 与 NC
+      line(N, E, {stroke: '#2563eb', 'stroke-width': 2.6}, gStep);
+      line(N, C, {stroke: '#7c3aed', 'stroke-width': 2.6}, gStep);
+      line(N, K, {stroke: '#7c3aed', 'stroke-width': 2}, gStep);
+
+      // 高亮两个全等三角形
+      // △EAN
+      polygon([E, A, N], {fill: 'rgba(37,99,235,0.22)', stroke: '#2563eb', 'stroke-width': 2}, gStep);
+      // △CKN
+      polygon([C, K, N], {fill: 'rgba(124,58,237,0.22)', stroke: '#7c3aed', 'stroke-width': 2}, gStep);
+
+      // 对应元素一一对应标记：
+      // 1. AE = CK
+      tickMark(A, E, '#059669', gStep);
+      tickMark(C, K, '#059669', gStep);
+
+      // 2. NA = NK
+      doubleTickMark(A, N, '#7c3aed', gStep);
+      doubleTickMark(N, K, '#7c3aed', gStep);
+
+      // 3. 夹角 ∠EAN = ∠CKN
+      angleArc(A, E, N, 28, {stroke: '#ea580c', 'stroke-width': 2}, gStep);
+      angleArc(K, N, C, 28, {stroke: '#ea580c', 'stroke-width': 2}, gStep);
+
+      // 最终结论对应角高亮：∠NEA 与 ∠NCK
+      // ∠NEA：顶点 E，边指向 N 与 A
+      angleArc(E, N, A, 22, {stroke: '#dc2626', 'stroke-width': 2.8}, gStep);
+      // ∠NCK：顶点 C，边指向 N 与 K
+      angleArc(C, N, K, 22, {stroke: '#dc2626', 'stroke-width': 2.8}, gStep);
+      break;
+    }
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `在 $\\triangle ABC$ 中，$AB > AC$，外接圆为 $\\Gamma$。<br>
+           $AD$ 为 $\\angle BAC$ 的外角平分线，交圆 $\\Gamma$ 于点 $D$（优弧 $BAC$ 的中点）；<br>
+           $AM$ 为 $\\angle BAC$ 的内角平分线，交圆 $\\Gamma$ 于点 $M$（劣弧 $BC$ 的中点）；<br>
+           点 $D$ 在 $AB$ 上的射影为点 $E$（即 $DE \\perp AB$）；<br>
+           $N$ 为 $AM$ 的中点；$M$ 在 $AC$ 上的射影为点 $K$（即 $MK \\perp AC$）。<br>
+           <b>求证：</b><span style="color:#dc2626; font-weight:700;">$\\angle NEA = \\angle NCK$</span>。`
+  },
+  {
+    title: '① 辅助垂线 DT ⟹ $\\triangle AED \\cong \\triangle ATD$',
+    body: `过点 $D$ 作 <span style="color:#2563eb; font-weight:700;">$DT \\perp AC$</span>，垂足为 $T$（$T$ 落在边 $CA$ 的反向延长线上）。<br>
+           因为 $AD$ 是 $\\angle BAC$ 的外角平分线，平分线上的点到角两边所在直线的距离相等：<br>
+           <div class="formula-box">$\\angle EAD = \\angle TAD$ 且 $\\angle AED = \\angle ATD = 90^\\circ$，$AD$ 为公共斜边</div>
+           由 AAS 全等判定，可得：<br>
+           <b style="color:#2563eb;">$\\triangle AED \\cong \\triangle ATD$</b> $\\implies$ <b>$DE = DT$</b> 且 <b>$AE = AT$</b>。`
+  },
+  {
+    title: '② 圆内接性质与弦长 ⟹ $\\mathrm{Rt}\\triangle DEB \\cong \\mathrm{Rt}\\triangle DTC$',
+    body: `连接 $DB, DC$。<br>
+           由于 $D$ 是外角平分线与外接圆的交点，$D$ 平分优弧 $BAC$，故对应弦长 <b style="color:#ea580c;">$DB = DC$</b>。<br>
+           在圆内接四边形 $ABDC$ 中，内对角与外角关系得 $\\angle DCT = \\angle DBE$。<br>
+           在直角三角形 $\\mathrm{Rt}\\triangle DEB$ 与 $\\mathrm{Rt}\\triangle DTC$ 中：<br>
+           <div class="formula-box">斜边 $DB = DC$，直角边 $DE = DT$</div>
+           由斜边直角边（HL）判定定理：<br>
+           <b style="color:#ea580c;">$\\mathrm{Rt}\\triangle DEB \\cong \\mathrm{Rt}\\triangle DTC$</b> $\\implies$ <b>$BE = CT$</b>。`
+  },
+  {
+    title: '③ 折弦推导 ⟹ $AE = CK = \\frac{1}{2}(AB - AC)$',
+    body: `由上一步的 $BE = CT$，在边 $AB$ 上有：<br>
+           <div class="formula-box">$AB = AE + BE = AE + CT$</div>
+           又因为 $T$ 在 $CA$ 的延长线上，且已证 $AT = AE$，故：<br>
+           <div class="formula-box">$CT = AC + AT = AC + AE$</div>
+           代入得：$AB = AE + (AC + AE) = AC + 2AE$，解得：<br>
+           <b style="color:#059669;">$AE = \\frac{1}{2}(AB - AC)$</b>。<br>
+           同理，点 $M$ 为劣弧 $BC$ 中点，$K$ 为 $M$ 在 $AC$ 上的垂足，由折弦定理对称性可推得：<br>
+           <b style="color:#059669;">$CK = \\frac{1}{2}(AB - AC)$</b> $\\implies$ <span style="color:#059669; font-weight:700;">$AE = CK$</span>。`
+  },
+  {
+    title: '④ 斜边中线 ⟹ $NK = NA$ 且 $\\angle NKC = \\angle EAN$',
+    body: `在直角三角形 $\\mathrm{Rt}\\triangle AKM$ 中，$\\angle AKM = 90^\\circ$，点 $N$ 为斜边 $AM$ 的中点。<br>
+           由直角三角形斜边中线等于斜边一半的性质，可知：<br>
+           <b style="color:#7c3aed;">$NK = NA = NM$</b> $\\implies$ $\\triangle NAK$ 为等腰三角形，底角 $\\angle NKA = \\angle NAK$。<br>
+           由于 $A, C, K$ 共线，故 $\\angle NKC = \\angle NKA = \\angle MAC$。<br>
+           又因为 $AM$ 是 $\\angle BAC$ 的内角平分线，故 $\\angle MAC = \\angle BAM = \\angle EAN$。<br>
+           由此得出关键等角关系：<br>
+           <span style="color:#dc2626; font-weight:700;">$\\angle NKC = \\angle EAN$</span>。`
+  },
+  {
+    title: '⑤ SAS 全等 $\\triangle CKN \\cong \\triangle EAN \\implies \\angle NEA = \\angle NCK$',
+    body: `综合前面的几何结论，在 $\\triangle CKN$ 与 $\\triangle EAN$ 中：<br>
+           <div class="formula-box">
+           ① $CK = AE$（由步骤 3 证得）<br>
+           ② $\\angle CKN = \\angle EAN$（由步骤 4 证得）<br>
+           ③ $NK = NA$（由步骤 4 证得）
+           </div>
+           由边角边（SAS）全等判定定理，可得：<br>
+           <b style="color:#2563eb;">$\\triangle CKN \\cong \\triangle EAN$</b>。<br>
+           因此对应角相等：<br>
+           <span style="color:#dc2626; font-size:16px; font-weight:700;">$\\angle NEA = \\angle NCK$</span>。<br>
+           全题得证！`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+if (typeof window.renderMath === 'function') window.renderMath(listEl);
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+
+  if (typeof window.renderMath === 'function') window.renderMath();
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2800);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

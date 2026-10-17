@@ -1,0 +1,31 @@
+---
+title: '练习 29：凸四边形特殊线段等长与角度求解'
+chapter: 5
+problem: 29
+source-chapter: '05'
+source-file: '05/29.md'
+id: 'ch05-p29'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+在凸四边形 ${ABCD}$ 中, ${AD}//{BC},{AC}$ 与 ${BD}$ 交于点 $O,{AC} = {BC},{AD} = \; {CD},{AO} = {AB}$ . 求 $\angle {ABC}$ 的度数.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,作 ${BE}//{AC},{DE}//{AB}$ ,设 ${BE}$ 与 ${DE}$ 交于点 $E$ ,连接 ${CE}$ ,则 $\angle {EBD} = \; \angle {AOB} = \angle {ABO} = \angle {EDB}$ ,于是 ${BE} = {DE}$ . 又 $\angle {EBC} = \angle {ACB} = \angle {DAC}$ ,由 ${AC} = \; {BC}$ ,知 $\angle {CBA} = \angle {CAB}$ ,则 $\angle {EBA} = \angle {DAB}$ ,所以四边形 ${ABED}$ 是等腰梯形, ${BE} = {AD}$ ，则 $\triangle  {BEC} \cong   \triangle  {ADC}$ . 于是 ${CE} = {CD} = {AD} = {BE} = {DE}$ ，即 $\triangle  {CDE}$ 为正三角形，则 $\angle {DCE} = {60}^{ \circ  }$ . 故 $\angle {ABC} = {80}^{ \circ  }$ .
+
+![](../images/166_838_294_484_315_0.jpg)
+:::
+
+

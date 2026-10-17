@@ -1,0 +1,112 @@
+const steps = [
+  {
+    title: '已知条件与图形结构',
+    body: `
+      如图，<span class="math">△ABC</span> 与 <span class="math">△XYZ</span> 的边相互交织，截点分别为 
+      <span class="math">A<sub>1</sub>, A<sub>2</sub></span>（在 <span class="math">BC</span> 上）、
+      <span class="math">B<sub>1</sub>, B<sub>2</sub></span>（在 <span class="math">AC</span> 上）、
+      <span class="math">C<sub>1</sub>, C<sub>2</sub></span>（在 <span class="math">AB</span> 上）。<br>
+      已知条件给出三组截线与边长成恒定比例：
+      <div class="formula-box">
+        <span class="math"><sup>A<sub>1</sub>A<sub>2</sub></sup>&frasl;<sub>BC</sub> = <sup>B<sub>1</sub>B<sub>2</sub></sup>&frasl;<sub>AC</sub> = <sup>C<sub>1</sub>C<sub>2</sub></sup>&frasl;<sub>AB</sub> = &lambda;</span>
+      </div>
+      求证：<span class="math">△XYZ</span> 边上的截线亦满足对应等比关系：
+      <div class="formula-box">
+        <span class="math"><sup>A<sub>2</sub>B<sub>1</sub></sup>&frasl;<sub>XY</sub> = <sup>B<sub>2</sub>C<sub>1</sub></sup>&frasl;<sub>YZ</sub> = <sup>C<sub>2</sub>A<sub>1</sub></sup>&frasl;<sub>ZX</sub></span>
+      </div>
+    `
+  },
+  {
+    title: '平移辅助线：构造平行四边形 C₁OB₁B₂',
+    body: `
+      将线段 <span class="math">B<sub>2</sub>B<sub>1</sub></span> 平移至以 <span class="math">C<sub>1</sub></span> 为起点的向量 <span class="math">C<sub>1</sub>O</span>，即令：
+      <div class="formula-box">
+        <span class="math">C<sub>1</sub>O // B<sub>2</sub>B<sub>1</sub> &nbsp;且&nbsp; C<sub>1</sub>O = B<sub>2</sub>B<sub>1</sub></span>
+      </div>
+      则四边形 <span class="math">C<sub>1</sub>OB<sub>1</sub>B<sub>2</sub></span> 为<b>平行四边形</b>。<br>
+      由此导出关键等量关系：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li><span class="math">C<sub>1</sub>O = B<sub>1</sub>B<sub>2</sub> = &lambda; &middot; AC</span>；</li>
+        <li><span class="math">OB<sub>1</sub> // C<sub>1</sub>B<sub>2</sub></span>（即 <span class="math">OB<sub>1</sub> // YZ</span>）且 <span class="math">OB<sub>1</sub> = B<sub>2</sub>C<sub>1</sub></span>。</li>
+      </ul>
+    `
+  },
+  {
+    title: '余弦定理与相似：证明 ΔC₂C₁O ~ ΔBAC',
+    body: `
+      在 <span class="math">△C<sub>2</sub>C<sub>1</sub>O</span> 与 <span class="math">△BAC</span> 中：<br>
+      1. <span class="math">C<sub>1</sub>C<sub>2</sub> = &lambda; &middot; AB</span>；<br>
+      2. <span class="math">C<sub>1</sub>O = B<sub>1</sub>B<sub>2</sub> = &lambda; &middot; AC</span>；<br>
+      3. 由于 <span class="math">C<sub>1</sub>C<sub>2</sub></span> 在边 <span class="math">AB</span> 上，且 <span class="math">C<sub>1</sub>O // AC</span>，故方向夹角 <span class="math">&ang;C<sub>2</sub>C<sub>1</sub>O = &ang;BAC</span>。<br>
+      由余弦定理计算对边 <span class="math">C<sub>2</sub>O</span> 的长度：
+      <div class="formula-box">
+        <span class="math">C<sub>2</sub>O<sup>2</sup> = C<sub>1</sub>C<sub>2</sub><sup>2</sup> + C<sub>1</sub>O<sup>2</sup> - 2 C<sub>1</sub>C<sub>2</sub> &middot; C<sub>1</sub>O &middot; cos&ang;C<sub>2</sub>C<sub>1</sub>O</span><br>
+        <span class="math">= &lambda;<sup>2</sup> (AB<sup>2</sup> + AC<sup>2</sup> - 2 AB &middot; AC &middot; cos&ang;BAC) = &lambda;<sup>2</sup> BC<sup>2</sup> = A<sub>1</sub>A<sub>2</sub><sup>2</sup></span>
+      </div>
+      因此 <span class="math">C<sub>2</sub>O = A<sub>1</sub>A<sub>2</sub> = &lambda; &middot; BC</span>，且由 <b>SAS</b> 判定得：
+      <div class="formula-box">
+        <b><span class="math">△C<sub>2</sub>C<sub>1</sub>O &sim; △BAC</span></b>
+      </div>
+    `
+  },
+  {
+    title: '平行四边形传递：证明 C₂OA₂A₁ 为平行四边形',
+    body: `
+      由 <span class="math">△C<sub>2</sub>C<sub>1</sub>O &sim; △BAC</span> 可得对应角相等：
+      <div class="formula-box">
+        <span class="math">&ang;C<sub>1</sub>C<sub>2</sub>O = &ang;ABC</span>
+      </div>
+      因为点 <span class="math">C<sub>1</sub>, C<sub>2</sub></span> 均在直线 <span class="math">AB</span> 上，由同位角相等知：
+      <div class="formula-box">
+        <span class="math">C<sub>2</sub>O // BC &nbsp;（即 C<sub>2</sub>O // A<sub>1</sub>A<sub>2</sub>）</span>
+      </div>
+      又因已证 <span class="math">C<sub>2</sub>O = A<sub>1</sub>A<sub>2</sub></span>，一组对边平行且相等，故：<br>
+      <b>四边形 <span class="math">C<sub>2</sub>OA<sub>2</sub>A<sub>1</sub></span> 为平行四边形！</b><br>
+      由此立即获得另一组对边的平行与等长性质：
+      <div class="formula-box">
+        <span class="math">OA<sub>2</sub> // C<sub>2</sub>A<sub>1</sub> &nbsp;（即 OA<sub>2</sub> // ZX） &nbsp;且&nbsp; OA<sub>2</sub> = C<sub>2</sub>A<sub>1</sub></span>
+      </div>
+    `
+  },
+  {
+    title: '核心相似三角形：证明 ΔOA₂B₁ ~ ΔZXY',
+    body: `
+      考察图形中心的关键小三角形 <span class="math">△OA<sub>2</sub>B<sub>1</sub></span> 的三边位置关系：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li><span class="math">OA<sub>2</sub> // ZX</span>（由平行四边形 <span class="math">C<sub>2</sub>OA<sub>2</sub>A<sub>1</sub></span> 对边）；</li>
+        <li><span class="math">OB<sub>1</sub> // ZY</span>（由平行四边形 <span class="math">C<sub>1</sub>OB<sub>1</sub>B<sub>2</sub></span> 对边）；</li>
+        <li>边 <span class="math">A<sub>2</sub>B<sub>1</sub></span> 本身恰好落在直线 <span class="math">XY</span> 上。</li>
+      </ul>
+      由两组平行线与直线 <span class="math">XY</span> 的夹角关系，对应角分别相等：
+      <div class="formula-box">
+        <span class="math">&ang;OA<sub>2</sub>B<sub>1</sub> = &ang;ZXY &nbsp;（对应 &ang;X）</span><br>
+        <span class="math">&ang;OB<sub>1</sub>A<sub>2</sub> = &ang;ZYX &nbsp;（对应 &ang;Y）</span>
+      </div>
+      由两角对应相等（AAA 判定），两三角形相似：
+      <div class="formula-box">
+        <b><span class="math">△OA<sub>2</sub>B<sub>1</sub> &sim; △ZXY</span></b>
+      </div>
+    `
+  },
+  {
+    title: '边长比代换：得出最终结论',
+    body: `
+      根据相似三角形 <span class="math">△OA<sub>2</sub>B<sub>1</sub> &sim; △ZXY</span> 的对应边成比例：
+      <div class="formula-box">
+        <span class="math"><sup>OA<sub>2</sub></sup>&frasl;<sub>ZX</sub> = <sup>OB<sub>1</sub></sup>&frasl;<sub>ZY</sub> = <sup>A<sub>2</sub>B<sub>1</sub></sup>&frasl;<sub>XY</sub></span>
+      </div>
+      将前文证明的平行四边形等长对边代入：
+      <ul style="margin: 6px 0 6px 20px;">
+        <li><span class="math">OA<sub>2</sub> = C<sub>2</sub>A<sub>1</sub></span></li>
+        <li><span class="math">OB<sub>1</sub> = B<sub>2</sub>C<sub>1</sub></span></li>
+      </ul>
+      直接代换得到目标比例恒等式：
+      <div class="formula-box" style="background:#f0fdf4; border-color:#86efac; color:#166534; font-size:15px; font-weight:700;">
+        <span class="math"><sup>A<sub>2</sub>B<sub>1</sub></sup>&frasl;<sub>XY</sub> = <sup>B<sub>2</sub>C<sub>1</sub></sup>&frasl;<sub>YZ</sub> = <sup>C<sub>2</sub>A<sub>1</sub></sup>&frasl;<sub>ZX</sub></span>
+      </div>
+      <b>原命题得证！</b><br>
+      <span style="color:#64748b; font-size:12.5px;">注：通过向量平移将分散的截线统一成相似三角形，充分体现了平行四边形在几何比值传递中的转化枢纽作用。</span>
+    `
+  }
+];
+

@@ -1,0 +1,341 @@
+================================================================================
+FILE: 08/2/2.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>例 1：内切圆切点、外接圆弧中点与位似中心证明 <span class="math-tag">XY // BC</span></h1>
+    <p>已知 $\triangle ABC$ 内切圆 $I$ 切于 $D,E,F$，外接圆 $\omega$ 弧 $AC,AB$ 中点为 $M,N$；$ME, NF$ 交于 $P$；$PB, PC$ 与圆 $I$ 交于 $X, Y$。求证 $XY \parallel BC$。</p>
+  </header>
+Found steps variable: steps
+Parsed 6 step items via regex
+
+--- Step 0 ---
+Title: 已知条件与几何构型
+Body: 设锐角 $\\bigtriangleup ABC$ 的内切圆 $I$ 与三边 $BC, CA, AB$ 分别切于点 $D, E, F$；其外接圆记为 $\\omega$。<br>
+取劣弧 $AC, AB$ 的中点分别为 $M, N$。<br>
+连结 $ME, NF$ 并延长相交于点 $P$。<br>...
+
+--- Step 1 ---
+Title: 引出弧中点 R 作外切三角形
+Body: 设外接圆 $\\omega$ 上劣弧 $BC$ 的中点为 $R$。<br>
+分别过点 $M, N, R$ 作外接圆 $\\omega$ 的三条切线，两两相交依次构成 $\\bigtriangleup A'B'C'$：<br>
+切点为 $N \\in A'B'$, $R \\in B'C'$, $M ...
+
+--- Step 2 ---
+Title: 垂径定理导出三组对应边平行
+Body: 记外接圆 $\\omega$ 的圆心为 $O$。<br>
+因为 $A'B'$ 切圆 $\\omega$ 于点 $N$，所以半径 $ON \\bot A'B'$。<br>
+又因 $N$ 为弧 $AB$ 的中点，由垂径定理知直径所在直线 $ON \\bot AB$。<br>
+故 <b style="co...
+
+--- Step 3 ---
+Title: 确立两三角形的外位似映射
+Body: 由三边对应平行且同向，必存在正位似变换 $\\mathcal{H}$，将 $\\bigtriangleup ABC$ 映射为 $\\bigtriangleup A'B'C'$。<br>
+在该位似变换下：<br>
+1. $\\bigtriangleup ABC$ 的内切圆 $I$ 必然映射为 $\\b...
+
+--- Step 4 ---
+Title: 交点 P 即为位似中心，三线共点
+Body: 在位似变换下，任何一对对应点的连线必过<b>位似中心</b>。<br>
+由于 $F \\mapsto N$ 且 $E \\mapsto M$，故连线 $FN$ 与 $EM$ 必交于位似中心。<br>
+而已知 $ME \\cap NF = P$，因此 <b style="color:#dc2626;"...
+
+--- Step 5 ---
+Title: 位似映射导出 XY // BC（原命题得证）
+Body: 位似变换 $\\mathcal{H}$（中心为 $P$）将圆 $I$ 变换为圆 $\\omega$：<br>
+由于点 $X$ 在圆 $I$ 上，且在射线 $PB$ 上，而 $B$ 为圆 $\\omega$ 上的对应点，因此 $X$ 的位似对应点即为 $B$（$X \\mapsto B$）。<br>
+...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 5705): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤文本内容 ============ */']
+  Function goTo (length 743): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };', 'btnNext.onclick = () => { stopAuto(); goTo(cur+1); };', "document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };"]
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/3/3.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1><span>📐</span> 例 2：九点圆、外接圆与垂径定理分步证明</h1>
+    <p><b>已知：</b>锐角 $\triangle ABC$ 中，$H$ 为垂心，圆 $\Omega$ 为九点圆，圆 $\omega$ 为 $\triangle BHC$ 的外接圆（圆心 $O'$），$X$ 为圆 $\omega$ 上弧 $BHC$ 上一点。延长 $AX$ 与圆 $\Omega$ 交于 $Y$，$P$ 在圆 $\Omega$ 上且 $PX = PY$。&nbsp;&nbsp;<b>求证：</b>$\angle O'PX = 90^\circ$。</p>
+  </header>
+Found steps variable: steps
+Parsed 6 step items via regex
+
+--- Step 0 ---
+Title: 已知构形与条件
+Body: 锐角 $\\triangle ABC$ 中，$H$ 为垂心，圆 $\\Omega$ 为九点圆（圆心 $N$），圆 $\\omega$ 为 $\\triangle BHC$ 的外接圆（圆心 $O'$）。<br>
+    $X$ 为圆 $\\omega$ 上弧 $BHC$ 上一点。延长射线 $AX$ 与...
+
+--- Step 1 ---
+Title: 九点圆的中点性质与外位似中心 A
+Body: 取线段 $AB, AC, AH$ 的中点分别为 $C', B', H'$。根据九点圆定理，$C', B', H'$ 均在九点圆 $\\Omega$ 上。<br>
+    以点 $A$ 为位似中心，位似比为 $\\frac{1}{2}$，显然有：<br>
+    $B \\mapsto C',\\qu...
+
+--- Step 2 ---
+Title: 延长 AP, AY 交圆 ω 于 Q, K，导出平行与比例
+Body: 延长射线 $AP, AY$ 与圆 $\\omega$ 分别交于点 $Q, K$。<br>
+    由于 $A$ 是圆 $\\Omega$ 到圆 $\\omega$ 位似比为 $\\frac{1}{2}$ 的外位似中心，圆 $\\Omega$ 上的任意点经以 $A$ 为中心放大 2 倍后，必落在圆 $...
+
+--- Step 3 ---
+Title: 延长 XP 交圆 ω 于 Z，由 PX = PY 导角证明
+Body: 延长射线 $XP$ 与圆 $\\omega$ 交于点 $Z$。<br>
+    由已知条件 $PX = PY$，$\\triangle PXY$ 为等腰三角形，底角相等：<br>
+    $\\angle PXY = \\angle PYX.$<br>
+    又由 Step 2 可知 $PY \\...
+
+--- Step 4 ---
+Title: 等圆周角对等弦，得出 P 为 XZ 中点
+Body: 在圆 $\\omega$ 中，圆周角 $\\angle ZKX$ 所对的弦为 $XZ$，圆周角 $\\angle QXY$（即 $\\angle QXK$）所对的弦为 $QK$。<br>
+    由圆周角定理，同圆中相等的圆周角所对的弦相等：<br>
+    $\\angle ZKX = \\ang...
+
+--- Step 5 ---
+Title: 由垂径定理得出 O'P ⊥ PX（证毕）
+Body: 在圆 $\\omega$ 中，$XZ$ 是一条弦，$O'$ 为圆心。<br>
+    由 Step 4 的结论，点 $P$ 是弦 $XZ$ 的中点。<br>
+    根据<b>垂径定理</b>：连接圆心与非直径弦的中点的线段，垂直于该弦！<br>
+    因此：<br>
+    <b style="...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 4017): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤文字数据 ============ */']
+  Function goTo (length 346): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(curStep - 1); };', 'btnNext.onclick = () => { stopAuto(); goTo(curStep + 1); };', 'btnReset.onclick = () => { stopAuto(); goTo(0); };']
+  Function updateUI (length 670): renderMathInElement = False
+    Tail: ["    window.history.replaceState({}, '', url);", '  }', '}']
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/4/4.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>四边形中点与四圆共点问题（反演与牛顿定理）</h1>
+    <p><b>已知：</b>四边形 <span class="math">ABCD</span> 内接于圆 <span class="math">O</span>，<span class="math">W, X, Y, Z</span> 分别为边 <span class="math">AB, BC, CD, DA</span> 的中点。&nbsp;&nbsp;<b>求证：</b><span class="math">△AOC, △BOD, △WOY, △XOZ</span> 的外接圆除了点 <span class="math">O</span> 外还有一个公共点 <span class="math">M</span>。</p>
+  </header>
+Found steps variable: steps
+Parsed 6 step items via regex
+
+--- Step 0 ---
+Title: 已知条件与构型
+Body: 设凸四边形 <span class="math">ABCD</span> 内接于圆 <span class="math">O</span>。<br>
+取各边中点分别记为 <span class="math">W</span> (<span class="math">AB</span> 中点)、<sp...
+
+--- Step 1 ---
+Title: 以 O 为中心建立反演变换
+Body: 以圆心 <span class="math">O</span> 为反演中心、圆 <span class="math">O</span> 的半径 <span class="math">R</span> 为反演半径作反演变换。<br>
+对于任意点 <span class="math">P (P &ne;...
+
+--- Step 2 ---
+Title: 证明 W'X'Y'Z' 为圆 O 的外切四边形
+Body: 以弦 <span class="math">AB</span> 及其反演点 <span class="math">W'</span> 为例：<br>
+因为 <span class="math">W</span> 是 <span class="math">AB</span> 的中点，由垂径定理知 <s...
+
+--- Step 3 ---
+Title: 牛顿定理：四线共点于 M'
+Body: 在圆外切四边形 <span class="math">W'X'Y'Z'</span> 中：<br>
+• 两组对边切点的连线分别为弦 <span style="color:${BLUE};font-weight:600">AC</span> 与弦 <span style="color:${GREEN}...
+
+--- Step 4 ---
+Title: 直线反演为圆与反演像点 M
+Body: 由反演几何基本定理：<b>不过反演中心 O 的直线，其反演像为经过反演中心 O 的圆</b>。<br>
+考察 Step 3 中的四条直线：<br>
+1. 直线 <span class="math">AC</span> 经过反演圆上点 <span class="math">A, C</span>，其反...
+
+--- Step 5 ---
+Title: 四圆交于公共点 M，命题得证
+Body: 因为点 <span class="math">M'</span> 是四条直线 <span class="math">AC, BD, W'Y', X'Z'</span> 的公共交点，<br>
+所以根据反演变换的点线对应性质，点 <span style="color:${RED};font-weight...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 4041): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤文本配置 ============ */']
+  Function goTo (length 711): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };', 'btnNext.onclick = () => { stopAuto(); goTo(cur+1); };', "document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };"]
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/5/5.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>例 4：圆外切四边形、配极原则与角平分线证明 <span class="math-tag">BD 平分 ∠AMC</span></h1>
+    <p>设四边形 $ABCD$ 的内切圆为圆 $O$，过 $O$ 作 $OM \perp BD$ 于 $M$。求证：$BD$ 平分 $\angle AMC$。</p>
+  </header>
+Found steps variable: steps
+Parsed 6 step items via regex
+
+--- Step 0 ---
+Title: 已知条件与几何构型
+Body: 设四边形 <span class="math">ABCD</span> 的内切圆为圆 <span class="math">O</span>，四边分别切于点 <span class="math">E, F, G, H</span>。<br>
+连接对角线 <span class="math">AC, ...
+
+--- Step 1 ---
+Title: ① 牛顿定理与配极原则：BD 为 Q 的极线
+Body: 连接 <span class="math">AC</span> 与 <span class="math">BD</span> 交于点 <span class="math">P</span>。由<b>牛顿定理</b>，切点弦 <span class="math">EG</span> 与 <span c...
+
+--- Step 2 ---
+Title: ② 自极三角形对偶：D,P,B,R 与 Q,A,P,C 共线
+Body: 设切点弦 <span class="math">HE</span> 与 <span class="math">GF</span> 的延长线交于点 <span class="math">R</span>。<br>
+在内接四边形 <span class="math">EFGH</span> 中，<spa...
+
+--- Step 3 ---
+Title: ③ 完全四边形截线：(Q, P; A, C) 为调和点列
+Body: 设割线 <span class="math">QHG</span> 与直线 <span class="math">BD</span> 交于点 <span class="math">N</span>。<br>
+由完全四边形的基本调和性质，割线上的点列 <span class="math">(Q, N;...
+
+--- Step 4 ---
+Title: ④ 极点连径正交：Q, M, O 三点共线且 QM ⊥ BD
+Body: 连接极点 <span class="math">Q</span> 与圆心 <span class="math">O</span>。<br>
+由极点与极线的基本正交性质：圆心与极点的连线垂直于该极点对应的极线。因为直线 <span class="math">BD</span> 为点 <span cla...
+
+--- Step 5 ---
+Title: ⑤ 调和线束正交定理：BD 平分 ∠AMC（证毕）
+Body: 以垂足 <span class="math">M</span> 为顶点，连接共线的调和点列 <span class="math">Q, A, P, C</span>，构成调和线束 <span class="math">M(Q, P; A, C) = -1</span>。<br>
+在这一调和线束中，射...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 4170): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤讲解文本数据 ============ */']
+  Function goTo (length 723): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };', 'btnNext.onclick = () => { stopAuto(); goTo(cur+1); };', "document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };"]
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/6/6.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>例 5：直线 MN 恒过定点的反演与共轴圆证明</h1>
+    <p>
+      <span class="tag tag-blue">已知条件</span>给定锐角 △ABC，D 为 BC 上动点，内心为 I, I₁, I₂；圆 IAI₁ 与圆 IAI₂ 分别交外接圆于 M, N
+      <br>
+      <span class="tag tag-green">求证目标</span>直线 MN 恒过定点 P₀（由等角共轭反演与共轴圆系公共根轴唯一定出）
+    </p>
+  </header>
+Found steps variable: steps
+Parsed 6 step items via regex
+
+--- Step 0 ---
+Title: 已知构形与题目条件
+Body: 给定锐角 △ABC 及其外接圆 ⊙(ABC)（圆心为 O）。点 D 为底边 BC 上的任意动点。<br>记 △ABC、△ABD 与 △ACD 的内心分别为 I、I₁ 与 I₂。<br>作圆 ⊙(IAI₁) 与圆 ⊙(IAI₂)，它们与 △ABC 的外接圆分别交于异于 A 的动点 M 和 N。<br>...
+
+--- Step 1 ---
+Title: 外接圆弧中点 E 与鸡爪定理反演对偶
+Body: 设外接圆劣弧 BC 的中点为 E。由经典的<b>鸡爪定理</b>，有 EB = EC = EI。<br>进一步，设 △ABC 的 A-旁心为 Iₐ。由于内角平分线与外角平分线垂直（∠IBIₐ = 90°），且 A, I, E, Iₐ 共线于角平分线上，因此：<div class="formula-b...
+
+--- Step 2 ---
+Title: 内心角平分线性质与两圆在 A 处正交
+Body: 设圆 ⊙(IAI₁) 与 ⊙(IAI₂) 的圆心分别为 O₁, O₂。在 △ABD 中，由于 AI₁, DI₁ 分别平分 ∠BAD, ∠ADB，由内心角度关系得：<br>∠AI₁I = 90° - (1/2)∠ADB<br>同理，在 △ACD 中有：<br>∠AI₂I = 90° - (1/2)∠A...
+
+--- Step 3 ---
+Title: 等角共轭反演变换，圆化为直角直线对
+Body: 以 A 为反演中心，R = √(AB · AC) 为半径，并复合关于 ∠A 内角平分线的轴对称（即<b>等角共轭反演</b> I*）：<br>1. 顶点 B ↦ C，C ↦ B，故过 A, B, C 的<b>外接圆 ⊙(ABC) 映射为直线 BC 本身</b>！<br>2. 由 Step 1 的鸡爪...
+
+--- Step 4 ---
+Title: 射影定理导出恒定圆幂与共轴圆根轴
+Body: 过旁心 Iₐ 作边 BC 的垂线，垂足为 X。由初等几何，点 X 是 A-旁切圆在 BC 上的切点，满足切线长 AX = s（半周长），因此<b>点 X 是不随动点 D 改变的绝对定点</b>！<br>在直角三角形 △M\'IₐN\' 中，IₐX ⊥ M\'N\'。由射影定理：<div class=...
+
+--- Step 5 ---
+Title: 逆反演导出直线 MN 恒过定点 P0（原命题得证）
+Body: 对圆 ⊙(AM\'N\') 进行逆等角共轭反演：<br>1. 圆 ⊙(AM\'N\') 经过反演中心 A 及动点 M\', N\'，其反演像必为一条不过 A 的直线，并且经过点 M\', N\' 的原像 M, N。因此<b>圆 ⊙(AM\'N\') 的反演像就是直线 MN</b>！<br>2. 由于...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 4521): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤文本 ============ */']
+  Function goTo (length 606): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };', 'btnNext.onclick = () => { stopAuto(); goTo(cur+1); };', "document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };"]
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/7/7.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>例 6：费尔巴哈定理 (Feuerbach's Theorem)</h1>
+    <p>已知：任意 $\triangle ABC$ 的九点圆、内切圆 $\odot I$ 与 $A$-旁切圆 $\odot I_a$ ｜ 求证：九点圆与其内切圆和三个旁切圆都相切</p>
+  </header>
+Found steps variable: steps
+Parsed 7 step items via regex
+
+--- Step 0 ---
+Title: 构型引入：九点圆、内切圆与旁切圆
+Body: 在任意不等边锐角 $\\triangle ABC$ 中，记三边中点为 <b style="color:${BLUE}">A₁, B₁, C₁</b>，其外接圆即为三角形的<b>九点圆</b>（圆心为 <b style="color:${BLUE}">N</b>）。<br>
+           $\...
+
+--- Step 1 ---
+Title: 切点对称性：A₁ 是 XXₐ 的中点
+Body: 记三边长为 $a, b, c$，半周长 $p = \\frac{1}{2}(a+b+c)$，不妨设 $b > c$。<br>
+           由切线长性质易知：$BX = CX_a = p - b = \\frac{a - b + c}{2}$。<br>
+           因为 $A_1$...
+
+--- Step 2 ---
+Title: 第二条内公切线 B\'C\' 与四点共线
+Body: 底边 $BC$ 是圆 $I$ 与圆 $I_a$ 的内公切线。两圆必有另一条对称的内公切线 <b style="color:${ORANGE}">B\'C\'</b>（$B\' \\in AC, C\' \\in AB$），且与 $BC$ 交于点 <b style="color:${ORANGE}">...
+
+--- Step 3 ---
+Title: 中位线交公切线，相似三角形导出距离比例
+Body: 连接中位线 <b style="color:${CYAN}">A₁B₁</b>（$\\parallel AB$）与 <b style="color:${CYAN}">A₁C₁</b>（$\\parallel AC$），分别与公切线 $B\'C\'$ 交于 <b style="color:${CYAN...
+
+--- Step 4 ---
+Title: 建立以 A₁ 为中心、半径 (b-c)/2 的反演变换
+Body: 注意到中位线长 $A_1B_1 = \\frac{c}{2}, A_1C_1 = \\frac{b}{2}$。将它们与前式相乘：<br>
+           <b style="color:${BLUE}">A₁B″ · A₁B₁</b> $= \\frac{(b-c)^2}{2c} \\cdot...
+
+--- Step 5 ---
+Title: 九点圆反演为公切线 B\'C\'，切圆 I 于点 T
+Body: 根据反演几何性质：<br>
+           1. 九点圆经过反演中心 $A_1$，且经过 $B_1, C_1$。其反演像为过 $B″, C″$ 的直线，即<b>内公切线 B\'C\'</b>！<br>
+           2. 线段 $A_1X$ 切圆 $I$ 于 $X$，切线长 $A_1X...
+
+--- Step 6 ---
+Title: 同理与旁切圆相切，费尔巴哈定理完整获证
+Body: 同理，切线长 $A_1X_a = R_inv$，故<b>旁切圆 $\\odot I_a$ 的反演像也是其自身</b>！<br>
+           公切线 $B\'C\'$ 切旁切圆于 $T_a\'$，反演后九点圆与旁切圆 $\\odot I_a$ 相切于点 <b style="color:${R...
+
+INTERACTION FUNCTIONS:
+  Function renderStep (length 4789): renderMathInElement = False
+    Tail: ['  }', '}', '/* ============ 步骤文本 ============ */']
+  Function goTo (length 584): renderMathInElement = False
+    Tail: ['btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };', 'btnNext.onclick = () => { stopAuto(); goTo(cur+1); };', "document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };"]
+Total renderMathInElement calls in file: 0
+================================================================================
+FILE: 08/8/8.html
+================================================================================
+HEAD Katex: CSS=False, JS=False, auto-render=False
+HEAD Links: []
+HEAD Scripts: []
+HEADER HTML:
+<header>
+    <h1>例 7：外切四边形的反演与对角线中点距离之比</h1>
+    <div class="subtitle">反演后转化为平行四边形，利用相似三角形中线比求出比值 35/48</div>
+  </header>
+Found steps variable: STEPS
+Parsed 0 step items via regex
+
+INTERACTION FUNCTIONS:
+  Function setStep (length 685): renderMathInElement = False
+    Tail: ["  window.history.replaceState({}, '', url);", '  if (window.onStepChanged) window.onStepChanged(curStep);', '}']
+  Function nextStep (length 24): renderMathInElement = False
+    Tail: ['setStep(curStep + 1); }']
+  Function prevStep (length 25): renderMathInElement = False
+    Tail: ['setStep(curStep - 1); }']
+Total renderMathInElement calls in file: 0

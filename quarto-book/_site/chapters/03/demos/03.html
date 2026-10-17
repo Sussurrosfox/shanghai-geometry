@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圆上割线三线共点定理 (两次帕斯卡定理) — 分步证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1220px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 16px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14.5px; color: #475569; margin-top: 6px; line-height: 1.5; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative;
+  }
+  svg { width: 100%; height: auto; max-height: 75vh; }
+  .panel {
+    flex: 1 1 380px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 62vh; padding-right: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item .title { font-weight: 600; font-size: 14.5px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 10px rgba(37,99,235,0.08); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    font-size: 12px; margin-top: 8px; color: #64748b;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-color { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>圆上割线三线共点定理 (两次帕斯卡定理)</h1>
+    <p><b>已知</b>：$A, B, C$ 为圆 $\omega$ 上任意三点，$M, N$ 为平面上任意两点。由 $A, B, C$ 经 $M, N, M$ 依次作割线得到 $A_3, B_3, C_3$。<br>
+    <b>求证</b>：$AA_3, BB_3, CC_3$ 三线共点。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 700 650" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-color" style="background:#7c3aed;"></span>过 M 点割线</span>
+        <span class="legend-item"><span class="legend-color" style="background:#ea580c;"></span>过 N 点割线</span>
+        <span class="legend-item"><span class="legend-color" style="background:#059669;"></span>帕斯卡辅助交点 S</span>
+        <span class="legend-item"><span class="legend-color" style="background:#dc2626;"></span>主交点 T</span>
+        <span class="legend-item"><span class="legend-color" style="background:#0284c7;"></span>关键共线轴 MN</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 两直线交点：P1-P2 与 Q1-Q2 */
+function lineIntersect(p1, p2, q1, q2){
+  const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+  const x3 = q1.x, y3 = q1.y, x4 = q2.x, y4 = q2.y;
+  const denom = (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4);
+  if (Math.abs(denom) < 1e-9) return null;
+  const px = ((x1*y2 - y1*x2)*(x3 - x4) - (x1 - x2)*(x3*y4 - y3*x4)) / denom;
+  const py = ((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4)) / denom;
+  return {x: px, y: py};
+}
+
+/* 割线与圆的另一个交点：点 P 在圆 O(r) 上，割线过点 K */
+function secantOther(P, K, O, r){
+  const pRel = sub(P, O);
+  const v = sub(K, P);
+  const dot = pRel.x * v.x + pRel.y * v.y;
+  const norm2 = v.x * v.x + v.y * v.y;
+  if (norm2 < 1e-9) return P;
+  const t = -2.0 * dot / norm2;
+  return {x: P.x + t * v.x, y: P.y + t * v.y};
+}
+
+/* 几何常数与点位设置 (精确解算，保持圆内紧凑与美观) */
+const O = { x: 350.0, y: 325.0 };
+const R = 230.0;
+
+// 定点 M, N
+const M = { x: 304.0, y: 279.0 };
+const N = { x: 373.0, y: 394.0 };
+
+// 基准点 A, B (在圆上)
+const thA = 175 * Math.PI / 180;
+const thB = 65 * Math.PI / 180;
+const A = { x: O.x + R * Math.cos(thA), y: O.y - R * Math.sin(thA) };
+const B = { x: O.x + R * Math.cos(thB), y: O.y - R * Math.sin(thB) };
+
+// 依次求解割线交点
+const A1 = secantOther(A, M, O, R);
+const A2 = secantOther(A1, N, O, R);
+const A3 = secantOther(A2, M, O, R);
+
+const B1 = secantOther(B, M, O, R);
+const B2 = secantOther(B1, N, O, R);
+const B3 = secantOther(B2, M, O, R);
+
+// 帕斯卡对边交点 S 和主交点 T
+const S = lineIntersect(A, B2, A2, B);
+const T = lineIntersect(A, A3, B, B3);
+
+// 示意点 C 及其对应点 C3 (用于最后一步说明)
+const thC = 118 * Math.PI / 180;
+const C = { x: O.x + R * Math.cos(thC), y: O.y - R * Math.sin(thC) };
+const C3 = secantOther(C, T, O, R); // C3 在圆上且使 CC3 过 T
+
+/* ============ SVG 工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color, r=4.5, parent, stroke='#fff'){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:stroke, 'stroke-width':1.5}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=15, bold=true){
+  const t = el('text', {x:p.x+dx, y:p.y+dy, 'font-size':size, fill:color,
+    'text-anchor':'middle', 'dominant-baseline':'central',
+    'font-family':'"Times New Roman", STIXGeneral, serif', 'font-style':'italic',
+    'font-weight': bold ? '700' : '500'}, parent);
+  t.textContent = text;
+  return t;
+}
+/* 延长线（从 p 沿 q 方向两端各延长 ext） */
+function extended(p, q, ext=40, attrs={}, parent){
+  const d = norm(sub(q,p));
+  return line(sub(p, mul(d, ext)), add(q, mul(d, ext)), attrs, parent);
+}
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* ============ 分层绘制 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：原始圆与参考
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与标签
+
+const BLUE   = '#2563eb',
+      GREEN  = '#059669',
+      RED    = '#dc2626',
+      PURPLE = '#7c3aed',
+      ORANGE = '#ea580c',
+      CYAN   = '#0284c7',
+      SLATE  = '#64748b';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 绘制大圆 omega
+  circle(O, R, {stroke: '#334155', 'stroke-width': 2.2, fill: '#f8fafc', opacity: 0.9}, gBase);
+  // 轻微圆心点
+  dot(O, '#94a3b8', 2.5, gBase);
+  label(O, 'O', 0, -12, '#94a3b8', gBase, 12, false);
+}
+
+function drawPoints(opts = {}){
+  gPts.innerHTML = '';
+  const { showC = false, highlightT = false, highlightS = false } = opts;
+
+  // 基础点 A, B
+  dot(A, BLUE, 5, gPts);
+  label(A, 'A', -22, 2, BLUE, gPts);
+
+  dot(B, BLUE, 5, gPts);
+  label(B, 'B', 16, -16, BLUE, gPts);
+
+  // 割线生成点 A1, A2, A3
+  dot(A1, PURPLE, 4.5, gPts);
+  label(A1, 'A₁', 22, -6, PURPLE, gPts);
+
+  dot(A2, ORANGE, 4.5, gPts);
+  label(A2, 'A₂', -18, 20, ORANGE, gPts);
+
+  dot(A3, RED, 4.8, gPts);
+  label(A3, 'A₃', -4, -18, RED, gPts);
+
+  // 割线生成点 B1, B2, B3
+  dot(B1, PURPLE, 4.5, gPts);
+  label(B1, 'B₁', -22, 16, PURPLE, gPts);
+
+  dot(B2, ORANGE, 4.5, gPts);
+  label(B2, 'B₂', 22, 6, ORANGE, gPts);
+
+  dot(B3, RED, 4.8, gPts);
+  label(B3, 'B₃', -22, -12, RED, gPts);
+
+  // 定点 M, N
+  dot(M, PURPLE, 5, gPts);
+  label(M, 'M', -18, -6, PURPLE, gPts);
+
+  dot(N, ORANGE, 5, gPts);
+  label(N, 'N', 18, 8, ORANGE, gPts);
+
+  // 辅助交点 S
+  if (highlightS) {
+    dot(S, GREEN, 6, gPts, '#fff');
+    circle(S, 10, {stroke: GREEN, 'stroke-width': 1.5, opacity: 0.7}, gPts);
+    label(S, 'S', 18, -6, GREEN, gPts);
+  } else {
+    dot(S, GREEN, 4.5, gPts);
+    label(S, 'S', 18, -6, GREEN, gPts);
+  }
+
+  // 主交点 T
+  if (highlightT) {
+    dot(T, RED, 6.5, gPts, '#fff');
+    circle(T, 11, {stroke: RED, 'stroke-width': 1.8, opacity: 0.8}, gPts);
+    label(T, 'T', -20, -10, RED, gPts);
+  } else {
+    dot(T, RED, 5, gPts);
+    label(T, 'T', -20, -10, RED, gPts);
+  }
+
+  // 示意 C, C3
+  if (showC) {
+    dot(C, SLATE, 4.5, gPts);
+    label(C, 'C', -16, -16, SLATE, gPts);
+    dot(C3, SLATE, 4.5, gPts);
+    label(C3, 'C₃', 22, 12, SLATE, gPts);
+  }
+}
+
+/* ============ 各步骤画面 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';   // 关键：每步先清空动态层
+
+  switch(s){
+    case 0: { // 步骤 0：已知构型与交点生成
+      drawPoints({ highlightT: false, highlightS: false });
+      // 展示割线生成链 A -> M -> A1 -> N -> A2 -> M -> A3
+      line(A, A1, {stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(A1, A2, {stroke: ORANGE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(A2, A3, {stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+
+      // 展示割线生成链 B -> M -> B1 -> N -> B2 -> M -> B3
+      line(B, B1, {stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(B1, B2, {stroke: ORANGE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+      line(B2, B3, {stroke: PURPLE, 'stroke-width': 1.6, 'stroke-dasharray': '5 4'}, gStep);
+
+      // 提示待证明的三线 AA3 与 BB3
+      segDashed(A, A3, RED, 2, gStep);
+      segDashed(B, B3, RED, 2, gStep);
+      break;
+    }
+
+    case 1: { // 步骤 1：目标转化——只需证明 AA3, BB3, MN 三线共点
+      drawPoints({ highlightT: true, highlightS: false });
+      // 弱化基础割线
+      line(A, A1, {stroke: '#cbd5e1', 'stroke-width': 1, 'stroke-dasharray': '4 4'}, gStep);
+      line(B, B1, {stroke: '#cbd5e1', 'stroke-width': 1, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 贯穿直线 MN (长穿透基线)
+      extended(T, N, 65, {stroke: CYAN, 'stroke-width': 4.5, opacity: 0.25}, gStep);
+      extended(T, N, 65, {stroke: CYAN, 'stroke-width': 2, 'stroke-dasharray': '8 5'}, gStep);
+
+      // 高亮目标线 AA3 与 BB3，交于 T
+      extended(A, A3, 20, {stroke: RED, 'stroke-width': 2.8}, gStep);
+      extended(B, B3, 20, {stroke: RED, 'stroke-width': 2.8}, gStep);
+      break;
+    }
+
+    case 2: { // 步骤 2：引交点 S，构造六边形 A1A2BB1B2A
+      drawPoints({ highlightT: false, highlightS: true });
+
+      // 连结弦 AB2 与 A2B，相交于 S
+      highlightSeg(A, B2, GREEN, gStep, 2.8);
+      highlightSeg(A2, B, GREEN, gStep, 2.8);
+
+      // 绘制六边形 A1 - A2 - B - B1 - B2 - A 的填充与外框
+      const hex1 = [A1, A2, B, B1, B2, A];
+      polygon(hex1, {fill: '#10b981', 'fill-opacity': 0.12, stroke: '#059669', 'stroke-width': 1.8}, gStep);
+
+      // 标识顶点顺序
+      const names = ['① A₁', '② A₂', '③ B', '④ B₁', '⑤ B₂', '⑥ A'];
+      hex1.forEach((pt, idx) => {
+        circle(pt, 8, {stroke: GREEN, 'stroke-width': 1.2, fill: 'none'}, gStep);
+      });
+      break;
+    }
+
+    case 3: { // 步骤 3：对六边形 I 应用帕斯卡定理 ⇒ M, N, S 共线
+      drawPoints({ highlightT: false, highlightS: true });
+
+      // 六边形轮廓淡显
+      const hex1 = [A1, A2, B, B1, B2, A];
+      polygon(hex1, {fill: '#10b981', 'fill-opacity': 0.06, stroke: '#94a3b8', 'stroke-width': 1, 'stroke-dasharray': '4 4'}, gStep);
+
+      // 三对对边高亮配对：
+      // 对边 1: A1A2 与 B1B2 (交于 N)
+      extended(A1, A2, 20, {stroke: ORANGE, 'stroke-width': 2.6}, gStep);
+      extended(B1, B2, 20, {stroke: ORANGE, 'stroke-width': 2.6}, gStep);
+
+      // 对边 2: A2B 与 B2A (交于 S)
+      line(A2, B, {stroke: GREEN, 'stroke-width': 2.6}, gStep);
+      line(B2, A, {stroke: GREEN, 'stroke-width': 2.6}, gStep);
+
+      // 对边 3: BB1 与 AA1 (交于 M)
+      extended(B, B1, 20, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+      extended(A, A1, 20, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+
+      // 帕斯卡线：贯穿 M, S, N 的直线
+      extended(M, N, 45, {stroke: '#059669', 'stroke-width': 5, opacity: 0.28}, gStep);
+      extended(M, N, 45, {stroke: '#047857', 'stroke-width': 2.2}, gStep);
+      break;
+    }
+
+    case 4: { // 步骤 4：对六边形 II 应用帕斯卡定理 ⇒ T, M, S 共线
+      drawPoints({ highlightT: true, highlightS: true });
+
+      // 六边形 II: A - A3 - A2 - B - B3 - B2
+      const hex2 = [A, A3, A2, B, B3, B2];
+      polygon(hex2, {fill: '#3b82f6', 'fill-opacity': 0.1, stroke: '#2563eb', 'stroke-width': 1.6}, gStep);
+
+      // 三对对边高亮：
+      // 对边 1: AA3 与 BB3 (交于 T)
+      extended(A, A3, 30, {stroke: RED, 'stroke-width': 2.6}, gStep);
+      extended(B, B3, 30, {stroke: RED, 'stroke-width': 2.6}, gStep);
+
+      // 对边 2: A3A2 与 B3B2 (交于 M)
+      line(A3, A2, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+      line(B3, B2, {stroke: PURPLE, 'stroke-width': 2.6}, gStep);
+
+      // 对边 3: A2B 与 B2A (交于 S)
+      line(A2, B, {stroke: GREEN, 'stroke-width': 2.6}, gStep);
+      line(B2, A, {stroke: GREEN, 'stroke-width': 2.6}, gStep);
+
+      // 第二条帕斯卡线：贯穿 T, M, S 的直线
+      extended(T, S, 35, {stroke: '#dc2626', 'stroke-width': 5, opacity: 0.25}, gStep);
+      extended(T, S, 35, {stroke: '#b91c1c', 'stroke-width': 2.2}, gStep);
+      break;
+    }
+
+    case 5: { // 步骤 5：四点共线结论与三线共点得证
+      drawPoints({ showC: true, highlightT: true, highlightS: true });
+
+      // 绘制完整四点共线轴 T - M - S - N
+      extended(T, N, 60, {stroke: CYAN, 'stroke-width': 7, opacity: 0.3}, gStep);
+      extended(T, N, 60, {stroke: CYAN, 'stroke-width': 2.5}, gStep);
+
+      // 高亮三条汇聚线 AA3, BB3, 以及 C 组线 CC3
+      extended(A, A3, 25, {stroke: RED, 'stroke-width': 3}, gStep);
+      extended(B, B3, 25, {stroke: RED, 'stroke-width': 3}, gStep);
+      extended(C, C3, 25, {stroke: SLATE, 'stroke-width': 2.2, 'stroke-dasharray': '7 4'}, gStep);
+
+      // 对边交点连线淡化保留
+      line(A, B2, {stroke: GREEN, 'stroke-width': 1.2, opacity: 0.6}, gStep);
+      line(A2, B, {stroke: GREEN, 'stroke-width': 1.2, opacity: 0.6}, gStep);
+      break;
+    }
+  }
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '已知构型与交点生成',
+    body: `已知 $A, B, C$ 为圆 $\\omega$ 上任意三点，$M, N$ 为平面上任意两点。<br>
+从点 $A$ 出发，依次通过定点 $M, N, M$ 作割线：<br>
+① 割线 $AM$ 与圆交于 <span style="color:${PURPLE}"><b>$A_1$</b></span>；<br>
+② 割线 $A_1N$ 与圆交于 <span style="color:${ORANGE}"><b>$A_2$</b></span>；<br>
+③ 割线 $A_2M$ 与圆交于 <span style="color:${RED}"><b>$A_3$</b></span>。<br>
+同理，从点 $B$ 出发依次得到 <span style="color:${PURPLE}"><b>$B_1$</b></span>, <span style="color:${ORANGE}"><b>$B_2$</b></span>, <span style="color:${RED}"><b>$B_3$</b></span>。<br>
+<b>求证</b>：$AA_3, BB_3, CC_3$ 三线共点。`
+  },
+  {
+    title: '目标转化：只需证明 AA₃, BB₃, MN 三线共点',
+    body: `设直线 $AA_3$ 与 $BB_3$ 相交于点 <span style="color:${RED}"><b>$T$</b></span>。<br>
+若能证明点 $T$ 恒在定直线 <span style="color:${CYAN}"><b>$MN$</b></span> 上（即 $M, N, T$ 三点共线）：<br>
+则交点 $T$ 的位置完全由割线生成路径及定点 $M, N$ 决定，不依赖于所选的特定点对。<br>
+同理必有 $AA_3$ 与 $CC_3$ 亦相交于直线 $MN$ 上的唯一点 $T$，从而原命题即等价于证明：<br>
+<b style="color:${RED}">$M, N, T$ 三点共线</b>（即 $AA_3, BB_3, MN$ 三线共点于 $T$）。`
+  },
+  {
+    title: '引对边交点 S，构造六边形 A₁A₂BB₁B₂A',
+    body: `连结弦 $AB_2$ 与弦 $A_2B$，设它们相交于点 <span style="color:${GREEN}"><b>$S$</b></span>。<br>
+在圆 $\\omega$ 上选取六个有序顶点：<br>
+<span style="color:${GREEN}"><b>$A_1 \\to A_2 \\to B \\to B_1 \\to B_2 \\to A$</b></span>。<br>
+这六个点构成一个圆内接六边形 $A_1A_2BB_1B_2A$。<br>
+我们将对该内接六边形应用射影几何的经典基石——<b>帕斯卡定理（Pascal's Theorem）</b>。`
+  },
+  {
+    title: '第一次帕斯卡定理 ⇒ M, N, S 三点共线',
+    body: `对圆内接六边形 $A_1A_2BB_1B_2A$，考察其三对对边的交点：<br>
+1️⃣ 对边 $A_1A_2$ 与 $B_1B_2$：由定义均过定点 $N$，交点为 <span style="color:${ORANGE}"><b>$N$</b></span>；<br>
+2️⃣ 对边 $A_2B$ 与 $B_2A$：由设交点为 <span style="color:${GREEN}"><b>$S$</b></span>；<br>
+3️⃣ 对边 $BB_1$ 与 $AA_1$：由定义均过定点 $M$，交点为 <span style="color:${PURPLE}"><b>$M$</b></span>。<br>
+根据<b>帕斯卡定理</b>，圆内接六边形的三对对边交点共线，因此：<br>
+<b style="color:${GREEN}">$M, N, S$ 三点共线</b>，即点 $S$ 必落在直线 $MN$ 上！`
+  },
+  {
+    title: '第二次帕斯卡定理 ⇒ T, M, S 三点共线',
+    body: `再在圆 $\\omega$ 上构造第二个内接六边形：<br>
+<span style="color:${BLUE}"><b>$A \\to A_3 \\to A_2 \\to B \\to B_3 \\to B_2$</b></span>。<br>
+同样分析其三对对边的交点：<br>
+1️⃣ 对边 $AA_3$ 与 $BB_3$：相交于点 <span style="color:${RED}"><b>$T$</b></span>；<br>
+2️⃣ 对边 $A_3A_2$ 与 $B_3B_2$：由定义均过定点 $M$，交点为 <span style="color:${PURPLE}"><b>$M$</b></span>；<br>
+3️⃣ 对边 $A_2B$ 与 $B_2A$：相交于点 <span style="color:${GREEN}"><b>$S$</b></span>。<br>
+由<b>帕斯卡定理</b>，这三对对边的交点亦必共线，因此：<br>
+<b style="color:${RED}">$T, M, S$ 三点共线</b>，即点 $T$ 落在直线 $MS$ 上！`
+  },
+  {
+    title: '共线传递与最终结论：三线共点得证',
+    body: `综合前后两步：<br>
+由步骤 3 知 <span style="color:${GREEN}">$M, N, S$ 共线</span>；由步骤 4 知 <span style="color:${RED}">$T, M, S$ 共线</span>。<br>
+由于点 $M, S$ 为相异两点，两条直线重合，故：<br>
+<b style="color:${CYAN}">$M, N, S, T$ 四点共线</b>！<br>
+从而点 $T = AA_3 \\cap BB_3$ 落在直线 $MN$ 上，即 $AA_3, BB_3, MN$ 三线共点于 $T$。<br>
+同理，$CC_3$ 亦过该交点 $T$。<br>
+由此得证：<b style="color:${RED}">$AA_3, BB_3, CC_3$ 三线共点于 $T$</b>。原命题获证！🎉`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 关键：步骤切换后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+---
+title: '练习 15：四点共圆割线比例与等长充要条件'
+chapter: 5
+problem: 15
+source-chapter: '05'
+source-file: '05/15.md'
+id: 'ch05-p15'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+已知过 $\triangle {ABC}$ 的顶点 $A, B$ 的圆交边 ${AC},{BC}$ 于点 $D, E$ . 直线 ${AB},{DE}$ 交于点 $F$ ,直线 ${BD},{CF}$ 交于点 $M$ . 证明: ${MF} = {MC}$ 的充要条件是 $M{C}^2 = {MB} \cdot \; {MD}$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,对 $\triangle {BCF}$ 及点 $D$ ,由塞瓦定理,得
+
+$$
+\frac{FA}{AB} \cdot  \frac{BE}{EC} \cdot  \frac{CM}{MF} = 1.
+$$
+
+因此
+
+$$
+{MF} = {MC} \Leftrightarrow  \frac{FA}{AB} \cdot  \frac{BE}{EC} = 1
+$$
+
+$$
+\Leftrightarrow  {AE}//{CF}
+$$
+
+$$
+\Leftrightarrow  \angle {FCA} = \angle {EAC} = \angle {MBC}\text{ (因为 }\angle {CBD} = \angle {EAD}\text{ ) }
+$$
+
+$$
+\Leftrightarrow  \triangle {MCD} \backsim  \triangle {MBC}
+$$
+
+$$
+\Leftrightarrow  {MB} \cdot  {MD} = M{C}^{2}\text{ . }
+$$
+
+原问题得证.
+
+![](../images/158_898_1732_475_329_0.jpg)
+:::
+
+

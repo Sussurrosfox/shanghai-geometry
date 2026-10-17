@@ -1,0 +1,55 @@
+## 一、梅涅劳斯定理
+
+1. 梅涅劳斯定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA},{AB}$ 或其延长线上的点,若 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 三点共线,则
+
+$$
+\frac{B{A}^{\prime }}{{A}^{\prime }C} \cdot  \frac{C{B}^{\prime }}{{B}^{\prime }A} \cdot  \frac{A{C}^{\prime }}{{C}^{\prime }B} = 1
+$$
+
+2. 梅涅劳斯定理的逆定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA}$ , ${AB}$ 或其延长线上的点,若
+
+$$
+\frac{B{A}^{\prime }}{{A}^{\prime }C} \cdot  \frac{C{B}^{\prime }}{{B}^{\prime }A} \cdot  \frac{A{C}^{\prime }}{{C}^{\prime }B} = 1,
+$$
+
+则 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 三点共线.
+
+3. 第一角元形式的梅涅劳斯定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC}$ , ${CA},{AB}$ 所在直线 (包括三边的延长线) 上的点,则 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 共线的充分必要条件是
+
+$$
+\frac{\sin \angle {BA}{A}^{\prime }}{\sin \angle {A}^{\prime }{AC}} \cdot  \frac{\sin \angle {AC}{C}^{\prime }}{\sin \angle {C}^{\prime }{CB}} \cdot  \frac{\sin \angle {CB}{B}^{\prime }}{\sin \angle {B}^{\prime }{BA}} = 1.
+$$
+
+4. 第二角元形式的梅涅劳斯定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC}$ , ${CA},{AB}$ 所在直线上的点,点 $O$ 不在 $\triangle {ABC}$ 三边所在直线上,则 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 三点共线的充要条件是
+
+$$
+\frac{\sin \angle {BO}{A}^{\prime }}{\sin \angle {A}^{\prime }{OC}} \cdot  \frac{\sin \angle {CO}{B}^{\prime }}{\sin \angle {B}^{\prime }{OA}} \cdot  \frac{\sin \angle {AO}{C}^{\prime }}{\sin \angle {C}^{\prime }{OB}} = 1.
+$$
+
+## 二、塞瓦定理
+
+1. 塞瓦定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA},{AB}$ 或其延长线上的点,若 $A{A}^{\prime }, B{B}^{\prime }, C{C}^{\prime }$ 三线平行或共点,则
+
+$$
+\frac{B{A}^{\prime }}{{A}^{\prime }C} \cdot  \frac{C{B}^{\prime }}{{B}^{\prime }A} \cdot  \frac{A{C}^{\prime }}{{C}^{\prime }B} = 1.
+$$
+
+2. 塞瓦定理的逆定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA},{AB}$ 或其延长线上的点, 若
+
+$$
+\frac{B{A}^{\prime }}{{A}^{\prime }C} \cdot  \frac{C{B}^{\prime }}{{B}^{\prime }A} \cdot  \frac{A{C}^{\prime }}{{C}^{\prime }B} = 1,
+$$
+
+则 $A{A}^{\prime }, B{B}^{\prime }, C{C}^{\prime }$ 三线共点或互相平行.
+
+3. 第一角元形式的塞瓦定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA}$ , ${AB}$ 所在直线上的点,则三直线 $A{A}^{\prime }, B{B}^{\prime }, C{C}^{\prime }$ 平行或共点的充分必要条件是
+
+$$
+\frac{\sin \angle {BA}{A}^{\prime }}{\sin \angle {A}^{\prime }{AC}} \cdot  \frac{\sin \angle {AC}{C}^{\prime }}{\sin \angle {C}^{\prime }{CB}} \cdot  \frac{\sin \angle {CB}{B}^{\prime }}{\sin \angle {B}^{\prime }{BA}} = 1.
+$$
+
+4. 第二角元形式的塞瓦定理: 设 ${A}^{\prime },{B}^{\prime },{C}^{\prime }$ 分别是 $\triangle {ABC}$ 的三边 ${BC},{CA}$ , ${AB}$ 所在直线上的点, $O$ 是不在 $\triangle {ABC}$ 的三边所在直线上的点,则 $A{A}^{\prime }, B{B}^{\prime }$ , $C{C}^{\prime }$ 平行或共点的充分必要条件是
+
+$$
+\frac{\sin \angle {BO}{A}^{\prime }}{\sin \angle {A}^{\prime }{OC}} \cdot  \frac{\sin \angle {AO}{C}^{\prime }}{\sin \angle {C}^{\prime }{OB}} \cdot  \frac{\sin \angle {CO}{B}^{\prime }}{\sin \angle {B}^{\prime }{OA}} = 1.
+$$

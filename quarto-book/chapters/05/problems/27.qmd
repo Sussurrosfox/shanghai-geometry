@@ -1,0 +1,40 @@
+---
+title: '练习 27：完全四边形牛顿线（对角线中点共线）'
+chapter: 5
+problem: 27
+source-chapter: '05'
+source-file: '05/27.md'
+id: 'ch05-p27'
+tags:
+- 练习一（综合习题）
+- 中点
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">中点</span>
+:::
+
+## 题目
+
+两两相交且没有三线共点的四条直线及它们的六个交点所构成的图形称为完全四边形. 证明: 完全四边形的三条对角线的中点共线.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，在完全四边形 ${ABECDF}$ 中， $L$ 为 ${AC}$ 的中点， $M$ 为 ${BD}$ 的中点， $N$ 为 ${EF}$ 的中点. 取 ${BE}$ 的中点 $P$ ， ${CE}$ 的中点 $Q$ ， ${BC}$ 的中点 $R$ . 由 $A$ ， $B$ ， $E$ 共线知 $L, R, Q$ 共线, $D, C, E$ 共线知 $M, R, P$ 共线, $B, C, F$ 共线知 $P, Q, N$ 共线.
+
+由 ${LQ}//{AE}$ ,知 $\frac{RL}{LQ} = \frac{BA}{AE},{PN}//{BF}$ 知 $\frac{QN}{NP} = \frac{CF}{FB},{MP}//{DE}$ 知 $\frac{PM}{MR} = \frac{ED}{DC}$ . 三式相乘得
+
+$$
+\frac{RL}{LQ} \cdot  \frac{QN}{NP} \cdot  \frac{PM}{MR} = \frac{BA}{AE} \cdot  \frac{ED}{DC} \cdot  \frac{CF}{FB} = 1,
+$$
+
+其中后面一个等号是对 $\triangle {BCE}$ 和直线 ${ADF}$ 用梅涅劳斯定理得到. 对 $\triangle {PQR}$ ,由梅涅劳斯定理的逆定理,知 $L, M, N$ 共线. 原问题得证.
+
+![](../images/165_891_563_430_404_0.jpg)
+:::
+
+

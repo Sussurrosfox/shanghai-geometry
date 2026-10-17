@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 1：线段不等式平移证明 (AD > BE) — 分步证明交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #0f172a;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.01em; }
+  header p { font-size: 14px; color: #475569; margin-top: 8px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,0.08); padding: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; border: 1px solid #e2e8f0;
+  }
+  svg { width: 100%; height: auto; max-height: 74vh; display: block; }
+  .panel {
+    flex: 1 1 400px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,0.08); padding: 22px;
+    display: flex; flex-direction: column; border: 1px solid #e2e8f0;
+  }
+  .panel-header {
+    font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .step-count { font-size: 13px; font-weight: 500; color: #64748b; }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; max-height: 60vh; }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #94a3b8; background: #f1f5f9; }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 10px; display: none;
+    padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 10px rgba(37,99,235,0.08); }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all 0.15s ease; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; flex: 1.2; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; flex: 1; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress-info { text-align: center; font-size: 12px; color: #64748b; margin-top: 12px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: monospace; }
+  .math { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; font-style: italic; }
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .tag-blue { background: #dbeafe; color: #1e40af; }
+  .tag-orange { background: #ffedd5; color: #9a3412; }
+  .tag-green { background: #dcfce7; color: #166534; }
+  .tag-purple { background: #f3e8ff; color: #6b21a8; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; padding: 0 2px; font-size: 0.9em; }
+  .num { border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .den { padding-top: 1px; }
+  .formula-box {
+    background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+    padding: 8px 12px; margin: 8px 0; font-size: 13.5px; text-align: center;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          macros: {
+            '\\parallel': '\\mathbin{/\\!/}',
+            '\\bigtriangleup': '\\triangle',
+            '\\ang': '\\angle',
+            '\\angmsd': '\\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 1：线段不等式平移证明</h1>
+    <p>
+      <b>已知：</b>点 $D$ 是 $\triangle ABC$ 的边 $BC$ 上一点，使得 $AD > BC$；$E$ 为 $AC$ 上一点，使得 $\frac{AE}{EC} = \frac{BD}{AD - BC}$。<br>
+      <b>求证：</b>$AD > BE$。
+    </p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 620 480" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span>证明推理步骤</span>
+        <span class="step-count" id="stepCounter">第 0 / 5 步</span>
+      </div>
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动播放</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress-info">
+        可用键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换 ｜ 支持 URL 参数 <code>?step=N</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何坐标与常量定义 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* 优选高精度几何坐标体系 */
+const A = { x: 160.00, y: 110.00 };
+const B = { x: 100.00, y: 420.00 };
+const C = { x: 330.00, y: 420.00 };
+const D = { x: 200.00, y: 420.00 };
+const F = { x: 412.57, y: 420.00 };
+const G = { x: 512.57, y: 420.00 };
+const E = { x: 253.11, y: 279.80 };
+const K = { x: 353.11, y: 279.80 };
+
+/* ============ 色彩规范 ============ */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const CYAN   = '#0891b2';
+const ORANGE = '#ea580c';
+const BASE_COLOR = '#334155';
+const MUTED_LINE = '#94a3b8';
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs = {}, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w = 2, dash = '6 4', parent){
+  return line(p, q, {stroke: color, 'stroke-width': w, 'stroke-dasharray': dash, fill: 'none'}, parent);
+}
+
+function dot(p, color = '#0f172a', r = 4.5, parent){
+  return el('circle', {cx: p.x, cy: p.y, r: r, fill: color, stroke: '#ffffff', 'stroke-width': 1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p => `${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+/* 白底防遮挡高精度标签 */
+function label(p, text, dx = 0, dy = 0, color = '#0f172a', parent, size = 16, bold = true){
+  const g = el('g', {}, parent);
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Cambria Math", "STIX Two Math", "Times New Roman", serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    'style': 'paint-order: stroke fill; stroke: #ffffff; stroke-width: 4.5px; stroke-linejoin: round;'
+  }, g);
+  t.textContent = text;
+  return g;
+}
+
+/* 高亮线段（带柔和外发光底衬） */
+function highlightSeg(p, q, color, parent, w = 3.5){
+  line(p, q, {stroke: color, 'stroke-width': w + 6, 'stroke-linecap': 'round', opacity: 0.22}, parent);
+  return line(p, q, {stroke: color, 'stroke-width': w, 'stroke-linecap': 'round'}, parent);
+}
+
+/* 等长单/双刻度线 */
+function tickMark(p, q, color, parent, offset = 0, count = 1){
+  const m = mid(p, q);
+  const d = norm(sub(q, p));
+  const n = perp(d);
+  if (count === 1){
+    const c = add(m, mul(d, offset));
+    line(add(c, mul(n, 6)), add(c, mul(n, -6)), {stroke: color, 'stroke-width': 2.2, 'stroke-linecap': 'round'}, parent);
+  } else if (count === 2){
+    const c1 = add(m, mul(d, offset - 2.5));
+    const c2 = add(m, mul(d, offset + 2.5));
+    line(add(c1, mul(n, 6)), add(c1, mul(n, -6)), {stroke: color, 'stroke-width': 2.0, 'stroke-linecap': 'round'}, parent);
+    line(add(c2, mul(n, 6)), add(c2, mul(n, -6)), {stroke: color, 'stroke-width': 2.0, 'stroke-linecap': 'round'}, parent);
+  }
+}
+
+/* 平行箭头标记 */
+function arrowMark(p, q, color, parent){
+  const m = mid(p, q);
+  const d = norm(sub(q, p));
+  const n = perp(d);
+  const tip = add(m, mul(d, 8));
+  const p1 = add(add(m, mul(d, -5)), mul(n, 5));
+  const p2 = add(add(m, mul(d, -5)), mul(n, -5));
+  el('polygon', {points: `${tip.x},${tip.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`, fill: color}, parent);
+}
+
+/* 自适应角弧线 */
+function angleArc(v, p1, p2, r = 24, attrs = {}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  while (da >= Math.PI * 2) da -= Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: RED, 'stroke-width': 2, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage); // 底层静态原始几何图形
+const gStep = el('g', {id: 'gStep'}, stage); // 中层动态步骤演进层（切换时清空重绘）
+const gPts  = el('g', {id: 'gPts'}, stage);  // 顶层点与防遮挡标签
+
+/* 绘制底层基础图形（全程保留） */
+function drawBase(){
+  // 原始三角形 ABC
+  polygon([A, B, C], {fill: '#f8fafc', stroke: BASE_COLOR, 'stroke-width': 2.2, 'stroke-linejoin': 'round'}, gBase);
+  // 基准连线 AD 与 BE
+  line(A, D, {stroke: MUTED_LINE, 'stroke-width': 1.6}, gBase);
+  line(B, E, {stroke: MUTED_LINE, 'stroke-width': 1.6}, gBase);
+}
+
+/* 顶层点与防遮挡标签管理 */
+function drawPoints(s){
+  gPts.innerHTML = '';
+  // 基础点 A, B, C, D, E 在所有步骤中常驻
+  dot(A, BASE_COLOR, 4.5, gPts);
+  label(A, 'A', 0, -18, BASE_COLOR, gPts);
+
+  dot(B, BASE_COLOR, 4.5, gPts);
+  label(B, 'B', -16, 16, BASE_COLOR, gPts);
+
+  dot(C, BASE_COLOR, 4.5, gPts);
+  label(C, 'C', 6, 20, BASE_COLOR, gPts);
+
+  dot(D, BASE_COLOR, 4.5, gPts);
+  label(D, 'D', -6, 20, BASE_COLOR, gPts);
+
+  dot(E, BASE_COLOR, 4.5, gPts);
+  label(E, 'E', -18, -6, BASE_COLOR, gPts);
+
+  // 点 F, G 在步骤 1 及之后出现
+  if (s >= 1){
+    dot(F, CYAN, 4.5, gPts);
+    label(F, 'F', 0, 20, CYAN, gPts);
+
+    dot(G, CYAN, 4.5, gPts);
+    label(G, 'G', 16, 16, CYAN, gPts);
+  }
+
+  // 点 K 在步骤 3 及之后出现
+  if (s >= 3){
+    dot(K, ORANGE, 4.5, gPts);
+    label(K, 'K', 16, -12, ORANGE, gPts);
+  }
+}
+
+/* ============ 各步骤动态画面渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = ''; // 核心准则：每步切换先清空，辅助线按需即时重绘，用毕即擦除
+
+  switch(s){
+    case 0:
+      // Step 0: 目标高亮对比
+      highlightSeg(A, D, BLUE, gStep, 3.8);
+      highlightSeg(B, E, ORANGE, gStep, 3.8);
+      break;
+
+    case 1:
+      // Step 1: 延长底边构造 CF 与 FG
+      // 延长线 CG
+      line(C, G, {stroke: CYAN, 'stroke-width': 2.2, 'stroke-dasharray': '5 4'}, gStep);
+      // 高亮 BD 与 FG 等长刻度
+      highlightSeg(B, D, CYAN, gStep, 3.0);
+      highlightSeg(F, G, CYAN, gStep, 3.0);
+      tickMark(B, D, CYAN, gStep, 0, 2);
+      tickMark(F, G, CYAN, gStep, 0, 2);
+      // 辅助线段 AD 和 DG 标注
+      highlightSeg(A, D, BLUE, gStep, 2.5);
+      break;
+
+    case 2:
+      // Step 2: 比例转化得 EF ∥ AG
+      // 底边延长线保留
+      line(C, G, {stroke: CYAN, 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      // 辅助线 EF 与 AG
+      segDashed(E, F, BLUE, 2.4, '6 4', gStep);
+      segDashed(A, G, BLUE, 2.4, '6 4', gStep);
+      // 平行标记箭头
+      arrowMark(E, F, BLUE, gStep);
+      arrowMark(A, G, BLUE, gStep);
+      // 高亮相关比例线段 AE, EC 与 FG, CF
+      highlightSeg(A, E, BLUE, gStep, 3.0);
+      highlightSeg(E, C, BLUE, gStep, 3.0);
+      break;
+
+    case 3:
+      // Step 3: 平行四边形平移：将 BE 平移至 DK
+      // 保留底边延长线 CG 与 AG
+      line(C, G, {stroke: MUTED_LINE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      line(A, G, {stroke: MUTED_LINE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'}, gStep);
+      // 水平辅助线 EK ∥ CG
+      segDashed(E, K, ORANGE, 2.2, '6 4', gStep);
+      // 平行四边形 BDKE 填充
+      polygon([B, D, K, E], {fill: 'rgba(234, 88, 12, 0.12)', stroke: 'none'}, gStep);
+      // 高亮平移线段 BE 与 DK（等长）
+      highlightSeg(B, E, ORANGE, gStep, 3.5);
+      highlightSeg(D, K, ORANGE, gStep, 3.5);
+      tickMark(B, E, ORANGE, gStep, 0, 1);
+      tickMark(D, K, ORANGE, gStep, 0, 1);
+      // 高亮底边 BD 与 EK 平行等长
+      arrowMark(B, D, ORANGE, gStep);
+      arrowMark(E, K, ORANGE, gStep);
+      break;
+
+    case 4:
+      // Step 4: 等腰三角形底角与外角不等式
+      // 保留线段 AG, DK, DG
+      line(A, G, {stroke: MUTED_LINE, 'stroke-width': 1.8}, gStep);
+      line(D, K, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      // 高亮等腰三角形 ADG 的两腰 AD 与 DG
+      polygon([A, D, G], {fill: 'rgba(5, 150, 105, 0.08)', stroke: 'none'}, gStep);
+      highlightSeg(A, D, GREEN, gStep, 3.5);
+      highlightSeg(D, G, GREEN, gStep, 3.5);
+      // 角弧标注：两底角相等 ∠DAK = ∠G
+      angleArc(A, D, K, 28, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(G, A, D, 32, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 角弧标注：外角 ∠AKD > ∠G
+      angleArc(K, A, D, 24, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      break;
+
+    case 5:
+      // Step 5: 在 △ADK 中大角对大边得出最终结论
+      // 高亮核心三角形 △ADK
+      polygon([A, D, K], {fill: 'rgba(5, 150, 105, 0.14)', stroke: '#059669', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}, gStep);
+      // 大边 AD 对大角 ∠AKD
+      highlightSeg(A, D, GREEN, gStep, 4.2);
+      angleArc(K, A, D, 24, {stroke: PURPLE, 'stroke-width': 2.5}, gStep);
+      // 小边 DK 对小角 ∠DAK
+      highlightSeg(D, K, ORANGE, gStep, 3.8);
+      angleArc(A, D, K, 28, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      // 同时高亮原始线段 BE（与 DK 等长）
+      highlightSeg(B, E, ORANGE, gStep, 3.8);
+      tickMark(B, E, ORANGE, gStep, 0, 1);
+      tickMark(D, K, ORANGE, gStep, 0, 1);
+      // 保留底边参考线
+      line(C, G, {stroke: MUTED_LINE, 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      line(A, G, {stroke: MUTED_LINE, 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}, gStep);
+      break;
+  }
+
+  // 顶层点与标签动态更新
+  drawPoints(s);
+
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+}
+
+/* ============ 步骤文本数组 ============ */
+const steps = [
+  {
+    title: '已知条件与问题导入',
+    body: `
+      <b>已知条件：</b>点 $D$ 在 $\\triangle ABC$ 的边 $BC$ 上，且满足 <span class="tag tag-blue">$AD > BC$</span>；点 $E$ 在边 $AC$ 上，满足比例关系式：
+      <div class="formula-box">$\\frac{AE}{EC} = \\frac{BD}{AD - BC}$</div>
+      <b>求证目标：</b>证明 <span class="tag tag-blue">$AD$</span> > <span class="tag tag-orange">$BE$</span>。<br>
+      <b>几何困境：</b>线段 $AD$ 与 $BE$ 既不共端点，也不在同一个三角形中，无法直接利用三角形边角不等式进行比较。<br>
+      <b>核心突破口：</b>通过平移，将线段 $BE$ 转移到与 $AD$ 共顶点的三角形中！
+    `
+  },
+  {
+    title: '① 延长底边：构造关键线段 CF 与 FG',
+    body: `
+      如图所示，在底边直线上进行几何构造：<br>
+      1. 延长 $BC$ 至点 $F$，使得 <span class="tag tag-blue">$CF = AD - BC$</span>；<br>
+      2. 继续延长至点 $G$，使得 <span class="tag tag-orange">$FG = BD$</span>。<br>
+      <b>全长核算：</b><br>
+      &bull; $BC + CF = BC + (AD - BC) = AD$<br>
+      &bull; 线段 $DG$ 的总长为：
+      <div class="formula-box">$DG = DC + CF + FG = (BD + DC) + CF = BC + CF = AD$</div>
+      因此，我们巧妙构造出了线段等量关系：<b>$DG = AD$</b>！
+    `
+  },
+  {
+    title: '② 比例转化：由平行线分线段成比例得 EF ∥ AG',
+    body: `
+      根据题目给出的比例条件 $\\frac{AE}{EC} = \\frac{BD}{AD - BC}$，将构造的等长代入：<br>
+      &bull; 构造中 $BD = FG$；<br>
+      &bull; 构造中 $AD - BC = CF$。<br>
+      因此原比例式等价转化为：
+      <div class="formula-box">$\\frac{AE}{EC} = \\frac{FG}{CF}$</div>
+      在 $\\triangle ACG$ 中，点 $E$ 位于边 $AC$ 上，点 $F$ 位于边 $CG$ 上。<br>
+      根据<b>平行线分线段成比例定理的逆定理</b>，两边截出的线段对应成比例，立即推出：
+      <div class="formula-box"><b>$EF \\parallel AG$</b></div>
+    `
+  },
+  {
+    title: '③ 平移构造：平行四边形 BDKE 使 BE = DK',
+    body: `
+      过点 $E$ 作直线平行于底边 $CG$，交线段 $AG$ 于点 $K$，即 $EK \\parallel CG$：<br>
+      1. 在四边形 $FEKG$ 中，$EF \\parallel KG$ 且 $EK \\parallel FG$，故 <b>$FEKG$ 为平行四边形</b>；<br>
+      2. 从而其对边平行且相等：$EK \\xlongequal{\\parallel} FG$；<br>
+      3. 又由第一步构造知 $FG = BD$ 且都在底边同一直线上，所以：
+      <div class="formula-box"><b>$EK \\xlongequal{\\parallel} BD$</b></div>
+      四边形 $BDKE$ 有一组对边平行且相等，因此 <b>$BDKE$ 为平行四边形</b>！<br>
+      连接 $DK$，则对边平行且相等：<span class="tag tag-orange"><b>$DK = BE$</b></span>。<br>
+      至此，我们成功将线段 $BE$ 沿水平方向平移到了 $DK$！
+    `
+  },
+  {
+    title: '④ 角度关系：等腰 △ADG 底角与外角不等式',
+    body: `
+      现在将几何焦点集中到点 $D, A, G, K$ 构成的角度关系：<br>
+      1. 在第 ① 步中已算出：
+      <div class="formula-box">$DG = DC + CF + FG = BC + CF = AD$</div>
+      因此 <b>$\\triangle ADG$ 是以 $D$ 为顶点的等腰三角形</b>（$AD = DG$）。<br>
+      根据等腰三角形两底角相等，有：
+      <div class="formula-box">$\\angle DAK = \\angle DAG = \\angle G$</div>
+      2. 考察 $\\triangle DKG$：点 $K$ 在线段 $AG$ 上，角 $\\angle AKD$ 是 $\\triangle DKG$ 在顶点 $K$ 处的外角。<br>
+      由<b>三角形外角大于任何一个不相邻的内角</b>，立即得到：
+      <div class="formula-box">$\\angle AKD > \\angle G$</div>
+      将 $\\angle G = \\angle DAK$ 代入，即可导出关键角的不等关系：
+      <div class="formula-box"><b>$\\angle AKD > \\angle DAK$</b></div>
+    `
+  },
+  {
+    title: '⑤ 得出结论：在 △ADK 中大角对大边 AD > BE',
+    body: `
+      聚焦三角形 <span class="tag tag-green">$\\triangle ADK$</span>：<br>
+      在 $\\triangle ADK$ 中，由第 ④ 步已知：
+      <div class="formula-box">$\\angle AKD > \\angle DAK$</div>
+      根据平面几何基本定理<b>「在同一个三角形中，大角对大边」</b>：<br>
+      角 $\\angle AKD$ 所对的边为 $AD$，角 $\\angle DAK$ 所对的边为 $DK$。因此：
+      <div class="formula-box"><span class="tag tag-green">$AD$</span> > <span class="tag tag-orange">$DK$</span></div>
+      最后，代入第 ③ 步中平移平行四边形给出的对边等量关系 <span class="tag tag-orange">$DK = BE$</span>，立即得到：
+      <div class="formula-box" style="font-size: 16px; font-weight: 700; color: #1e40af; background: #eff6ff; border-color: #93c5fd;">
+        $AD > BE$
+      </div>
+      <b>结论证明完毕！</b><br>
+      <i>方法总结：</i>通过构造延长线和平行四边形，巧妙实现了线段平移，将原本分散在空间的两条线段转化到同一三角形 $\\triangle ADK$ 中，利用等腰外角与大角对大边达成证明。
+    `
+  }
+];
+
+/* ============ 交互控制与状态管理 ============ */
+let cur = 0;
+let autoTimer = null;
+
+const listEl = document.getElementById('stepList');
+const counterEl = document.getElementById('stepCounter');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+/* 构建步骤卡片列表 */
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.setAttribute('data-step', i);
+  d.innerHTML = `
+    <div class="title">
+      <span class="badge">${i === 0 ? '✦' : i}</span>
+      <span>${s.title}</span>
+    </div>
+    <div class="body">${s.body}</div>
+  `;
+  d.onclick = () => {
+    stopAuto();
+    goTo(i);
+  };
+  listEl.appendChild(d);
+});
+
+function updateUrl(i){
+  const url = new URL(window.location);
+  url.searchParams.set('step', i);
+  window.history.replaceState({}, '', url);
+}
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+
+  const activeCard = listEl.children[cur];
+  if (activeCard) {
+    activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  counterEl.textContent = `第 ${cur} / ${steps.length - 1} 步`;
+  btnPrev.disabled = (cur === 0);
+  btnNext.disabled = (cur === steps.length - 1);
+
+  renderStep(cur);
+  updateUrl(cur);
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+function stopAuto(){
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btnAuto.textContent = '▶ 自动播放';
+    btnAuto.classList.remove('btn-primary');
+    btnAuto.classList.add('btn-ghost');
+  }
+}
+
+function toggleAuto(){
+  if (autoTimer) {
+    stopAuto();
+  } else {
+    btnAuto.textContent = '⏸ 暂停';
+    btnAuto.classList.remove('btn-ghost');
+    btnAuto.classList.add('btn-primary');
+    if (cur === steps.length - 1) goTo(0);
+    autoTimer = setInterval(() => {
+      if (cur < steps.length - 1) {
+        goTo(cur + 1);
+      } else {
+        stopAuto();
+      }
+    }, 2800);
+  }
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+btnAuto.onclick = toggleAuto;
+btnReset.onclick = () => { stopAuto(); goTo(0); };
+
+/* 键盘左右箭头控制 */
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') {
+    stopAuto();
+    goTo(cur - 1);
+  } else if (e.key === 'ArrowRight') {
+    stopAuto();
+    goTo(cur + 1);
+  }
+});
+
+/* 初始化：读取 URL 参数 ?step=N */
+window.addEventListener('DOMContentLoaded', () => {
+  drawBase();
+  const params = new URLSearchParams(window.location.search);
+  const stepParam = parseInt(params.get('step'), 10);
+  const initialStep = (!isNaN(stepParam) && stepParam >= 0 && stepParam < steps.length) ? stepParam : 0;
+  goTo(initialStep);
+});
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

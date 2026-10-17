@@ -1,0 +1,62 @@
+- id: "01"
+  number: 1
+  lecture_num: 1
+  type: "lecture"
+  title: "全等三角形"
+  problems_range: "2-9"
+  description: "全等三角形的判定定理、中位线与直角三角形斜边中线构造、角平分线对称等竞赛典型手法。"
+
+- id: "02"
+  number: 2
+  lecture_num: 2
+  type: "lecture"
+  title: "相似三角形"
+  problems_range: "2-8"
+  description: "相似三角形判定、比例线段、射影定理与共圆构型中的相似转换。"
+
+- id: "03"
+  number: 3
+  lecture_num: 3
+  type: "lecture"
+  title: "点共线与线共点"
+  problems_range: "2-9"
+  description: "梅涅劳斯定理、塞瓦定理、帕斯卡定理、西姆松线与极线思想。"
+
+- id: "04"
+  number: 4
+  lecture_num: 4
+  type: "lecture"
+  title: "平移、对称和旋转变换"
+  problems_range: "2-9"
+  description: "几何变换法破局、旋转相似、中点中心对称构造与极端原理。"
+
+- id: "05"
+  number: 5
+  type: "exercise"
+  title: "练习一（综合习题）"
+  problems_range: "1-39"
+  description: "涵盖全等、相似、共线共点及几何变换四大专题的竞赛综合演练，共收录 39 道经典赛题及完整解答。"
+
+- id: "06"
+  number: 6
+  lecture_num: 5
+  type: "lecture"
+  title: "圆的基本性质"
+  problems_range: "2-10"
+  description: "圆周角定理、弦切角定理、四点共圆判定与托勒密定理应用。"
+
+- id: "07"
+  number: 7
+  lecture_num: 6
+  type: "lecture"
+  title: "圆幂与根轴"
+  problems_range: "2-10"
+  description: "相交弦定理、切割线定理、根轴与根心性质、正交圆与共轴圆系。"
+
+- id: "08"
+  number: 8
+  lecture_num: 7
+  type: "lecture"
+  title: "反演与位似"
+  problems_range: "2-8"
+  description: "位似中心与欧拉线、九点圆性质、反演变换与交比保持。"

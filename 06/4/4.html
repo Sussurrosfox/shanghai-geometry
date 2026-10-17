@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 3 完全四边形垂足四点共圆证明 — 高精度交互分步演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 13.5px; color: #64748b; margin-top: 6px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  
+  /* 左侧画布卡片 */
+  .canvas-card {
+    flex: 1 1 650px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg {
+    width: 100%; height: auto; max-height: 610px;
+    background: #fbfcfe; border-radius: 12px; border: 1px solid #e2e8f0;
+  }
+  
+  /* 右侧步骤面板 */
+  .sidebar {
+    flex: 1 1 390px; display: flex; flex-direction: column;
+    background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 18px; min-width: 320px; max-height: 690px;
+  }
+  .steps-list {
+    flex: 1; overflow-y: auto; padding-right: 6px; margin-bottom: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    cursor: pointer; transition: all .2s ease; background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item.active {
+    border-color: #2563eb; background: #eff6ff;
+    box-shadow: 0 4px 12px rgba(37,99,235,.12);
+  }
+  .step-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .step-num {
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: #64748b;
+  }
+  .step-item.active .step-num { color: #2563eb; }
+  .step-title { font-size: 14.5px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+  .step-body { font-size: 13px; color: #475569; line-height: 1.65; display: none; }
+  .step-item.active .step-body { display: block; }
+  
+  /* 控制按纽条 */
+  .controls {
+    display: flex; gap: 8px; flex-wrap: wrap; padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .btn {
+    flex: 1 1 calc(25% - 8px); padding: 9px 12px; font-size: 13px; font-weight: 600;
+    border-radius: 10px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155;
+    cursor: pointer; transition: all .15s ease; text-align: center; user-select: none;
+  }
+  .btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+  .btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+  
+  /* 公式排版与徽章 */
+  .formula-box {
+    background: #f1f5f9; border-left: 3px solid #2563eb; padding: 7px 11px;
+    margin: 7px 0; border-radius: 4px; font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: 13.5px; color: #0f172a;
+  }
+  .qed-badge {
+    display: inline-block; background: #10b981; color: #fff; font-size: 11px;
+    font-weight: 700; padding: 2px 7px; border-radius: 6px; margin-left: 6px;
+  }
+  .math { font-family: "Cambria Math", "Times New Roman", serif; font-style: italic; }
+  .hint-bar { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 8px; }
+  kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; font-size: 11.5px; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+
+</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 3 点 R 在四边形 ABCD 四边上的投影共圆</h1>
+    <p>完全四边形对角线交点 $O$、对边交点 $P, Q$、$O$ 在 $PQ$ 上的正交投影 $R$ $\implies$ $R$ 在四边上的投影 $X, Y, Z, W$ 严格共圆</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="20 40 700 480">
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <g id="gBase"></g>
+        <g id="gStep"></g>
+        <g id="gPts"></g>
+      </svg>
+    </div>
+    <div class="sidebar">
+      <div class="steps-list" id="stepsList"></div>
+      <div class="controls">
+        <button class="btn" id="btnPrev">◀ 上一步</button>
+        <button class="btn btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn" id="btnAuto">▶ 自动播放</button>
+        <button class="btn" id="btnReset">重置</button>
+      </div>
+      <div class="hint-bar">快捷键：<kbd>←</kbd> <kbd>→</kbd> / <kbd>PageUp</kbd> <kbd>PageDown</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 精确解析几何解算体系 (机器精度闭环求解) ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineInter(p1, d1, p2, d2) {
+  const det = d1.x * (-d2.y) - d1.y * (-d2.x);
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x - p1.x) * (-d2.y) - (p2.y - p1.y) * (-d2.x)) / det;
+  return add(p1, mul(d1, t));
+}
+
+function lineInter2Pts(p1, p2, p3, p4) {
+  return lineInter(p1, sub(p2, p1), p3, sub(p4, p3));
+}
+
+function foot(p, a, b) {
+  const ab = sub(b, a);
+  const denom = ab.x * ab.x + ab.y * ab.y;
+  if (denom < 1e-9) return a;
+  const t = ((p.x - a.x) * ab.x + (p.y - a.y) * ab.y) / denom;
+  return add(a, mul(ab, t));
+}
+
+function circle3(p1, p2, p3) {
+  const d = 2 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+  if (Math.abs(d) < 1e-9) return { c: { x: 0, y: 0 }, r: 1e9 };
+  const ux = ((p1.x**2 + p1.y**2) * (p2.y - p3.y) + (p2.x**2 + p2.y**2) * (p3.y - p1.y) + (p3.x**2 + p3.y**2) * (p1.y - p2.y)) / d;
+  const uy = ((p1.x**2 + p1.y**2) * (p3.x - p2.x) + (p2.x**2 + p2.y**2) * (p1.x - p3.x) + (p3.x**2 + p3.y**2) * (p2.x - p1.x)) / d;
+  const c = { x: ux, y: uy };
+  return { c, r: dist(c, p1) };
+}
+
+/* 设定完全四边形的高精度基准骨架 */
+const P = { x: 450.00, y: 70.00 };
+const Q = { x: 60.00, y: 400.00 };
+const A = { x: 295.98, y: 289.96 };
+const B = { x: 255.64, y: 347.58 };
+const D = { x: 506.74, y: 191.68 };
+
+// 其余点全部由严格几何关系动态求解，杜绝任何人工近似误差
+const C = lineInter2Pts(P, D, Q, B);
+const O = lineInter2Pts(A, C, B, D);
+const R = foot(O, P, Q);
+const E = lineInter2Pts(A, C, P, Q);
+
+// R 在四边所在直线上的垂足
+const X = foot(R, A, B);
+const Y = foot(R, B, C);
+const Z = foot(R, C, D);
+const W = foot(R, D, A);
+
+// 四点共圆的外接圆
+const circ_XYZW = circle3(X, Y, Z);
+
+// 各步骤中的两对直径辅助圆
+const circ_AWRX = { c: mid(A, R), r: dist(A, R)/2 };
+const circ_QWRY = { c: mid(Q, R), r: dist(Q, R)/2 };
+const circ_PXRZ = { c: mid(P, R), r: dist(P, R)/2 };
+const circ_CYRZ = { c: mid(C, R), r: dist(C, R)/2 };
+
+/* ============ SVG 图元构造函数 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, stroke = "#64748b", w = 1.8, dash = null, parent = null) {
+  const attrs = { x1: p.x, y1: p.y, x2: q.x, y2: q.y, stroke, "stroke-width": w, "stroke-linecap": "round" };
+  if (dash) attrs["stroke-dasharray"] = dash;
+  return el("line", attrs, parent);
+}
+
+function circle(c, r, stroke = "#2563eb", fill = "none", w = 1.8, dash = null, parent = null) {
+  const attrs = { cx: c.x, cy: c.y, r, stroke, fill, "stroke-width": w };
+  if (dash) attrs["stroke-dasharray"] = dash;
+  return el("circle", attrs, parent);
+}
+
+function polygon(pts, fill = "rgba(37,99,235,0.08)", stroke = "#2563eb", w = 1.8, parent = null) {
+  const points = pts.map(p => `${p.x},${p.y}`).join(" ");
+  return el("polygon", { points, fill, stroke, "stroke-width": w, "stroke-linejoin": "round" }, parent);
+}
+
+function dot(p, r = 4.2, fill = "#1e293b", stroke = "#ffffff", w = 2, parent = null) {
+  return el("circle", { cx: p.x, cy: p.y, r, fill, stroke, "stroke-width": w }, parent);
+}
+
+function label(p, text, dx = 0, dy = 0, fill = "#0f172a", size = 14, bold = true, parent = null) {
+  const t = el("text", {
+    x: p.x + dx, y: p.y + dy, fill,
+    "font-size": size, "font-family": '"Times New Roman", STIXGeneral, serif',
+    "font-style": "italic",
+    "font-weight": bold ? "700" : "500", "text-anchor": "middle", "dominant-baseline": "central",
+    style: "stroke: #ffffff; stroke-width: 4.5px; stroke-linejoin: round; paint-order: stroke fill;"
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+function rightAngle(v, p, q, size = 10, stroke = "#dc2626", w = 1.6, parent = null) {
+  const u1 = norm(sub(p, v));
+  const u2 = norm(sub(q, v));
+  const p1 = add(v, mul(u1, size));
+  const p2 = add(v, mul(u2, size));
+  const corner = add(p1, mul(u2, size));
+  return el("polyline", {
+    points: `${p1.x},${p1.y} ${corner.x},${corner.y} ${p2.x},${p2.y}`,
+    fill: "none", stroke, "stroke-width": w
+  }, parent);
+}
+
+function arcAngle(v, p, q, r = 20, stroke = "#f59e0b", fill = "none", w = 2, parent = null) {
+  const a1 = Math.atan2(p.y - v.y, p.x - v.x);
+  const a2 = Math.atan2(q.y - v.y, q.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  const endA = a1 + diff;
+  const x1 = v.x + r * Math.cos(a1), y1 = v.y + r * Math.sin(a1);
+  const x2 = v.x + r * Math.cos(endA), y2 = v.y + r * Math.sin(endA);
+  const sweep = diff > 0 ? 1 : 0;
+  const d = `M ${x1} ${y1} A ${r} ${r} 0 0 ${sweep} ${x2} ${y2}`;
+  return el("path", { d, fill, stroke, "stroke-width": w, "stroke-linecap": "round" }, parent);
+}
+
+/* ============ 步骤文本定义 (严格 7 步) ============ */
+const steps = [
+  {
+    num: "步骤 0",
+    title: "✦ 已知条件与完全四边形构形",
+    body: `给定凸四边形 $ABCD$。对角线 $AC$ 与 $BD$ 相交于点 $O$；<br>
+    对边 $AB$ 与 $CD$ 延长线交于点 $P$，$AD$ 与 $BC$ 延长线交于点 $Q$；<br>
+    过点 $O$ 向直线 $PQ$ 作垂线，垂足为 $R$（$OR \\perp PQ$）；<br>
+    点 $R$ 在四边形四边所在直线上的垂足分别为 $X, Y, Z, W$。<br>
+    <div class="formula-box"><strong>求证目标：</strong>点 $X, Y, Z, W$ 四点共圆。</div>`
+  },
+  {
+    num: "步骤 1",
+    title: "① 垂足共圆导出 ∠XWY = ∠XAR - ∠YQR",
+    body: `在四边形 $AWRX$ 中，$\\angle AXR = \\angle AWR = 90^\\circ$，对角互补，故 $A, W, R, X$ 共圆于以 $AR$ 为直径的圆！<br>
+    由同弧所对圆周角相等得：$\\angle XWR = \\angle XAR$；<br>
+    在四边形 $QWRY$ 中，$\\angle QWR = \\angle QYR = 90^\\circ$，故 $Q, W, Y, R$ 共圆于以 $QR$ 为直径的圆！<br>
+    同理得：$\\angle YWR = \\angle YQR$；<br>
+    两角作差即得：
+    <div class="formula-box">$\\angle XWY = \\angle XWR - \\angle YWR = \\angle XAR - \\angle YQR$</div>`
+  },
+  {
+    num: "步骤 2",
+    title: "② 对称推导 ∠XZY = ∠YCR - ∠XPR",
+    body: `同理，在四边形 $PXRZ$ 中，$\\angle PXR = \\angle PZR = 90^\\circ \\implies P, X, R, Z$ 四点共圆于以 $PR$ 为直径的圆；<br>
+    在四边形 $CYRZ$ 中，$\\angle CYR = \\angle CZR = 90^\\circ \\implies C, Y, R, Z$ 四点共圆于以 $CR$ 为直径的圆；<br>
+    同弧圆周角相等：$\\angle XZR = \\angle XPR$，$\\angle YZR = \\angle YCR$；<br>
+    两角作差即得：
+    <div class="formula-box">$\\angle XZY = \\angle YZR - \\angle XZR = \\angle YCR - \\angle XPR$</div>`
+  },
+  {
+    num: "步骤 3",
+    title: "③ 四点共圆充要条件等价转化",
+    body: `点 $X, Y, Z, W$ 四点共圆 $\\iff \\angle XWY = \\angle XZY$；<br>
+    代入前两步的角度差式并移项：<br>
+    $\\angle XAR + \\angle XPR = \\angle YCR + \\angle YQR$；<br>
+    在直线 $AP$ 上 $RX \\perp AP$，Rt$\\triangle AXR$ 与 Rt$\\triangle PXR$ 给出 $\\angle XAR + \\angle XPR = 180^\\circ - \\angle ARP$；<br>
+    同理在直线 $CQ$ 上 $\\angle YCR + \\angle YQR = 180^\\circ - \\angle CRQ$；<br>
+    <div class="formula-box">$\\angle XWY = \\angle XZY \\iff \\angle ARQ = \\angle CRP$</div>`
+  },
+  {
+    num: "步骤 4",
+    title: "④ 延长 CA 交 PQ 于 E，三用梅涅劳斯定理",
+    body: `延长对角线 $CA$ 与直线 $PQ$ 相交于点 $E$：<br>
+    对 $\\triangle DAC$ 与截线 $PQE$ 用梅氏定理：$\\frac{QA}{DQ} \\cdot \\frac{PD}{CP} \\cdot \\frac{EC}{AE} = 1$；<br>
+    对 $\\triangle ACP$ 与截线 $BOD$ 用梅氏定理：$\\frac{AO}{OC} \\cdot \\frac{CD}{DP} \\cdot \\frac{PB}{BA} = 1$；<br>
+    对 $\\triangle DAP$ 与截线 $QBC$ 用梅氏定理：$\\frac{DQ}{QA} \\cdot \\frac{AB}{BP} \\cdot \\frac{PC}{CD} = 1$。`
+  },
+  {
+    num: "步骤 5",
+    title: "⑤ 三式相乘导出调和点列 (C, A; O, E) = -1",
+    body: `将三组梅涅劳斯定理三式两边分别相乘：<br>
+    比值中 $\\frac{QA}{DQ} \\cdot \\frac{DQ}{QA} = 1$、$\\frac{PD}{CP} \\cdot \\frac{PC}{CD} \\cdot \\frac{CD}{DP} = 1$、$\\frac{PB}{BA} \\cdot \\frac{AB}{BP} = 1$ 全部对消！<br>
+    化简得到核心调和比值：<br>
+    <div class="formula-box">$\\frac{AE}{EC} = \\frac{AO}{OC} \\iff (C, A; O, E) = -1$</div>
+    即点列 $C, O, A, E$ 严格构成一条调和点列！`
+  },
+  {
+    num: "步骤 6",
+    title: "⑥ 调和线束与直角导出角平分线 ⇒ 命题得证",
+    body: `由点列 $C, O, A, E$ 为调和点列，连线束 $R(C, A; O, E)$ 为调和线束；<br>
+    题设已知 $OR \\perp PQ$，且 $E$ 在直线 $PQ$ 上，故 $\\angle ORE = 90^\\circ$；<br>
+    两共轭线垂直 $\\implies RO$ 平分 $\\angle ARC$，即 $\\angle ARO = \\angle CRO$；<br>
+    由 $\\angle ORQ = \\angle ORP = 90^\\circ$ 得：$\\angle ARQ = \\angle CRP$；<br>
+    由步骤 3 逆推得 $\\angle XWY = \\angle XZY$ $\\implies$ <strong>$X, Y, Z, W$ 四点共圆！</strong><span class="qed-badge">Q.E.D.</span>`
+  }
+];
+
+/* ============ 图层容器 ============ */
+const gBase = document.getElementById('gBase');
+const gStep = document.getElementById('gStep');
+const gPts  = document.getElementById('gPts');
+
+/* 绘制底层静态骨架 (全程保留) */
+function drawBase() {
+  gBase.innerHTML = '';
+  
+  // 完全四边形延伸虚线
+  line(P, B, "#94a3b8", 1.4, "4 4", gBase);
+  line(P, C, "#94a3b8", 1.4, "4 4", gBase);
+  line(Q, D, "#94a3b8", 1.4, "4 4", gBase);
+  line(Q, C, "#94a3b8", 1.4, "4 4", gBase);
+  
+  // 第三条对角线 PQ
+  line(P, Q, "#059669", 2.2, "6 4", gBase);
+
+  // 四边形 ABCD 与对角线 AC, BD
+  polygon([A, B, C, D], "rgba(37,99,235,0.06)", "#2563eb", 2.4, gBase);
+  line(A, C, "#64748b", 1.6, "3 3", gBase);
+  line(B, D, "#64748b", 1.6, "3 3", gBase);
+
+  // 垂线段 OR ⊥ PQ 与直角标记
+  line(O, R, "#dc2626", 2.0, null, gBase);
+  rightAngle(R, O, Q, 11, "#dc2626", 1.6, gBase);
+
+  // 垂线段 RX, RY, RZ, RW
+  line(R, X, "#ea580c", 1.4, "3 3", gBase);
+  line(R, Y, "#ea580c", 1.4, "3 3", gBase);
+  line(R, Z, "#ea580c", 1.4, "3 3", gBase);
+  line(R, W, "#ea580c", 1.4, "3 3", gBase);
+  rightAngle(X, R, B, 9, "#ea580c", 1.3, gBase);
+  rightAngle(Y, R, C, 9, "#ea580c", 1.3, gBase);
+  rightAngle(Z, R, D, 9, "#ea580c", 1.3, gBase);
+  rightAngle(W, R, D, 9, "#ea580c", 1.3, gBase);
+}
+
+/* 绘制顶层点与防遮挡描边标签 */
+function drawPoints(curStep) {
+  gPts.innerHTML = '';
+  
+  // 经精算绝不重叠的偏移位置
+  const ptsList = [
+    { p: A, t: "A", dx: -16, dy: -10, fill: "#0f172a" },
+    { p: B, t: "B", dx: -16, dy: 12, fill: "#0f172a" },
+    { p: C, t: "C", dx: 16, dy: 10, fill: "#0f172a" },
+    { p: D, t: "D", dx: 16, dy: -10, fill: "#0f172a" },
+    { p: O, t: "O", dx: 0, dy: 16, fill: "#2563eb" },
+    { p: P, t: "P", dx: 0, dy: -16, fill: "#475569" },
+    { p: Q, t: "Q", dx: -16, dy: 12, fill: "#475569" },
+    { p: R, t: "R", dx: -14, dy: -14, fill: "#dc2626" },
+    { p: X, t: "X", dx: 14, dy: -10, fill: "#ea580c" },
+    { p: Y, t: "Y", dx: 0, dy: 16, fill: "#ea580c" },
+    { p: Z, t: "Z", dx: 16, dy: -8, fill: "#ea580c" },
+    { p: W, t: "W", dx: 0, dy: -14, fill: "#ea580c" }
+  ];
+
+  if (curStep >= 4) {
+    ptsList.push({ p: E, t: "E", dx: -16, dy: -10, fill: "#d97706" });
+  }
+
+  ptsList.forEach(item => {
+    dot(item.p, 4.5, item.fill, "#ffffff", 2, gPts);
+    label(item.p, item.t, item.dx, item.dy, item.fill, 14, true, gPts);
+  });
+}
+
+/* 动态步骤图元渲染 (每步切换先清空 gStep，辅助线随用随画用完即擦) */
+function renderStep(idx) {
+  gStep.innerHTML = '';
+
+  if (idx === 0) {
+    // 步骤 0：高亮四边形 XYZW
+    polygon([X, Y, Z, W], "rgba(234,88,12,0.08)", "#ea580c", 2, gStep);
+  } else if (idx === 1) {
+    // 步骤 1：⊙(AWRX) 与 ⊙(QWRY)
+    circle(circ_AWRX.c, circ_AWRX.r, "#2563eb", "rgba(37,99,235,0.05)", 1.8, "5 4", gStep);
+    circle(circ_QWRY.c, circ_QWRY.r, "#0891b2", "rgba(8,145,178,0.05)", 1.8, "5 4", gStep);
+    line(A, R, "#2563eb", 2, "4 3", gStep);
+    line(Q, R, "#0891b2", 2, "4 3", gStep);
+    line(X, W, "#2563eb", 2.2, null, gStep);
+    line(Y, W, "#0891b2", 2.2, null, gStep);
+    
+    // 角弧：∠XWR = ∠XAR, ∠YWR = ∠YQR
+    arcAngle(W, X, R, 22, "#2563eb", "none", 2.2, gStep);
+    arcAngle(A, X, R, 24, "#2563eb", "none", 2.2, gStep);
+    arcAngle(W, Y, R, 16, "#0891b2", "none", 2.2, gStep);
+    arcAngle(Q, Y, R, 26, "#0891b2", "none", 2.2, gStep);
+  } else if (idx === 2) {
+    // 步骤 2：⊙(PXRZ) 与 ⊙(CYRZ)
+    circle(circ_PXRZ.c, circ_PXRZ.r, "#7c3aed", "rgba(124,58,237,0.05)", 1.8, "5 4", gStep);
+    circle(circ_CYRZ.c, circ_CYRZ.r, "#db2777", "rgba(219,39,119,0.05)", 1.8, "5 4", gStep);
+    line(P, R, "#7c3aed", 2, "4 3", gStep);
+    line(C, R, "#db2777", 2, "4 3", gStep);
+    line(X, Z, "#7c3aed", 2.2, null, gStep);
+    line(Y, Z, "#db2777", 2.2, null, gStep);
+    
+    // 角弧：∠XZR = ∠XPR, ∠YZR = ∠YCR
+    arcAngle(Z, X, R, 20, "#7c3aed", "none", 2.2, gStep);
+    arcAngle(P, X, R, 26, "#7c3aed", "none", 2.2, gStep);
+    arcAngle(Z, Y, R, 24, "#db2777", "none", 2.2, gStep);
+    arcAngle(C, Y, R, 22, "#db2777", "none", 2.2, gStep);
+  } else if (idx === 3) {
+    // 步骤 3：充要条件等价转化 ∠ARQ = ∠CRP
+    line(R, A, "#2563eb", 2.4, null, gStep);
+    line(R, Q, "#2563eb", 2.4, null, gStep);
+    line(R, C, "#059669", 2.4, null, gStep);
+    line(R, P, "#059669", 2.4, null, gStep);
+    
+    // 目标相等角弧
+    arcAngle(R, A, Q, 28, "#2563eb", "none", 2.5, gStep);
+    arcAngle(R, C, P, 32, "#059669", "none", 2.5, gStep);
+  } else if (idx === 4) {
+    // 步骤 4：延长 CA 交 PQ 于 E 与三组梅涅劳斯定理
+    line(C, E, "#d97706", 2.5, null, gStep);
+    line(P, Q, "#059669", 2.2, null, gStep);
+    dot(E, 5, "#d97706", "#ffffff", 2, gStep);
+    
+    // 高亮三组截线构形
+    polygon([D, A, C], "rgba(217,119,6,0.07)", "#d97706", 1.8, gStep);
+  } else if (idx === 5) {
+    // 步骤 5：调和点列 (C, A; O, E) = -1
+    line(C, E, "#f43f5e", 3.2, null, gStep);
+    [C, O, A, E].forEach(pt => {
+      circle(pt, 8, "#f43f5e", "rgba(244,63,94,0.25)", 1.8, null, gStep);
+    });
+  } else if (idx === 6) {
+    // 步骤 6：调和线束与直角，最终共圆
+    line(R, E, "#059669", 2.2, null, gStep);
+    line(R, O, "#dc2626", 2.2, null, gStep);
+    rightAngle(R, O, E, 12, "#dc2626", 1.8, gStep);
+
+    // 平分角弧
+    arcAngle(R, A, O, 22, "#d97706", "none", 2.2, gStep);
+    arcAngle(R, C, O, 22, "#d97706", "none", 2.2, gStep);
+
+    // 绘制穿过 X, Y, Z, W 的高亮外接共圆（带滤镜发光与实体高亮环）
+    circle(circ_XYZW.c, circ_XYZW.r, "#dc2626", "none", 5, null, gStep).setAttribute("filter", "url(#glow)");
+    circle(circ_XYZW.c, circ_XYZW.r, "#dc2626", "rgba(220,38,38,0.06)", 2.8, null, gStep);
+    polygon([X, Y, Z, W], "rgba(220,38,38,0.12)", "#dc2626", 2.2, gStep);
+    [X, Y, Z, W].forEach(pt => {
+      circle(pt, 7, "#dc2626", "rgba(220,38,38,0.2)", 2, null, gStep);
+    });
+  }
+
+  drawPoints(idx);
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+/* ============ 交互控制系统 ============ */
+let currentStep = 0;
+let autoTimer = null;
+
+const stepsListEl = document.getElementById('stepsList');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+const btnReset = document.getElementById('btnReset');
+
+function initStepsUI() {
+  stepsListEl.innerHTML = '';
+  steps.forEach((s, idx) => {
+    const item = document.createElement('div');
+    item.className = `step-item ${idx === 0 ? 'active' : ''}`;
+    item.innerHTML = `
+      <div class="step-header">
+        <span class="step-num">${s.num}</span>
+      </div>
+      <div class="step-title">${s.title}</div>
+      <div class="step-body">${s.body}</div>
+    `;
+    item.onclick = () => { stopAuto(); goToStep(idx); };
+    stepsListEl.appendChild(item);
+  });
+}
+
+function updateUI() {
+  const items = stepsListEl.querySelectorAll('.step-item');
+  items.forEach((item, idx) => {
+    if (idx === currentStep) {
+      item.classList.add('active');
+      item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  renderStep(currentStep);
+
+  btnPrev.disabled = currentStep === 0;
+  btnNext.disabled = currentStep === steps.length - 1;
+
+  // 严格同步 URL ?step=N 参数
+  const url = new URL(window.location);
+  url.searchParams.set('step', currentStep);
+  window.history.replaceState({}, '', url);
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+function goToStep(idx) {
+  if (idx < 0 || idx >= steps.length) return;
+  currentStep = idx;
+  updateUI();
+}
+
+btnPrev.onclick = () => { stopAuto(); goToStep(currentStep - 1); };
+btnNext.onclick = () => { stopAuto(); goToStep(currentStep + 1); };
+btnReset.onclick = () => { stopAuto(); goToStep(0); };
+
+function stopAuto() {
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    btnAuto.textContent = "▶ 自动播放";
+    btnAuto.classList.remove('btn-primary');
+  }
+}
+
+btnAuto.onclick = () => {
+  if (autoTimer) {
+    stopAuto();
+  } else {
+    btnAuto.textContent = "⏸ 暂停";
+    btnAuto.classList.add('btn-primary');
+    if (currentStep >= steps.length - 1) goToStep(0);
+    autoTimer = setInterval(() => {
+      if (currentStep < steps.length - 1) {
+        goToStep(currentStep + 1);
+      } else {
+        stopAuto();
+      }
+    }, 2800);
+  }
+};
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+    e.preventDefault(); stopAuto(); goToStep(currentStep + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    e.preventDefault(); stopAuto(); goToStep(currentStep - 1);
+  }
+});
+
+/* 初始化执行 */
+drawBase();
+initStepsUI();
+
+const initialStep = parseInt(new URLSearchParams(window.location.search).get('step') || '0', 10);
+if (!isNaN(initialStep) && initialStep >= 0 && initialStep < steps.length) {
+  currentStep = initialStep;
+}
+updateUI();
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

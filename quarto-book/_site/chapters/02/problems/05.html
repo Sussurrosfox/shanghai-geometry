@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>14&nbsp; 例 5：双重三角形局部相似到整体相似 – 上海中学竞赛课程：平面几何</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../chapters/02/problems/06.html" rel="next">
+<link href="../../../chapters/02/problems/04.html" rel="prev">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-fe925cf0a27528b7bee6162f7e882ced.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+</head><body class="nav-sidebar floating quarto-light"><div style="display:none;">
+$$
+\gdef\bigtriangleup{\triangle}
+\gdef\ang{\angle}
+\gdef\parallelogram{\mathbin{/\!/}}
+$$
+</div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../chapters/02/index.html">第 2 讲 相似三角形</a></li><li class="breadcrumb-item"><a href="../../../chapters/02/problems/05.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">例 5：双重三角形局部相似到整体相似</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../../">上海中学竞赛课程：平面几何</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">前言</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 1 讲 全等三角形</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">第 1 讲 全等三角形</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">例 2：中位线与斜边中线构造全等（证明角相等）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">例 3：直线 KL 过线段 AJ 的中点</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">例 4：角平分线与平行线构造全等（证明线段相等）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">例 5：翻折与中位线构造全等</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">例 6：凸五边形垂线构造与垂心转换</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">例 7：凸六边形等长对边与旋转全等</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">例 8：中点外接圆与垂足共线证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/01/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">例 9：角三等分线与莫利正三角形构造</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 2 讲 相似三角形</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">第 2 讲 相似三角形</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">例 2：两圆外公切线与割线共圆及垂直证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">例 3：共轭相似与反交平行线角度转换</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">例 4：伴生相似与四边形角相等证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/05.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">例 5：双重三角形局部相似到整体相似</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">例 6：凸四边形双子相似与共圆导角</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">例 7：外心与内心连线上的线段等长证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/02/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">例 8：凸四边形内点等角与相似构型</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 3 讲 点共线与线共点</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">第 3 讲 点共线与线共点</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">例 2：帕斯卡定理（圆内接六边形对边交点共线）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">例 3：圆上三点切线交点与三线共点</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">例 4：直线定点调和共轭与角平分线</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">例 5：塞瓦定理角元形式与垂心共点充要条件</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">例 6：四边形外接圆与交点线共点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">例 7：六边形相交弦比例与相似三角形</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">例 8：外心、垂心反射与西姆松线共线</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/03/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">例 9：欧拉线与内心、重心、外心共线</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 4 讲 平移、对称和旋转变换</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">第 4 讲 平移、对称和旋转变换</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">例 2：旋转变换与中点线段不等式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">例 3：圆外接三角形旋转位似</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">例 4：重心坐标与平行四边形中点对称</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">例 5：正三角形旋转与角相等证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">例 6：翻折对称与平行四边形判定</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">例 7：等腰三角形旋转全等与线段关系</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">例 8：两三角形同向旋转相似中心</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/04/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">例 9：中心对称构造与线段不等式极值</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习一（综合习题）</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">练习一（综合习题）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">练习 1：圆截三角形各边垂线共点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">练习 2：等腰三角形内角与线段等长证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">练习 3：菱形外接圆与三点共线证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">练习 4：角平分线与外接圆比例线段</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">练习 5：梯形两切圆与对角线三线共点</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">练习 6：锐角三角形垂心与三线共点</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">练习 7：中线割线截线段倒数和比例关系</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">练习 8：内切圆切点连线与等角证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">练习 9：三个正三角形与正三角形构造</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">练习 10：平行四边形高线与垂心距离计算</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">47</span>&nbsp; <span class="chapter-title">练习 11：直角三角形等角与线段二倍关系</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">练习 12：凸五边形等角与对角线平分</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">49</span>&nbsp; <span class="chapter-title">练习 13：直角三角形斜边中点与角二倍关系</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/14.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">50</span>&nbsp; <span class="chapter-title">练习 14：两圆相交与中点垂直证明（直角）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/15.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">51</span>&nbsp; <span class="chapter-title">练习 15：四点共圆割线比例与等长充要条件</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/16.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">52</span>&nbsp; <span class="chapter-title">练习 16：三角形垂足连线与角平分线充要条件</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/17.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">53</span>&nbsp; <span class="chapter-title">练习 17：平行四边形割线截线段等长证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/18.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">54</span>&nbsp; <span class="chapter-title">练习 18：帕普斯定理（两直线上六点三点共线）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/19.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">55</span>&nbsp; <span class="chapter-title">练习 19：内心外接圆与垂直证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/20.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">56</span>&nbsp; <span class="chapter-title">练习 20：凸六边形折线距离不等式证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/21.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">57</span>&nbsp; <span class="chapter-title">练习 21：正方形内动点距离和最小值</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/22.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">58</span>&nbsp; <span class="chapter-title">练习 22：平行四边形动割线旁心定角证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/23.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">59</span>&nbsp; <span class="chapter-title">练习 23：中点与等长线段证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/24.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">60</span>&nbsp; <span class="chapter-title">练习 24：共圆动割线与共线证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/25.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">61</span>&nbsp; <span class="chapter-title">练习 25：外作正方形高线三线共点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/26.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">62</span>&nbsp; <span class="chapter-title">练习 26：相似三角形构型与三点共线证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/27.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">63</span>&nbsp; <span class="chapter-title">练习 27：完全四边形牛顿线（对角线中点共线）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/28.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">64</span>&nbsp; <span class="chapter-title">练习 28：内切圆切点连线与外接圆定角求解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/29.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">65</span>&nbsp; <span class="chapter-title">练习 29：凸四边形特殊线段等长与角度求解</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/30.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">66</span>&nbsp; <span class="chapter-title">练习 30：圆内接四边形角度转换与求值</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/31.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">67</span>&nbsp; <span class="chapter-title">练习 31：圆弧中点平行线与内心共线证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/32.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">68</span>&nbsp; <span class="chapter-title">练习 32：凸四边形中点割线等角证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/33.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">69</span>&nbsp; <span class="chapter-title">练习 33：凸四边形垂线与等角证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/34.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">70</span>&nbsp; <span class="chapter-title">练习 34：外接圆弧中点与内心垂直证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/35.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">71</span>&nbsp; <span class="chapter-title">练习 35：外接圆中点与内切圆切点垂直证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/36.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">72</span>&nbsp; <span class="chapter-title">练习 36：中点与三角形边长不等式证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/37.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">73</span>&nbsp; <span class="chapter-title">练习 37：内切圆切点与三线共点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/38.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">74</span>&nbsp; <span class="chapter-title">练习 38：内切圆割线截线段比例证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/05/problems/39.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">75</span>&nbsp; <span class="chapter-title">练习 39：角平分线射影与中点平分证明</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 5 讲 圆的基本性质</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">76</span>&nbsp; <span class="chapter-title">第 5 讲 圆的基本性质</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">77</span>&nbsp; <span class="chapter-title">例 2：圆切线弦切角与内心性质证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">78</span>&nbsp; <span class="chapter-title">例 3：割线定理与圆内接四边形导角</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">79</span>&nbsp; <span class="chapter-title">例 4：四点共圆判定与托勒密定理应用</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">80</span>&nbsp; <span class="chapter-title">例 5：两圆相交与四点共圆综合证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">81</span>&nbsp; <span class="chapter-title">例 6：双圆交点与共圆四边形垂直证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">82</span>&nbsp; <span class="chapter-title">例 7：外心内心对称轴与线段等长</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">83</span>&nbsp; <span class="chapter-title">例 8：阿波罗尼斯圆与角度相等证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">84</span>&nbsp; <span class="chapter-title">例 9：共轴圆与四点共圆判定</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/06/problems/10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">85</span>&nbsp; <span class="chapter-title">例 10：圆切线与角平分线交点共线</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 6 讲 圆幂与根轴</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">86</span>&nbsp; <span class="chapter-title">第 6 讲 圆幂与根轴</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">87</span>&nbsp; <span class="chapter-title">例 2：两圆公共弦与根轴性质</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">88</span>&nbsp; <span class="chapter-title">例 3：相交弦定理与平行四边形判定</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">89</span>&nbsp; <span class="chapter-title">例 4：切线长定理与圆幂等长证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">90</span>&nbsp; <span class="chapter-title">例 5：圆内接四边形对角线根轴与共线</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">91</span>&nbsp; <span class="chapter-title">例 6：动点切线与定点定直线根轴</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">92</span>&nbsp; <span class="chapter-title">例 7：共轴圆系三线共点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">93</span>&nbsp; <span class="chapter-title">例 8：垂心与外心圆幂恒等式</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/09.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">94</span>&nbsp; <span class="chapter-title">例 9：根心性质与三角形高线垂足共圆</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/07/problems/10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">95</span>&nbsp; <span class="chapter-title">例 10：反演圆与正交圆幂性质</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">第 7 讲 反演与位似</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">96</span>&nbsp; <span class="chapter-title">第 7 讲 反演与位似</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">97</span>&nbsp; <span class="chapter-title">例 2：内切圆切点连线与位似平行证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">98</span>&nbsp; <span class="chapter-title">例 3：双圆外位似中心与直角三角形证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">99</span>&nbsp; <span class="chapter-title">例 4：四圆共点与位似变换相似</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">100</span>&nbsp; <span class="chapter-title">例 5：调和线束与内切圆切点角平分线</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">101</span>&nbsp; <span class="chapter-title">例 6：反演变换与圆过定点证明</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">102</span>&nbsp; <span class="chapter-title">例 7：费尔巴哈定理（九点圆与内切圆切点反演）</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../chapters/08/problems/08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">103</span>&nbsp; <span class="chapter-title">例 8：外切四边形反演与调和四边形</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#题目" id="toc-题目" class="nav-link active" data-scroll-target="#题目"><span class="header-section-number">14.1</span> 题目</a></li>
+  <li><a href="#参考解答" id="toc-参考解答" class="nav-link" data-scroll-target="#参考解答"><span class="header-section-number">14.2</span> 参考解答</a></li>
+  <li><a href="#解题思路与分析" id="toc-解题思路与分析" class="nav-link" data-scroll-target="#解题思路与分析"><span class="header-section-number">14.3</span> 解题思路与分析</a></li>
+  <li><a href="#分步证明" id="toc-分步证明" class="nav-link" data-scroll-target="#分步证明"><span class="header-section-number">14.4</span> 分步证明</a></li>
+  <li><a href="#动态演示" id="toc-动态演示" class="nav-link" data-scroll-target="#动态演示"><span class="header-section-number">14.5</span> 动态演示</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../chapters/02/index.html">第 2 讲 相似三角形</a></li><li class="breadcrumb-item"><a href="../../../chapters/02/problems/05.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">例 5：双重三角形局部相似到整体相似</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">例 5：双重三角形局部相似到整体相似</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="problem-meta-bar">
+<p><span class="problem-meta-badge badge-chapter">第 2 讲 相似三角形</span> <span class="problem-meta-badge badge-difficulty">竞赛难度</span> <span class="problem-meta-badge badge-tag">相似三角形</span> <span class="problem-meta-badge badge-tag">中点</span></p>
+</div>
+<section id="题目" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="题目"><span class="header-section-number">14.1</span> 题目</h2>
+<p>设 <span class="math inline">{A}_1,{B}_1,{C}_1</span> 分别是 <span class="math inline">\triangle  {ABC}</span> 的边 <span class="math inline">{BC},{CA},{AB}</span> 上的点， <span class="math inline">\triangle  A{B}_1{C}_1</span> ， <span class="math inline">\triangle {A}_{1}B{C}_1</span> 和 <span class="math inline">\triangle {A}_1{B}_{1}C</span> 的外接圆分别与 <span class="math inline">\triangle {ABC}</span> 的外接圆交于另一点 <span class="math inline">{A}_2,{B}_2</span> , <span class="math inline">{C}_2\left( {{A}_2 \neq  A,{B}_2 \neq  B,{C}_2 \neq  C}\right)</span> ,点 <span class="math inline">{A}_3,{B}_3</span> 和 <span class="math inline">{C}_3</span> 分别是 <span class="math inline">{A}_1,{B}_1,{C}_1</span> 关于边 <span class="math inline">{BC}</span> , <span class="math inline">{CA},{AB}</span> 的中点的对称点. 证明: <span class="math inline">\triangle {A}_2{B}_2{C}_2 \backsim  \triangle {A}_3{B}_3{C}_3</span> .</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/16_1145_1681_314_367_0.jpg" class="img-fluid figure-img"></p>
+<figcaption>16_1145_1681_314_367_0.jpg</figcaption>
+</figure>
+</div>
+<p>图 2-4</p>
+</section>
+<section id="参考解答" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="参考解答"><span class="header-section-number">14.2</span> 参考解答</h2>
+<div class="callout callout-style-default callout-important callout-titled" title="标准解答">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>标准解答
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>如图 2-4,设 <span class="math inline">\triangle {ABC}</span> 的外接圆圆心为 <span class="math inline">O</span> ,连接 <span class="math inline">{A}_{2}A,{A}_2{B}_1,{A}_{2}C,{A}_{2}B,{A}_2{C}_1</span> . 因为</p>
+<p><span class="math display">
+\angle {C}_1{A}_2{B}_1 = \angle {BAC} = \angle B{A}_{2}C,
+</span></p>
+<p><span class="math display">
+\angle {A}_2{B}_1{C}_1 = \angle {A}_{2}A{C}_1 = \angle {A}_2{CB},
+</span></p>
+<p>所以 <span class="math inline">\triangle {B}_1{A}_2{C}_1 \backsim  \triangle C{A}_{2}B</span> ,于是,</p>
+<p><span class="math display">
+\frac{{B}_1{A}_2}{C{A}_2} = \frac{{A}_2{C}_1}{{A}_{2}B} = \frac{{B}_1{C}_1}{CB}.
+</span></p>
+<p>①</p>
+<p>对四边形 <span class="math inline">A{B}_1{C}_1{A}_2</span> 和 <span class="math inline">{ACB}{A}_2</span> ,由托勒密定理,有</p>
+<p><span class="math display">
+A{A}_2 \cdot  {B}_1{C}_1 = {B}_1{A}_2 \cdot  A{C}_1 - {A}_2{C}_1 \cdot  A{B}_1;
+</span></p>
+<p><span class="math display">
+A{A}_2 \cdot  {BC} = {A}_{2}C \cdot  {AB} - {A}_{2}B \cdot  {AC}.
+</span></p>
+<p>结合①，有</p>
+<p><span class="math display">
+\frac{{A}_{2}C}{{A}_{2}B} = \frac{{AC} - A{B}_1}{{AB} - A{C}_1} = \frac{C{B}_1}{B{C}_1} = \frac{A{B}_3}{A{C}_3}.
+</span></p>
+<p>又 <span class="math inline">\angle C{A}_{2}B = \angle {BAC} = \angle {B}_{3}A{C}_3</span> ,故 <span class="math inline">\triangle B{A}_{2}C \backsim  \triangle {C}_{3}A{B}_3</span> ,从而 <span class="math inline">\angle {A}_2{CB} = \; \angle A{B}_3{C}_3</span> . 同理有 <span class="math inline">\angle {B}_2{CA} = \angle B{A}_3{C}_3</span> .</p>
+<p>注意到在圆 <span class="math inline">O</span> 中, <span class="math inline">\angle {A}_{2}O{B}_2 = \angle {A}_2{OB} + \angle {B}_2{OA} - \angle {AOB}</span> ,所以</p>
+<p><span class="math display">
+\angle {A}_2{C}_2{B}_2 = \frac{1}{2}\angle {A}_{2}O{B}_2
+</span></p>
+<p><span class="math display">
+= \frac{1}{2}\left( {\angle {A}_2{OB} + \angle {B}_2{OA} - \angle {AOB}}\right)
+</span></p>
+<p><span class="math display">
+= \angle {A}_2{CB} + \angle {B}_2{CA} - \angle {ACB}
+</span></p>
+<p><span class="math display">
+= \angle A{B}_3{C}_3 + \angle B{A}_3{C}_3 + \left( {\angle {BAC} + \angle {ABC} - {180}^{ \circ  }}\right)
+</span></p>
+<p><span class="math display">
+= {180}^{ \circ  } - \angle A{C}_3{B}_3 - \angle B{C}_3{A}_3
+</span></p>
+<p><span class="math display">
+= \angle {A}_{3}{C}_{3}{B}_{3}\text{ . }
+</span></p>
+<p>同理有 <span class="math inline">\angle {B}_2{A}_2{C}_2 = \angle {B}_3{A}_3{C}_3,\angle {C}_2{B}_2{A}_2 = \angle {C}_3{B}_3{A}_3</span> ,所以 <span class="math inline">\triangle {A}_2{B}_2{C}_2 \backsim \; \triangle {A}_3{B}_3{C}_3</span> . 原问题得证.</p>
+<p>注:托勒密定理是指:圆内接四边形的两组对边的乘积之和等于两对角线的乘积.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/17_1135_1535_304_310_0.jpg" class="img-fluid figure-img"></p>
+<figcaption>17_1135_1535_304_310_0.jpg</figcaption>
+</figure>
+</div>
+<p>图 2-5</p>
+<p>事实上，如图 2-5，设四边形 <span class="math inline">{ABCD}</span> 内接于圆 <span class="math inline">O</span> ，在 <span class="math inline">{BD}</span> 上取点 <span class="math inline">P</span> ，使得 <span class="math inline">\angle {PAB} = \angle {CAD}</span> ，结合 <span class="math inline">\angle {ABP} = \angle {ACD}</span> ， 知 <span class="math inline">\triangle {ABP} \backsim  \triangle {ACD}</span> ，于是 <span class="math inline">\frac{AB}{AC} = \frac{BP}{CD}</span> ，即</p>
+<p><span class="math display">
+{AB} \cdot  {CD} = {AC} \cdot  {BP}.
+</span></p>
+<p>①</p>
+<p>又 <span class="math inline">\angle {BAC} = \angle {PAD},\angle {ADP} = \angle {ACB}</span> ，因此， <span class="math inline">\triangle  {ABC} \backsim \; \triangle {APD}</span> ，于是 <span class="math inline">\frac{BC}{AC} = \frac{PD}{AD}</span> ，即</p>
+<p><span class="math display">
+{BC} \cdot  {AD} = {AC} \cdot  {PD}.
+</span></p>
+<p>②</p>
+<p>将①、②两式相加，得</p>
+<p><span class="math display">
+{AB} \cdot  {CD} + {BC} \cdot  {AD} = {AC}\left( {{BP} + {PD}}\right)  = {AC} \cdot  {BD}.
+</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="解题思路与分析" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="解题思路与分析"><span class="header-section-number">14.3</span> 解题思路与分析</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="思路还原与分析">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>思路还原与分析
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>这份证明之所以让人觉得“费解”，主要有两方面原因： 1. <strong>叙述顺序是倒置的</strong>：教材采用的是典型的“综合法”书写（从已知直接推到结论），隐藏了背后<strong>从结论倒推（分析法）</strong>的思维拆解过程。 2. <strong>中间绕了一个大弯（强行使用托勒密定理）</strong>：在证明核心比例式 <span class="math inline">\frac{A_2C}{A_2B} = \frac{CB_1}{BC_1}</span> 时，作者为了契合章节主题（见文末专门介绍托勒密定理的“注”），强行用托勒密定理做代数消元，反而掩盖了极其简洁的<strong>旋转位似（密克点）</strong>几何本质。</p>
+<p>下面我们把这套证明拆解还原，看看它是如何一步步被“倒推”出来的，以及如何用几何直观瞬间看穿它。</p>
+<hr>
+<section id="一-逆向破局如何把全局相似拆解为局部相似" class="level3" data-number="14.3.1">
+<h3 data-number="14.3.1" class="anchored" data-anchor-id="一-逆向破局如何把全局相似拆解为局部相似"><span class="header-section-number">14.3.1</span> 一、 逆向破局：如何把“全局相似”拆解为“局部相似”？</h3>
+<p>题目的目标是证明 <span class="math inline">\triangle A_2B_2C_2 \sim \triangle A_3B_3C_3</span>。 面对这个目标，第一反应会觉得棘手：<span class="math inline">A_2, B_2, C_2</span> 是由三个不同的圆分别生成的，直接去找这两个三角形的整体关系非常困难。因此，<strong>核心策略是以 <span class="math inline">\triangle ABC</span> 为桥梁，将三个顶点的关系“解耦”（拆成单个顶点的独立问题）</strong>。</p>
+<section id="第-1-步拆解圆周角-angle-a_2c_2b_2对应证明的后半段" class="level4" data-number="14.3.1.1">
+<h4 data-number="14.3.1.1" class="anchored" data-anchor-id="第-1-步拆解圆周角-angle-a_2c_2b_2对应证明的后半段"><span class="header-section-number">14.3.1.1</span> 第 1 步：拆解圆周角 <span class="math inline">\angle A_2C_2B_2</span>（对应证明的后半段）</h4>
+<p>要证相似，只需证内角相等，比如 <span class="math inline">\angle A_2C_2B_2 = \angle A_3C_3B_3</span>。 * <strong>看左边（<span class="math inline">\angle A_2C_2B_2</span>）</strong>：<span class="math inline">A_2, B_2, C_2</span> 都在 <span class="math inline">\triangle ABC</span> 的外接圆 <span class="math inline">O</span> 上。<span class="math inline">\angle A_2C_2B_2</span> 对的是弧 <span class="math inline">\overset{\frown}{A_2B_2}</span>。怎样把动点 <span class="math inline">A_2, B_2</span> 的位置拆开？利用圆上的定点 <span class="math inline">A, B, C</span>，把弧拆成： <span class="math display">\overset{\frown}{A_2B_2} = \overset{\frown}{A_2B} + \overset{\frown}{AB_2} - \overset{\frown}{AB}</span> 转化为圆周角（以 <span class="math inline">C</span> 为顶点），立刻得到书中那步神来之笔： <span class="math display">\angle A_2C_2B_2 = \angle A_2CB + \angle B_2CA - \angle ACB</span> 注意看右边：<span class="math inline">\angle A_2CB</span> <strong>只与 <span class="math inline">A_2</span> 有关</strong>，<span class="math inline">\angle B_2CA</span> <strong>只与 <span class="math inline">B_2</span> 有关</strong>！两个动点被成功分离了。</p>
+<ul>
+<li><p><strong>看右边（<span class="math inline">\angle A_3C_3B_3</span>）</strong>：点 <span class="math inline">C_3</span> 在边 <span class="math inline">AB</span> 上，利用平角 <span class="math inline">180^\circ</span> 和 <span class="math inline">\triangle AC_3B_3</span>、<span class="math inline">\triangle BC_3A_3</span> 的内角和，同样把角度拆向两侧的 <span class="math inline">\triangle AC_3B_3</span> 和 <span class="math inline">\triangle BC_3A_3</span>： <span class="math display">\begin{aligned} \angle A_3C_3B_3 &amp;= 180^\circ - \angle AC_3B_3 - \angle BC_3A_3 \\ &amp;= 180^\circ - (180^\circ - \angle A - \angle AB_3C_3) - (180^\circ - \angle B - \angle BA_3C_3) \\ &amp;= \angle AB_3C_3 + \angle BA_3C_3 + (\angle A + \angle B - 180^\circ) \\ &amp;= \angle AB_3C_3 + \angle BA_3C_3 - \angle ACB \end{aligned}</span></p></li>
+<li><p><strong>对比两端</strong>：</p>
+<ul>
+<li><span class="math inline">\angle A_2C_2B_2 = \color{blue}{\angle A_2CB} + \color{teal}{\angle B_2CA} - \angle ACB</span></li>
+<li><span class="math inline">\angle A_3C_3B_3 = \color{blue}{\angle AB_3C_3} + \color{teal}{\angle BA_3C_3} - \angle ACB</span></li>
+</ul>
+<p>看到这里，破局点就彻底清晰了！只要能证明单独关于“<span class="math inline">A</span> 组点”的等式： <span class="math display">\angle A_2CB = \angle AB_3C_3</span> 那么由轮换对称性，必然也有 <span class="math inline">\angle B_2CA = \angle BA_3C_3</span>，两式一加，全局相似就证完了！</p></li>
+</ul>
+<hr>
+</section>
+<section id="第-2-步锁定过渡相似三角形-triangle-ba_2c-sim-triangle-c_3ab_3" class="level4" data-number="14.3.1.2">
+<h4 data-number="14.3.1.2" class="anchored" data-anchor-id="第-2-步锁定过渡相似三角形-triangle-ba_2c-sim-triangle-c_3ab_3"><span class="header-section-number">14.3.1.2</span> 第 2 步：锁定过渡相似三角形 <span class="math inline">\triangle BA_2C \sim \triangle C_3AB_3</span></h4>
+<p>接下来，怎么证 <span class="math inline">\angle A_2CB = \angle AB_3C_3</span>？ 观察这两个角所在的三角形：<span class="math inline">\triangle BA_2C</span> 和 <span class="math inline">\triangle C_3AB_3</span>。 因为 <span class="math inline">A, B, C, A_2</span> 四点共圆，我们手里<strong>白送了一个等角</strong>： <span class="math display">\angle BA_2C = \angle BAC = \angle C_3AB_3</span> 两个三角形已经有一组内角相等，如果还要让另一组内角 <span class="math inline">\angle A_2CB = \angle AB_3C_3</span> 相等，<strong>唯一的可能就是这两个三角形相似</strong>（<span class="math inline">\triangle BA_2C \sim \triangle C_3AB_3</span>）！</p>
+<p>既然顶角 <span class="math inline">\angle BA_2C = \angle C_3AB_3</span> 已经相等，要证它们相似，只需证<strong>夹边成比例</strong>（SAS）： <span class="math display">\frac{A_2C}{A_2B} = \frac{AB_3}{AC_3}</span> 而根据题设，<span class="math inline">B_3, C_3</span> 分别是 <span class="math inline">B_1, C_1</span> 关于边 <span class="math inline">AC, AB</span> 中点的对称点，所以 <span class="math inline">AB_3 = CB_1</span>，<span class="math inline">AC_3 = BC_1</span>。于是问题最终归结为证明： <span class="math display">\frac{A_2C}{A_2B} = \frac{CB_1}{BC_1}</span></p>
+<hr>
+</section>
+</section>
+<section id="二-局部攻坚作者是如何想到用托勒密定理的" class="level3" data-number="14.3.2">
+<h3 data-number="14.3.2" class="anchored" data-anchor-id="二-局部攻坚作者是如何想到用托勒密定理的"><span class="header-section-number">14.3.2</span> 二、 局部攻坚：作者是如何想到用托勒密定理的？</h3>
+<p>现在只剩最后一个问题：已知圆 <span class="math inline">(AB_1C_1)</span> 与圆 <span class="math inline">(ABC)</span> 交于 <span class="math inline">A, A_2</span>，如何证明 <span class="math inline">\frac{A_2C}{A_2B} = \frac{CB_1}{BC_1}</span>？</p>
+<section id="作者的思路代数消元视角" class="level4" data-number="14.3.2.1">
+<h4 data-number="14.3.2.1" class="anchored" data-anchor-id="作者的思路代数消元视角"><span class="header-section-number">14.3.2.1</span> 1. 作者的思路（代数消元视角）</h4>
+<p>作者看到 <span class="math inline">CB_1</span> 和 <span class="math inline">BC_1</span>，将它们看作了<strong>线段的差</strong>： <span class="math display">CB_1 = AC - AB_1, \quad BC_1 = AB - AC_1</span> * 其中 <span class="math inline">AC, AB</span> 是大圆内接四边形 <span class="math inline">ACBA_2</span> 的边； * <span class="math inline">AB_1, AC_1</span> 是小圆内接四边形 <span class="math inline">AB_1C_1A_2</span> 的边； * 两个圆有一条公共弦 <span class="math inline">AA_2</span>。</p>
+<p>为了把 <span class="math inline">(AC, AB)</span> 和 <span class="math inline">(AB_1, AC_1)</span> 联系起来并做差，作者先通过两组圆周角相等（<span class="math inline">\angle C_1A_2B_1 = \angle BAC = \angle BA_2C</span>，<span class="math inline">\angle A_2B_1C_1 = \angle A_2AC_1 = \angle A_2CB</span>）推出了基础相似 <span class="math inline">\triangle B_1A_2C_1 \sim \triangle CA_2B</span>，设其相似比为 <span class="math inline">k</span>，即： <span class="math display">\frac{B_1A_2}{CA_2} = \frac{A_2C_1}{A_2B} = \frac{B_1C_1}{CB} = k \quad \text{（即书中①式）}</span> 接着，对两个内接四边形分别写托勒密定理（注意图 2-4 中 <span class="math inline">A_2</span> 在弧 <span class="math inline">AB</span> 上，对角线分别是 <span class="math inline">B_1A_2, AC_1</span> 和 <span class="math inline">A_2C, AB</span>）： 1. 小四边形：<span class="math inline">AA_2 \cdot B_1C_1 = B_1A_2 \cdot AC_1 - A_2C_1 \cdot AB_1</span> 2. 大四边形：<span class="math inline">AA_2 \cdot BC = A_2C \cdot AB - A_2B \cdot AC</span></p>
+<p>书中写“结合①，有……”省略了一步关键的代数消元：将第 1 个式子中的 <span class="math inline">B_1C_1, B_1A_2, A_2C_1</span> 全部用 <span class="math inline">k \cdot CB, k \cdot CA_2, k \cdot A_2B</span> 替换： <span class="math display">AA_2 \cdot (k \cdot CB) = (k \cdot CA_2) \cdot AC_1 - (k \cdot A_2B) \cdot AB_1</span> 两边约去 <span class="math inline">k</span>，得到： <span class="math display">AA_2 \cdot BC = A_2C \cdot AC_1 - A_2B \cdot AB_1</span> 把这个式子和第 2 个托勒密等式联立（消去左边的 <span class="math inline">AA_2 \cdot BC</span>）： <span class="math display">A_2C \cdot AB - A_2B \cdot AC = A_2C \cdot AC_1 - A_2B \cdot AB_1</span> 移项合并同类项： <span class="math display">A_2C(AB - AC_1) = A_2B(AC - AB_1) \implies \frac{A_2C}{A_2B} = \frac{AC - AB_1}{AB - AC_1} = \frac{CB_1}{BC_1}</span> 这就是书中前半部分证明的完整来龙去脉。</p>
+<hr>
+</section>
+<section id="几何本质降维打击其实完全不需要托勒密定理" class="level4" data-number="14.3.2.2">
+<h4 data-number="14.3.2.2" class="anchored" data-anchor-id="几何本质降维打击其实完全不需要托勒密定理"><span class="header-section-number">14.3.2.2</span> 2. 几何本质（降维打击）：其实完全不需要托勒密定理！</h4>
+<p>你觉得前半段证明别扭是非常敏锐的直觉——因为<strong>这里用托勒密定理纯属“杀鸡用牛刀”</strong>（很大可能是为了给托勒密定理凑例题）。</p>
+<p>从几何结构上看，直线 <span class="math inline">AB, AC, BC, B_1C_1</span> 构成一个完全四边形，点 <span class="math inline">A_2</span> 就是它的<strong>密克点（Miquel Point，即旋转位似中心）</strong>。要证 <span class="math inline">\frac{A_2C}{A_2B} = \frac{CB_1}{BC_1}</span>，只需<strong>两行倒角</strong>直接证 <strong><span class="math inline">\triangle A_2BC_1 \sim \triangle A_2CB_1</span></strong> 即可：</p>
+<ol type="1">
+<li>在大圆 <span class="math inline">(ABC)</span> 中，同弧 <span class="math inline">\overset{\frown}{AA_2}</span> 所对的圆周角相等： <span class="math display">\angle A_2BC_1 = \angle A_2BA = \angle A_2CA = \angle A_2CB_1</span></li>
+<li>在小圆 <span class="math inline">(AB_1C_1)</span> 中，同弧 <span class="math inline">\overset{\frown}{AA_2}</span> 所对的圆周角相等，故其补角也相等： <span class="math display">\angle A_2C_1B = 180^\circ - \angle A_2C_1A = 180^\circ - \angle A_2B_1A = \angle A_2B_1C</span></li>
+</ol>
+<p>由 AA 相似立得 <strong><span class="math inline">\triangle A_2BC_1 \sim \triangle A_2CB_1</span></strong>，直接写出对应边之比： <span class="math display">\frac{A_2C}{A_2B} = \frac{CB_1}{BC_1}</span> （注：哪怕从书中的 <span class="math inline">\triangle B_1A_2C_1 \sim \triangle CA_2B</span> 出发，利用<strong>旋转位似成对出现</strong>的基本性质，将对应顶点交换位置，也能一步得出 <span class="math inline">\triangle A_2BC_1 \sim \triangle A_2CB_1</span>。）</p>
+<hr>
+</section>
+</section>
+<section id="三-思维脉络复盘图" class="level3" data-number="14.3.3">
+<h3 data-number="14.3.3" class="anchored" data-anchor-id="三-思维脉络复盘图"><span class="header-section-number">14.3.3</span> 三、 思维脉络复盘图</h3>
+<p>把整道题的思维过程顺过来，其实就是一条非常自然的<strong>分析法链条</strong>：</p>
+<p><span class="math display">\begin{array}{c}
+\text{欲证 }\triangle A_2B_2C_2 \sim \triangle A_3B_3C_3 \iff \angle A_2C_2B_2 = \angle A_3C_3B_3 \\
+\Downarrow \text{（利用 }\triangle ABC\text{ 拆角解耦）} \\
+\angle A_2CB + \angle B_2CA - \angle C = \angle AB_3C_3 + \angle BA_3C_3 - \angle C \\
+\Downarrow \text{（化归为单侧等角）} \\
+\text{欲证 }\angle A_2CB = \angle AB_3C_3 \xleftarrow{\text{已有 }\angle BA_2C = \angle C_3AB_3} \text{欲证 }\triangle BA_2C \sim \triangle C_3AB_3 \\
+\Downarrow \text{（SAS 转化到夹边比 + 中点对称性质）} \\
+\text{欲证 }\frac{A_2C}{A_2B} = \frac{AB_3}{AC_3} = \frac{CB_1}{BC_1} \\
+\Downarrow \text{（密克点旋转位似 / 书中改用托勒密定理消元）} \\
+\triangle A_2BC_1 \sim \triangle A_2CB_1
+\end{array}</span></p>
+<p>看清这条“<strong>先拆角解耦 <span class="math inline">\to</span> 再锁定过渡相似 <span class="math inline">\to</span> 最后用密克点位似收尾</strong>”的主线后，整道题的构造意图就彻底透明了。</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="分步证明" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="分步证明"><span class="header-section-number">14.4</span> 分步证明</h2>
+<div class="callout callout-style-default callout-tip callout-titled" title="分步推理与几何步骤">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">提示</span>分步推理与几何步骤
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<section id="步骤-0已知条件与几何构型" class="level3" data-number="14.4.1">
+<h3 data-number="14.4.1" class="anchored" data-anchor-id="步骤-0已知条件与几何构型"><span class="header-section-number">14.4.1</span> 步骤 0：已知条件与几何构型</h3>
+<p>在锐角 <span class="math inline">\triangle ABC</span> 中，外接圆为 <span class="math inline">\odot O</span>。点 <span class="math inline">A_1, B_1, C_1</span> 分别在边 <span class="math inline">BC, CA, AB</span> 上。 作 <span class="math inline">\triangle AB_1C_1, \triangle A_1BC_1, \triangle A_1B_1C</span> 的外接圆，与 <span class="math inline">\odot O</span> 分别交于另一点 <span class="math inline">A_2, B_2, C_2</span>。 同时取 <span class="math inline">A_1, B_1, C_1</span> 关于边中点的对称点 <span class="math inline">A_3, B_3, C_3</span>。 求证：<span class="math inline">\triangle A_2B_2C_2 \sim \triangle A_3B_3C_3</span></p>
+</section>
+<section id="步骤-1①-圆周角定理与第一组相似" class="level3" data-number="14.4.2">
+<h3 data-number="14.4.2" class="anchored" data-anchor-id="步骤-1①-圆周角定理与第一组相似"><span class="header-section-number">14.4.2</span> 步骤 1：① 圆周角定理与第一组相似</h3>
+<p>连接 <span class="math inline">A_2A, A_2B_1, A_2C, A_2B, A_2C_1</span>。 在圆 <span class="math inline">AB_1C_1A_2</span> 与圆 <span class="math inline">ABC</span> 中，同弧所对圆周角满足： <span class="math inline">\angle C_1A_2B_1 = \angle BAC = \angle BA_2C</span> <span class="math inline">\angle A_2B_1C_1 = \angle A_2AC_1 = \angle A_2CB</span> 两角对应相等，得出第一组相似三角形： <span class="math inline">\triangle B_1A_2C_1 \sim \triangle CA_2B</span> <span class="math inline">\implies \dfrac{B_1A_2}{CA_2} = \dfrac{A_2C_1}{A_2B} = \dfrac{B_1C_1}{CB} \quad \text{①}</span></p>
+</section>
+<section id="步骤-2②-托勒密定理与中点对称线段转化" class="level3" data-number="14.4.3">
+<h3 data-number="14.4.3" class="anchored" data-anchor-id="步骤-2②-托勒密定理与中点对称线段转化"><span class="header-section-number">14.4.3</span> 步骤 2：② 托勒密定理与中点对称线段转化</h3>
+<p>分别对圆内接四边形 <span class="math inline">AB_1C_1A_2</span> 与 <span class="math inline">ACBA_2</span> 应用托勒密定理： <span class="math inline">AA_2 \cdot B_1C_1 = B_1A_2 \cdot AC_1 - A_2C_1 \cdot AB_1</span> <span class="math inline">AA_2 \cdot BC = A_2C \cdot AB - A_2B \cdot AC</span> 代入 ① 式比例消去 <span class="math inline">AA_2</span>： <span class="math inline">\dfrac{A_2C}{A_2B} = \dfrac{AC - AB_1}{AB - AC_1} = \dfrac{CB_1}{BC_1}</span> 由中点对称性，<span class="math inline">CB_1 = AB_3,\; BC_1 = AC_3</span>： <span class="math inline">\dfrac{A_2C}{A_2B} = \dfrac{AB_3}{AC_3}</span></p>
+</section>
+<section id="步骤-3③-两边夹角判定相似-triangle-ba_2c-sim-triangle-c_3ab_3" class="level3" data-number="14.4.4">
+<h3 data-number="14.4.4" class="anchored" data-anchor-id="步骤-3③-两边夹角判定相似-triangle-ba_2c-sim-triangle-c_3ab_3"><span class="header-section-number">14.4.4</span> 步骤 3：③ 两边夹角判定相似 <span class="math inline">\triangle BA_2C \sim \triangle C_3AB_3</span></h3>
+<p>在 <span class="math inline">\triangle BA_2C</span> 与 <span class="math inline">\triangle C_3AB_3</span> 中： 两边成比例：<span class="math inline">\dfrac{A_2C}{AB_3} = \dfrac{A_2B}{AC_3}</span>； 对应夹角相等：<span class="math inline">\angle CA_2B = \angle BAC = \angle B_3AC_3</span>。 由两边成比例且夹角相等判定： <span class="math inline">\triangle BA_2C \sim \triangle C_3AB_3</span> <span class="math inline">\implies \mathbf{\angle A_2CB = \angle AB_3C_3}</span> 同理对 <span class="math inline">B_2</span> 对称推导可得：<span class="math inline">\mathbf{\angle B_2CA = \angle BA_3C_3}</span>。</p>
+</section>
+<section id="步骤-4④-圆心角与圆周角转换锁定顶点角" class="level3" data-number="14.4.5">
+<h3 data-number="14.4.5" class="anchored" data-anchor-id="步骤-4④-圆心角与圆周角转换锁定顶点角"><span class="header-section-number">14.4.5</span> 步骤 4：④ 圆心角与圆周角转换锁定顶点角</h3>
+<p>在圆 <span class="math inline">O</span> 中，圆心角与圆周角关系满足： <span class="math inline">\angle A_2C_2B_2 = \frac{1}{2}\angle A_2OB_2 = \angle A_2CB + \angle B_2CA - \angle ACB</span> 将步骤 ③ 导出的对应角代入： <span class="math inline">\angle A_2C_2B_2 = \angle AB_3C_3 + \angle BA_3C_3 + (\angle BAC + \angle ABC - 180^\circ)</span> <span class="math inline">= 180^\circ - \angle AC_3B_3 - \angle BC_3A_3 = \mathbf{\angle A_3C_3B_3}</span>！ 顶点角严格相等：<span class="math inline">\angle A_2C_2B_2 = \angle A_3C_3B_3</span></p>
+</section>
+<section id="步骤-5⑤-轮换对称性与最终结论" class="level3" data-number="14.4.6">
+<h3 data-number="14.4.6" class="anchored" data-anchor-id="步骤-5⑤-轮换对称性与最终结论"><span class="header-section-number">14.4.6</span> 步骤 5：⑤ 轮换对称性与最终结论</h3>
+<p>由几何构型的完全轮换对称性，同理可得其余两对内角对应相等： <span class="math inline">\angle B_2A_2C_2 = \angle B_3A_3C_3</span> <span class="math inline">\angle C_2B_2A_2 = \angle C_3B_3A_3</span> 两三角形的三组内角对应相等，从而最终得证：</p>
+<p><span class="math inline">\triangle A_2B_2C_2 \sim \triangle A_3B_3C_3</span></p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="动态演示" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="动态演示"><span class="header-section-number">14.5</span> 动态演示</h2>
+<div class="demo-link-container">
+<p><a href="../demos/05.html" class="demo-link" target="_blank" rel="noopener">在新窗口打开交互式分步演示</a></p>
+</div>
+<div class="demo-frame">
+<p><iframe src="../demos/05.html" title="例 5：双重三角形局部相似到整体相似 分步演示" loading="lazy"></iframe></p>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../../chapters/02/problems/04.html" class="pagination-link" aria-label="例 4：伴生相似与四边形角相等证明">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">例 4：伴生相似与四边形角相等证明</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../../chapters/02/problems/06.html" class="pagination-link" aria-label="例 6：凸四边形双子相似与共圆导角">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">例 6：凸四边形双子相似与共圆导角</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

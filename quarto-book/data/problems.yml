@@ -1,0 +1,1275 @@
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch01-p02
+  image: ../images/7_957_1582_432_366_0.jpg
+  problem: 2
+  tags:
+  - 全等三角形
+  - 中点
+  theorems:
+  - 全等三角形
+  title: 中位线与斜边中线构造全等（证明角相等）
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch01-p03
+  image: ../images/8_981_790_477_383_0.jpg
+  problem: 3
+  tags:
+  - 全等三角形
+  - 中点
+  theorems:
+  - 全等三角形
+  title: 直线 KL 过线段 AJ 的中点
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch01-p04
+  image: ../images/9_910_271_483_358_0.jpg
+  problem: 4
+  tags:
+  - 全等三角形
+  - 角平分线
+  theorems:
+  - 全等三角形
+  title: 角平分线与平行线构造全等（证明线段相等）
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch01-p05
+  image: ../images/9_1026_1205_363_433_0.jpg
+  problem: 5
+  tags:
+  - 全等三角形
+  - 中点
+  - 角平分线
+  theorems:
+  - 全等三角形
+  title: 翻折与中位线构造全等
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch01-p06
+  image: ../images/10_1031_384_449_438_0.jpg
+  problem: 6
+  tags:
+  - 全等三角形
+  - 角平分线
+  theorems:
+  - 全等三角形
+  title: 凸五边形垂线构造与垂心转换
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch01-p07
+  image: ../images/10_1026_1806_455_306_0.jpg
+  problem: 7
+  tags:
+  - 全等三角形
+  theorems:
+  - 全等三角形
+  title: 凸六边形等长对边与旋转全等
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch01-p08
+  image: ../images/11_944_1224_446_364_0.jpg
+  problem: 8
+  tags:
+  - 全等三角形
+  - 中点
+  theorems:
+  - 全等三角形
+  title: 中点外接圆与垂足共线证明
+  type: lecture
+- chapter: '01'
+  demo: true
+  demo_path: ../demos/09.html
+  difficulty: 竞赛
+  id: ch01-p09
+  image: ../images/12_920_307_537_378_0.jpg
+  problem: 9
+  tags:
+  - 全等三角形
+  theorems:
+  - 全等三角形
+  title: 角三等分线与莫利正三角形构造
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch02-p02
+  image: ../images/14_992_1387_487_334_0.jpg
+  problem: 2
+  tags:
+  - 相似三角形
+  - 中点
+  - 相似
+  theorems:
+  - 相似三角形
+  title: 两圆外公切线与割线共圆及垂直证明
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch02-p03
+  image: ../images/15_1032_715_367_499_0.jpg
+  problem: 3
+  tags:
+  - 相似三角形
+  - 中点
+  theorems:
+  - 相似三角形
+  title: 共轭相似与反交平行线角度转换
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch02-p04
+  image: ../images/16_1028_204_428_473_0.jpg
+  problem: 4
+  tags:
+  - 相似三角形
+  - 相似
+  theorems:
+  - 相似三角形
+  title: 伴生相似与四边形角相等证明
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch02-p05
+  image: ../images/16_1145_1681_314_367_0.jpg
+  problem: 5
+  tags:
+  - 相似三角形
+  - 中点
+  theorems:
+  - 相似三角形
+  title: 双重三角形局部相似到整体相似
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch02-p06
+  image: ../images/18_1052_491_392_299_0.jpg
+  problem: 6
+  tags:
+  - 相似三角形
+  - 相似
+  theorems:
+  - 相似三角形
+  title: 凸四边形双子相似与共圆导角
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch02-p07
+  image: ../images/18_1110_1644_329_506_0.jpg
+  problem: 7
+  tags:
+  - 相似三角形
+  - 中点
+  - 相似
+  theorems:
+  - 相似三角形
+  title: 外心与内心连线上的线段等长证明
+  type: lecture
+- chapter: '02'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch02-p08
+  image: ../images/19_1042_1630_395_482_0.jpg
+  problem: 8
+  tags:
+  - 相似三角形
+  theorems:
+  - 相似三角形
+  title: 凸四边形内点等角与相似构型
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch03-p02
+  image: ../images/22_1100_1485_335_361_0.jpg
+  problem: 2
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 帕斯卡定理（圆内接六边形对边交点共线）
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch03-p03
+  image: ../images/23_1027_1054_391_390_0.jpg
+  problem: 3
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 圆上三点切线交点与三线共点
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch03-p04
+  image: ../images/24_1150_199_282_414_0.jpg
+  problem: 4
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 直线定点调和共轭与角平分线
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch03-p05
+  image: ../images/24_1066_1310_363_370_0.jpg
+  problem: 5
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 塞瓦定理角元形式与垂心共点充要条件
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch03-p06
+  image: ../images/25_1030_1286_367_333_0.jpg
+  problem: 6
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 四边形外接圆与交点线共点证明
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch03-p07
+  image: ../images/26_1097_1458_356_361_0.jpg
+  problem: 7
+  tags:
+  - 点共线与线共点
+  - 相似
+  theorems:
+  - 点共线与线共点
+  title: 六边形相交弦比例与相似三角形
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch03-p08
+  image: ../images/27_983_1068_421_413_0.jpg
+  problem: 8
+  tags:
+  - 点共线与线共点
+  theorems:
+  - 点共线与线共点
+  title: 外心、垂心反射与西姆松线共线
+  type: lecture
+- chapter: '03'
+  demo: true
+  demo_path: ../demos/09.html
+  difficulty: 竞赛
+  id: ch03-p09
+  image: ../images/28_1040_576_399_336_0.jpg
+  problem: 9
+  tags:
+  - 点共线与线共点
+  - 中点
+  - 相似
+  theorems:
+  - 点共线与线共点
+  title: 欧拉线与内心、重心、外心共线
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch04-p02
+  image: ../images/30_996_1729_460_277_0.jpg
+  problem: 2
+  tags:
+  - 平移、对称和旋转变换
+  theorems:
+  - 平移、对称和旋转变换
+  title: 旋转变换与中点线段不等式
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch04-p03
+  image: ../images/31_877_755_524_329_0.jpg
+  problem: 3
+  tags:
+  - 平移、对称和旋转变换
+  - 中点
+  - 角平分线
+  theorems:
+  - 平移、对称和旋转变换
+  title: 圆外接三角形旋转位似
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch04-p04
+  image: ../images/32_959_414_494_467_0.jpg
+  problem: 4
+  tags:
+  - 平移、对称和旋转变换
+  - 四点共圆
+  theorems:
+  - 平移、对称和旋转变换
+  title: 重心坐标与平行四边形中点对称
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch04-p05
+  image: ../images/33_979_182_436_387_0.jpg
+  problem: 5
+  tags:
+  - 平移、对称和旋转变换
+  theorems:
+  - 平移、对称和旋转变换
+  title: 正三角形旋转与角相等证明
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch04-p06
+  image: ../images/34_1114_309_332_335_0.jpg
+  problem: 6
+  tags:
+  - 平移、对称和旋转变换
+  theorems:
+  - 平移、对称和旋转变换
+  title: 翻折对称与平行四边形判定
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch04-p07
+  problem: 7
+  tags:
+  - 平移、对称和旋转变换
+  - 角平分线
+  theorems:
+  - 平移、对称和旋转变换
+  title: 等腰三角形旋转全等与线段关系
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch04-p08
+  image: ../images/35_1080_204_340_326_0.jpg
+  problem: 8
+  tags:
+  - 平移、对称和旋转变换
+  - 相似
+  theorems:
+  - 平移、对称和旋转变换
+  title: 两三角形同向旋转相似中心
+  type: lecture
+- chapter: '04'
+  demo: true
+  demo_path: ../demos/09.html
+  difficulty: 竞赛
+  id: ch04-p09
+  image: ../images/35_976_1610_440_256_0.jpg
+  problem: 9
+  tags:
+  - 平移、对称和旋转变换
+  - 角平分线
+  theorems:
+  - 平移、对称和旋转变换
+  title: 中心对称构造与线段不等式极值
+  type: lecture
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p01
+  image: ../images/153_250_865_498_413_0.jpg
+  problem: 1
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 圆截三角形各边垂线共点证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p02
+  image: ../images/153_892_926_385_351_0.jpg
+  problem: 2
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 等腰三角形内角与线段等长证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p03
+  image: ../images/154_279_222_556_315_0.jpg
+  problem: 3
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 菱形外接圆与三点共线证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p04
+  image: ../images/154_983_177_400_365_0.jpg
+  problem: 4
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 角平分线与外接圆比例线段
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p05
+  image: ../images/154_499_1381_656_416_0.jpg
+  problem: 5
+  tags:
+  - 练习一（综合习题）
+  - 切线
+  theorems:
+  - 练习一（综合习题）
+  title: 梯形两切圆与对角线三线共点
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p06
+  image: ../images/155_246_1587_497_414_0.jpg
+  problem: 6
+  tags:
+  - 练习一（综合习题）
+  - 四点共圆
+  theorems:
+  - 练习一（综合习题）
+  title: 锐角三角形垂心与三线共点
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p07
+  image: ../images/155_887_1610_394_390_0.jpg
+  problem: 7
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 中线割线截线段倒数和比例关系
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p08
+  image: ../images/156_334_1376_344_399_0.jpg
+  problem: 8
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 内切圆切点连线与等角证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p09
+  image: ../images/156_823_1424_485_354_0.jpg
+  problem: 9
+  tags:
+  - 练习一（综合习题）
+  - 四点共圆
+  theorems:
+  - 练习一（综合习题）
+  title: 三个正三角形与正三角形构造
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p10
+  image: ../images/157_301_796_470_252_0.jpg
+  problem: 10
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 平行四边形高线与垂心距离计算
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p11
+  image: ../images/157_983_620_247_428_0.jpg
+  problem: 11
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 直角三角形等角与线段二倍关系
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p12
+  image: ../images/158_317_507_462_355_0.jpg
+  problem: 12
+  tags:
+  - 练习一（综合习题）
+  - 相似
+  theorems:
+  - 练习一（综合习题）
+  title: 凸五边形等角与对角线平分
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p13
+  image: ../images/158_922_395_409_464_0.jpg
+  problem: 13
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 直角三角形斜边中点与角二倍关系
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p14
+  image: ../images/158_271_1684_480_370_0.jpg
+  problem: 14
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 两圆相交与中点垂直证明（直角）
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p15
+  image: ../images/158_898_1732_475_329_0.jpg
+  problem: 15
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 四点共圆割线比例与等长充要条件
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p16
+  image: ../images/160_244_227_430_383_0.jpg
+  problem: 16
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 三角形垂足连线与角平分线充要条件
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p17
+  image: ../images/160_752_324_658_284_0.jpg
+  problem: 17
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 平行四边形割线截线段等长证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p18
+  image: ../images/161_217_710_537_378_0.jpg
+  problem: 18
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 帕普斯定理（两直线上六点三点共线）
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p19
+  image: ../images/161_898_548_429_541_0.jpg
+  problem: 19
+  tags:
+  - 练习一（综合习题）
+  - 四点共圆
+  theorems:
+  - 练习一（综合习题）
+  title: 内心外接圆与垂直证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p20
+  image: ../images/162_215_598_452_439_0.jpg
+  problem: 20
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 凸六边形折线距离不等式证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p21
+  image: ../images/162_743_755_686_283_0.jpg
+  problem: 21
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 正方形内动点距离和最小值
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p22
+  image: ../images/163_289_808_378_492_0.jpg
+  problem: 22
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 平行四边形动割线旁心定角证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p23
+  image: ../images/163_844_892_424_405_0.jpg
+  problem: 23
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 中点与等长线段证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p24
+  image: ../images/164_225_769_475_401_0.jpg
+  problem: 24
+  tags:
+  - 练习一（综合习题）
+  - 四点共圆
+  theorems:
+  - 练习一（综合习题）
+  title: 共圆动割线与共线证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p25
+  image: ../images/164_847_771_557_401_0.jpg
+  problem: 25
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 外作正方形高线三线共点证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p26
+  image: ../images/165_242_510_506_458_0.jpg
+  problem: 26
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 相似三角形构型与三点共线证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p27
+  image: ../images/165_891_563_430_404_0.jpg
+  problem: 27
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 完全四边形牛顿线（对角线中点共线）
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p28
+  image: ../images/166_306_189_387_419_0.jpg
+  problem: 28
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 内切圆切点连线与外接圆定角求解
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p29
+  image: ../images/166_838_294_484_315_0.jpg
+  problem: 29
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 凸四边形特殊线段等长与角度求解
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p30
+  image: ../images/166_304_1655_481_355_0.jpg
+  problem: 30
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 圆内接四边形角度转换与求值
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p31
+  image: ../images/166_928_1637_388_367_0.jpg
+  problem: 31
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 圆弧中点平行线与内心共线证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p32
+  image: ../images/167_259_1670_433_454_0.jpg
+  problem: 32
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  - 角平分线
+  theorems:
+  - 练习一（综合习题）
+  title: 凸四边形中点割线等角证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p33
+  image: ../images/167_836_1672_471_454_0.jpg
+  problem: 33
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 凸四边形垂线与等角证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p34
+  image: ../images/169_264_195_487_468_0.jpg
+  problem: 34
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 外接圆弧中点与内心垂直证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p35
+  image: ../images/169_896_218_418_438_0.jpg
+  problem: 35
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  - 四点共圆
+  theorems:
+  - 练习一（综合习题）
+  title: 外接圆中点与内切圆切点垂直证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p36
+  image: ../images/170_597_197_433_347_0.jpg
+  problem: 36
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  theorems:
+  - 练习一（综合习题）
+  title: 中点与三角形边长不等式证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p37
+  image: ../images/170_388_735_852_494_0.jpg
+  problem: 37
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 内切圆切点与三线共点证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p38
+  image: ../images/171_566_778_428_409_0.jpg
+  problem: 38
+  tags:
+  - 练习一（综合习题）
+  theorems:
+  - 练习一（综合习题）
+  title: 内切圆割线截线段比例证明
+  type: exercise
+- chapter: '05'
+  demo: false
+  difficulty: 竞赛
+  id: ch05-p39
+  image: ../images/172_588_1326_443_482_0.jpg
+  problem: 39
+  tags:
+  - 练习一（综合习题）
+  - 中点
+  - 角平分线
+  theorems:
+  - 练习一（综合习题）
+  title: 角平分线射影与中点平分证明
+  type: exercise
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch06-p02
+  problem: 2
+  tags:
+  - 圆的基本性质
+  - 角平分线
+  theorems:
+  - 圆的基本性质
+  title: 圆切线弦切角与内心性质证明
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch06-p03
+  image: ../images/55_1035_1613_374_460_0.jpg
+  problem: 3
+  tags:
+  - 圆的基本性质
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 割线定理与圆内接四边形导角
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch06-p04
+  image: ../images/56_468_1421_681_391_0.jpg
+  problem: 4
+  tags:
+  - 圆的基本性质
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 四点共圆判定与托勒密定理应用
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch06-p05
+  image: ../images/57_921_1187_485_403_0.jpg
+  problem: 5
+  tags:
+  - 圆的基本性质
+  - 中点
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 两圆相交与四点共圆综合证明
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch06-p06
+  image: ../images/58_1006_722_467_357_0.jpg
+  problem: 6
+  tags:
+  - 圆的基本性质
+  - 中点
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 双圆交点与共圆四边形垂直证明
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch06-p07
+  image: ../images/59_934_643_463_412_0.jpg
+  problem: 7
+  tags:
+  - 圆的基本性质
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 外心内心对称轴与线段等长
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch06-p08
+  image: ../images/60_536_180_575_436_0.jpg
+  problem: 8
+  tags:
+  - 圆的基本性质
+  - 中点
+  - 角平分线
+  theorems:
+  - 圆的基本性质
+  title: 阿波罗尼斯圆与角度相等证明
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/09.html
+  difficulty: 竞赛
+  id: ch06-p09
+  image: ../images/60_1029_1699_432_406_0.jpg
+  problem: 9
+  tags:
+  - 圆的基本性质
+  - 四点共圆
+  theorems:
+  - 圆的基本性质
+  title: 共轴圆与四点共圆判定
+  type: lecture
+- chapter: '06'
+  demo: true
+  demo_path: ../demos/10.html
+  difficulty: 竞赛
+  id: ch06-p10
+  image: ../images/61_967_1183_440_481_0.jpg
+  problem: 10
+  tags:
+  - 圆的基本性质
+  - 中点
+  - 角平分线
+  theorems:
+  - 圆的基本性质
+  title: 圆切线与角平分线交点共线
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch07-p02
+  image: ../images/64_911_915_549_339_0.jpg
+  problem: 2
+  tags:
+  - 圆幂与根轴
+  - 根轴
+  theorems:
+  - 圆幂与根轴
+  title: 两圆公共弦与根轴性质
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch07-p03
+  image: ../images/65_1048_361_349_364_0.jpg
+  problem: 3
+  tags:
+  - 圆幂与根轴
+  - 中点
+  - 四点共圆
+  theorems:
+  - 圆幂与根轴
+  title: 相交弦定理与平行四边形判定
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch07-p04
+  image: ../images/65_924_1648_473_371_0.jpg
+  problem: 4
+  tags:
+  - 圆幂与根轴
+  - 四点共圆
+  - 根轴
+  theorems:
+  - 圆幂与根轴
+  title: 切线长定理与圆幂等长证明
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch07-p05
+  image: ../images/66_1123_1404_364_420_0.jpg
+  problem: 5
+  tags:
+  - 圆幂与根轴
+  - 中点
+  - 切线
+  theorems:
+  - 圆幂与根轴
+  title: 圆内接四边形对角线根轴与共线
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch07-p06
+  image: ../images/67_914_995_485_466_0.jpg
+  problem: 6
+  tags:
+  - 圆幂与根轴
+  - 四点共圆
+  - 切线
+  theorems:
+  - 圆幂与根轴
+  title: 动点切线与定点定直线根轴
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch07-p07
+  image: ../images/68_429_775_795_693_0.jpg
+  problem: 7
+  tags:
+  - 圆幂与根轴
+  - 根轴
+  theorems:
+  - 圆幂与根轴
+  title: 共轴圆系三线共点证明
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch07-p08
+  image: ../images/69_1004_476_395_399_0.jpg
+  problem: 8
+  tags:
+  - 圆幂与根轴
+  theorems:
+  - 圆幂与根轴
+  title: 垂心与外心圆幂恒等式
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/09.html
+  difficulty: 竞赛
+  id: ch07-p09
+  image: ../images/70_963_990_515_399_0.jpg
+  problem: 9
+  tags:
+  - 圆幂与根轴
+  - 中点
+  - 四点共圆
+  theorems:
+  - 圆幂与根轴
+  title: 根心性质与三角形高线垂足共圆
+  type: lecture
+- chapter: '07'
+  demo: true
+  demo_path: ../demos/10.html
+  difficulty: 竞赛
+  id: ch07-p10
+  image: ../images/71_331_661_863_520_0.jpg
+  problem: 10
+  tags:
+  - 圆幂与根轴
+  - 四点共圆
+  - 根轴
+  theorems:
+  - 圆幂与根轴
+  title: 反演圆与正交圆幂性质
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/02.html
+  difficulty: 竞赛
+  id: ch08-p02
+  image: ../images/74_881_1022_569_531_0.jpg
+  problem: 2
+  tags:
+  - 反演与位似
+  - 中点
+  - 切线
+  theorems:
+  - 反演与位似
+  title: 内切圆切点连线与位似平行证明
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/03.html
+  difficulty: 竞赛
+  id: ch08-p03
+  image: ../images/75_1029_191_414_661_0.jpg
+  problem: 3
+  tags:
+  - 反演与位似
+  - 中点
+  theorems:
+  - 反演与位似
+  title: 双圆外位似中心与直角三角形证明
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/04.html
+  difficulty: 竞赛
+  id: ch08-p04
+  image: ../images/75_536_1174_533_376_0.jpg
+  problem: 4
+  tags:
+  - 反演与位似
+  - 中点
+  - 反演
+  theorems:
+  - 反演与位似
+  title: 四圆共点与位似变换相似
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/05.html
+  difficulty: 竞赛
+  id: ch08-p05
+  image: ../images/76_836_325_606_605_0.jpg
+  problem: 5
+  tags:
+  - 反演与位似
+  - 角平分线
+  theorems:
+  - 反演与位似
+  title: 调和线束与内切圆切点角平分线
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/06.html
+  difficulty: 竞赛
+  id: ch08-p06
+  image: ../images/76_980_1711_462_426_0.jpg
+  problem: 6
+  tags:
+  - 反演与位似
+  - 根轴
+  - 反演
+  theorems:
+  - 反演与位似
+  title: 反演变换与圆过定点证明
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/07.html
+  difficulty: 竞赛
+  id: ch08-p07
+  image: ../images/77_928_1838_504_224_0.jpg
+  problem: 7
+  tags:
+  - 反演与位似
+  - 中点
+  - 角平分线
+  theorems:
+  - 反演与位似
+  title: 费尔巴哈定理（九点圆与内切圆切点反演）
+  type: lecture
+- chapter: 08
+  demo: true
+  demo_path: ../demos/08.html
+  difficulty: 竞赛
+  id: ch08-p08
+  image: ../images/79_991_572_450_436_0.jpg
+  problem: 8
+  tags:
+  - 反演与位似
+  - 中点
+  - 相似
+  theorems:
+  - 反演与位似
+  title: 外切四边形反演与调和四边形
+  type: lecture

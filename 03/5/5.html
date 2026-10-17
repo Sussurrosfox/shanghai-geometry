@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双层塞瓦共点定理的对偶转化 — 高精度分步几何演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1260px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 25px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+  header p { font-size: 14px; color: #475569; margin-top: 8px; line-height: 1.6; }
+  header .theorem-tag {
+    display: inline-block; background: #dbeafe; color: #1e40af; font-size: 12px;
+    font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px;
+  }
+  .main { display: flex; gap: 22px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 640px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  svg { width: 100%; height: auto; max-height: 74vh; display: block; }
+  .panel {
+    flex: 1 1 420px; background: #ffffff; border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+    padding: 22px; display: flex; flex-direction: column; min-height: 600px;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
+  .step-item {
+    border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s ease;
+    background: #f8fafc;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f1f5f9; }
+  .step-item .title { font-weight: 700; font-size: 14.5px; display: flex; gap: 10px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: #cbd5e1; color: #334155; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.8; color: #334155; margin-top: 10px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 8px rgba(37,99,235,.12); }
+  .step-item.active .title { color: #1d4ed8; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #1e3a8a; }
+  .formula-box {
+    background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 12px;
+    margin: 8px 0; border-radius: 4px; font-size: 13px;
+  }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 12px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 5px; font-size:11px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .legend {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    font-size: 12.5px; color: #475569; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="theorem-tag">高精度交互几何 · 塞瓦定理与角元对偶</div>
+    <h1>双层塞瓦共点定理的对偶转化</h1>
+    <p><b>已知</b>：点 $D, E, F$ 分别在 $\triangle ABC$ 三边上，$P, Q, R$ 分别在 $\triangle DEF$ 三边上，且 $DP, EQ, FR$ 三线共点于 $Y$。<br>
+       <b>求证</b>：$AP, BQ, CR$ 三线共点 $\Longleftrightarrow$ $AD, BE, CF$ 三线共点。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 740 620" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#059669;"></span>内层共点 Y ($DP, EQ, FR$)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#ea580c;"></span>边元共点 X ($AD, BE, CF$)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span>角元共点 Z ($AP, BQ, CR$)</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">支持键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何辅助函数 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+
+function lineIntersect(p1, p2, p3, p4){
+  const d1 = sub(p2, p1), d2 = sub(p4, p3);
+  const det = d1.x * (-d2.y) - (-d2.x) * d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p3.x - p1.x)*(-d2.y) - (-d2.x)*(p3.y - p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+/* ============ 精确几何解算数据（质心代数严格自洽） ============ */
+const A = { x: 360.0, y: 70.0 };
+const B = { x: 90.0, y: 550.0 };
+const C = { x: 650.0, y: 520.0 };
+
+// X 在 △ABC 中的重心坐标 (uX, vX, wX)
+const uX = 0.300, vX = 0.420, wX = 0.280;
+const X = {
+  x: uX * A.x + vX * B.x + wX * C.x,
+  y: uX * A.y + vX * B.y + wX * C.y
+};
+
+// D in BC, E in CA, F in AB
+const D = {
+  x: (vX * B.x + wX * C.x) / (vX + wX),
+  y: (vX * B.y + wX * C.y) / (vX + wX)
+};
+const E = {
+  x: (uX * A.x + wX * C.x) / (uX + wX),
+  y: (uX * A.y + wX * C.y) / (uX + wX)
+};
+const F = {
+  x: (uX * A.x + vX * B.x) / (uX + vX),
+  y: (uX * A.y + vX * B.y) / (uX + vX)
+};
+
+// Y 在 △DEF 中的重心坐标 (pY, qY, rY)
+const pY = 0.318, qY = 0.420, rY = 0.262;
+const Y = {
+  x: pY * D.x + qY * E.x + rY * F.x,
+  y: pY * D.y + qY * E.y + rY * F.y
+};
+
+// P in EF, Q in FD, R in DE
+const P = {
+  x: (qY * E.x + rY * F.x) / (qY + rY),
+  y: (qY * E.y + rY * F.y) / (qY + rY)
+};
+const Q = {
+  x: (pY * D.x + rY * F.x) / (pY + rY),
+  y: (pY * D.y + rY * F.y) / (pY + rY)
+};
+const R = {
+  x: (pY * D.x + qY * E.x) / (pY + qY),
+  y: (pY * D.y + qY * E.y) / (pY + qY)
+};
+
+// Z 为 AP, BQ, CR 的严格交点
+const Z = lineIntersect(A, P, B, Q);
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 5', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color='#0f172a', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.5}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIX Two Math, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    'paint-order': 'stroke',
+    stroke: '#ffffff', 'stroke-width': 3.5, 'stroke-linejoin': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+6, 'stroke-linecap':'round', opacity:.22}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 严谨的劣角角弧绘制 */
+function angleArc(v, p1, p2, r=26, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += Math.PI * 2;
+  while (diff > Math.PI) diff -= Math.PI * 2;
+  const sweep = diff > 0 ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 2, ...attrs
+  }, parent);
+}
+
+/* 顶点角平分线方向点（用于角标注文本自适应定位） */
+function bisectorPos(v, p1, p2, r=40){
+  const u1 = norm(sub(p1, v));
+  const u2 = norm(sub(p2, v));
+  const b = norm(add(u1, u2));
+  return add(v, mul(b, r));
+}
+
+/* ============ 分层绘制系统 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);
+const gStep = el('g', {id: 'gStep'}, stage);
+const gPts  = el('g', {id: 'gPts'}, stage);
+
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c',
+      DARK = '#0f172a', MUTED = '#94a3b8';
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 大三角形 ABC
+  polygon([A, B, C], {
+    fill: '#f8fafc', stroke: '#334155', 'stroke-width': 2.2, 'stroke-linejoin': 'round'
+  }, gBase);
+
+  // 内层三角形 DEF
+  polygon([D, E, F], {
+    fill: 'rgba(5, 150, 105, 0.05)', stroke: '#059669', 'stroke-width': 1.8, 'stroke-linejoin': 'round'
+  }, gBase);
+}
+
+function drawPoints(showY=true, showX=false, showZ=false){
+  gPts.innerHTML = '';
+  // 基础外层顶点
+  dot(A, DARK, 4.5, gPts); label(A, 'A', 0, -18, DARK, gPts);
+  dot(B, DARK, 4.5, gPts); label(B, 'B', -16, 12, DARK, gPts);
+  dot(C, DARK, 4.5, gPts); label(C, 'C', 18, 10, DARK, gPts);
+
+  // 内层三角形顶点 D, E, F
+  dot(D, GREEN, 4, gPts); label(D, 'D', -6, 18, GREEN, gPts);
+  dot(E, GREEN, 4, gPts); label(E, 'E', 18, -10, GREEN, gPts);
+  dot(F, GREEN, 4, gPts); label(F, 'F', -18, -6, GREEN, gPts);
+
+  // 内层边分点 P, Q, R
+  dot(P, PURPLE, 4, gPts); label(P, 'P', 14, -14, PURPLE, gPts);
+  dot(Q, PURPLE, 4, gPts); label(Q, 'Q', -14, 14, PURPLE, gPts);
+  dot(R, PURPLE, 4, gPts); label(R, 'R', 16, 10, PURPLE, gPts);
+
+  // 内层共点 Y (DP, EQ, FR)
+  if (showY) {
+    el('circle', {cx:Y.x, cy:Y.y, r:8, fill:'rgba(5,150,105,0.2)'}, gPts);
+    dot(Y, GREEN, 4.5, gPts);
+    label(Y, 'Y', 0, -16, GREEN, gPts);
+  }
+
+  // 边元共点 X (AD, BE, CF)
+  if (showX) {
+    el('circle', {cx:X.x, cy:X.y, r:8, fill:'rgba(234,88,12,0.2)'}, gPts);
+    dot(X, ORANGE, 4.5, gPts);
+    label(X, 'X', -16, 12, ORANGE, gPts);
+  }
+
+  // 角元共点 Z (AP, BQ, CR)
+  if (showZ) {
+    el('circle', {cx:Z.x, cy:Z.y, r:8, fill:'rgba(37,99,235,0.2)'}, gPts);
+    dot(Z, BLUE, 4.5, gPts);
+    label(Z, 'Z', 16, -12, BLUE, gPts);
+  }
+}
+
+/* ============ 动态步骤层渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  switch(s){
+    case 0:
+      // 已知条件：绘制内层塞瓦线 DP, EQ, FR 汇聚于点 Y
+      drawPoints(true, false, false);
+      segDashed(D, P, GREEN, 2, gStep);
+      segDashed(E, Q, GREEN, 2, gStep);
+      segDashed(F, R, GREEN, 2, gStep);
+      circle(Y, 12, {stroke: GREEN, 'stroke-width': 1.5, 'stroke-dasharray': '3 3', opacity: 0.8}, gStep);
+      break;
+
+    case 1:
+      // 步骤 1：剖分 △AEF，聚焦线段 AP 与角弧
+      drawPoints(false, false, false);
+      polygon([A, E, P], {fill: 'rgba(37, 99, 235, 0.08)', stroke: 'none'}, gStep);
+      polygon([A, F, P], {fill: 'rgba(124, 58, 237, 0.08)', stroke: 'none'}, gStep);
+
+      highlightSeg(A, P, BLUE, gStep, 3.5);
+      highlightSeg(E, P, '#0284c7', gStep, 3);
+      highlightSeg(P, F, '#7c3aed', gStep, 3);
+
+      // 角弧与文本标注
+      angleArc(A, B, P, 36, {stroke: RED, 'stroke-width': 2}, gStep);
+      angleArc(A, P, C, 46, {stroke: BLUE, 'stroke-width': 2}, gStep);
+
+      const bPos1 = bisectorPos(A, B, P, 58);
+      const bPos2 = bisectorPos(A, P, C, 68);
+      label(bPos1, '∠BAP', 0, 0, RED, gStep, 12.5, false);
+      label(bPos2, '∠PAC', 0, 0, BLUE, gStep, 12.5, false);
+      break;
+
+    case 2:
+      // 步骤 2：轮换对偶，三组射线 AP, BQ, CR 与对应角弧
+      drawPoints(false, false, false);
+      highlightSeg(A, P, BLUE, gStep, 2.5);
+      highlightSeg(B, Q, BLUE, gStep, 2.5);
+      highlightSeg(C, R, BLUE, gStep, 2.5);
+
+      // 顶点 A 角弧
+      angleArc(A, B, P, 32, {stroke: RED, 'stroke-width': 1.8}, gStep);
+      angleArc(A, P, C, 40, {stroke: BLUE, 'stroke-width': 1.8}, gStep);
+
+      // 顶点 B 角弧
+      angleArc(B, C, Q, 34, {stroke: RED, 'stroke-width': 1.8}, gStep);
+      angleArc(B, Q, A, 42, {stroke: BLUE, 'stroke-width': 1.8}, gStep);
+
+      // 顶点 C 角弧
+      angleArc(C, A, R, 34, {stroke: RED, 'stroke-width': 1.8}, gStep);
+      angleArc(C, R, B, 42, {stroke: BLUE, 'stroke-width': 1.8}, gStep);
+      break;
+
+    case 3:
+      // 步骤 3：内层塞瓦定理消去
+      drawPoints(true, false, false);
+      polygon([D, E, F], {fill: 'rgba(5, 150, 105, 0.12)', stroke: GREEN, 'stroke-width': 2}, gStep);
+
+      line(D, P, {stroke: GREEN, 'stroke-width': 2.5}, gStep);
+      line(E, Q, {stroke: GREEN, 'stroke-width': 2.5}, gStep);
+      line(F, R, {stroke: GREEN, 'stroke-width': 2.5}, gStep);
+
+      dot(P, GREEN, 5.5, gStep);
+      dot(Q, GREEN, 5.5, gStep);
+      dot(R, GREEN, 5.5, gStep);
+      circle(Y, 14, {stroke: GREEN, 'stroke-width': 2, 'stroke-dasharray': '4 3'}, gStep);
+      break;
+
+    case 4:
+      // 步骤 4：边元塞瓦与角元塞瓦对偶对比
+      drawPoints(false, true, true);
+      // 外层塞瓦线 AD, BE, CF 汇于 X
+      segDashed(A, D, ORANGE, 2, gStep);
+      segDashed(B, E, ORANGE, 2, gStep);
+      segDashed(C, F, ORANGE, 2, gStep);
+
+      // 角元引线 AP, BQ, CR 汇于 Z
+      line(A, P, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      line(B, Q, {stroke: BLUE, 'stroke-width': 2}, gStep);
+      line(C, R, {stroke: BLUE, 'stroke-width': 2}, gStep);
+
+      circle(X, 12, {stroke: ORANGE, 'stroke-width': 1.5, 'stroke-dasharray': '3 3'}, gStep);
+      circle(Z, 12, {stroke: BLUE, 'stroke-width': 1.5, 'stroke-dasharray': '3 3'}, gStep);
+      break;
+
+    case 5:
+      // 步骤 5：三组共点大一统，充要等价成立
+      drawPoints(true, true, true);
+      // 内层塞瓦 (绿)
+      segDashed(D, P, GREEN, 1.8, gStep);
+      segDashed(E, Q, GREEN, 1.8, gStep);
+      segDashed(F, R, GREEN, 1.8, gStep);
+
+      // 边元塞瓦 (橙)
+      segDashed(A, D, ORANGE, 1.8, gStep);
+      segDashed(B, E, ORANGE, 1.8, gStep);
+      segDashed(C, F, ORANGE, 1.8, gStep);
+
+      // 角元引线 (蓝)
+      line(A, P, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      line(B, Q, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+      line(C, R, {stroke: BLUE, 'stroke-width': 2.2}, gStep);
+
+      // 共点光晕强调
+      circle(Y, 15, {stroke: GREEN, 'stroke-width': 2, opacity: 0.7}, gStep);
+      circle(X, 15, {stroke: ORANGE, 'stroke-width': 2, opacity: 0.7}, gStep);
+      circle(Z, 15, {stroke: BLUE, 'stroke-width': 2, opacity: 0.7}, gStep);
+      break;
+  }
+}
+
+/* ============ 步骤文本内容 ============ */
+const steps = [
+  {
+    title: '题设条件与双层几何构形',
+    body: `在 $\\triangle ABC$ 中，三边上分别有点 $D \\in BC, E \\in CA, F \\in AB$，构成内层三角形 $\\triangle DEF$。<br>
+           在内层 $\\triangle DEF$ 的三边上分别有点 $P \\in EF, Q \\in FD, R \\in DE$。<br>
+           <div class="formula-box">
+             <b>已知条件</b>：$DP, EQ, FR$ 三线共点于点 <span style="color:${GREEN};font-weight:bold;">$Y$</span>。<br>
+             <b>求证目标</b>：$AP, BQ, CR$ 三线共点 $\\Longleftrightarrow$ $AD, BE, CF$ 三线共点。
+           </div>
+           本题的核心在于利用正弦定理/面积比，建立内层分点与外层顶角正弦之间的桥梁。`
+  },
+  {
+    title: '① 顶角剖分与面积/正弦比分解',
+    body: `连接 $AP$。在 $\\triangle AEF$ 中，线段 $AP$ 将其分割为 $\\triangle AEP$ 与 $\\triangle AFP$。<br>
+           两三角形共顶点 $A$ 且底边在同一直线 $EF$ 上，其面积比等于底边线段比：<br>
+           <div class="formula-box">
+             $$\\frac{EP}{PF} = \\frac{S_{\\triangle AEP}}{S_{\\triangle AFP}} = \\frac{\\frac{1}{2} AE \\cdot AP \\cdot \\sin\\angle PAE}{\\frac{1}{2} AF \\cdot AP \\cdot \\sin\\angle PAF}$$
+           </div>
+           由于 $E \\in AC, F \\in AB$，有 $\\angle PAE = \\angle PAC$ 且 $\\angle PAF = \\angle BAP$。<br>
+           约去公因式 $\\frac{1}{2} AP$，即得核心分解式：<br>
+           <span style="color:${BLUE};font-weight:bold;font-size:14.5px;">$$\\frac{EP}{PF} = \\frac{EA}{AF} \\cdot \\frac{\\sin\\angle PAC}{\\sin\\angle BAP}$$</span>`
+  },
+  {
+    title: '② 轮换对偶与三式联乘',
+    body: `同理，对顶点 $B$ 及 $\\triangle BFD$ 中的截线 $BQ$、顶点 $C$ 及 $\\triangle CDE$ 中的截线 $CR$ 应用完全相同的面积分解：<br>
+           <div class="formula-box">
+             $$\\frac{FQ}{QD} = \\frac{FB}{BD} \\cdot \\frac{\\sin\\angle QBA}{\\sin\\angle CBQ}, \\quad \\frac{DR}{RE} = \\frac{DC}{CE} \\cdot \\frac{\\sin\\angle RCB}{\\sin\\angle ACR}$$
+           </div>
+           将上述三个分比等式相乘，并移项整理各因子：<br>
+           <span style="color:${PURPLE};font-weight:bold;font-size:13.5px;">
+             $$\\left(\\frac{EP}{PF} \\cdot \\frac{FQ}{QD} \\cdot \\frac{DR}{RE}\\right) \\cdot \\left(\\frac{BD}{DC} \\cdot \\frac{CE}{EA} \\cdot \\frac{AF}{FB}\\right) \\cdot \\left(\\frac{\\sin\\angle BAP}{\\sin\\angle PAC} \\cdot \\frac{\\sin\\angle CBQ}{\\sin\\angle QBA} \\cdot \\frac{\\sin\\angle ACR}{\\sin\\angle RCB}\\right) = 1$$
+           </span>`
+  },
+  {
+    title: '③ 内层塞瓦定理：内层比消去',
+    body: `注意到题设已知强条件：在 $\\triangle DEF$ 中，$DP, EQ, FR$ 三线共点于点 <span style="color:${GREEN};font-weight:bold;">$Y$</span>。<br>
+           根据塞瓦定理（Ceva\'s Theorem）边长比形式：<br>
+           <div class="formula-box">
+             <span style="color:${GREEN};font-weight:bold;font-size:14.5px;">$$\\frac{EP}{PF} \\cdot \\frac{FQ}{QD} \\cdot \\frac{DR}{RE} = 1$$</span>
+           </div>
+           代入步骤 ② 的联乘式，第一项内层比值积恰好为 1，直接消去，得到惊艳的边元与角元守恒等式：<br>
+           <span style="color:${RED};font-weight:bold;font-size:14px;">
+             $$\\left(\\frac{BD}{DC} \\cdot \\frac{CE}{EA} \\cdot \\frac{AF}{FB}\\right) \\cdot \\left(\\frac{\\sin\\angle BAP}{\\sin\\angle PAC} \\cdot \\frac{\\sin\\angle CBQ}{\\sin\\angle QBA} \\cdot \\frac{\\sin\\angle ACR}{\\sin\\angle RCB}\\right) = 1$$
+           </span>`
+  },
+  {
+    title: '④ 边元塞瓦与角元塞瓦对偶解析',
+    body: `仔细观察守恒等式中的两个关键乘积因子：<br>
+           1. <b>边元乘积</b>：由经典塞瓦定理，在 $\\triangle ABC$ 中：<br>
+           <div class="formula-box">
+             $$AD, BE, CF\\text{ 三线共点于 } X \\Longleftrightarrow \\frac{BD}{DC} \\cdot \\frac{CE}{EA} \\cdot \\frac{AF}{FB} = 1$$
+           </div>
+           2. <b>角元乘积</b>：由角元塞瓦定理（Trigonometric Ceva），在 $\\triangle ABC$ 中：<br>
+           <div class="formula-box">
+             $$AP, BQ, CR\\text{ 三线共点于 } Z \\Longleftrightarrow \\frac{\\sin\\angle BAP}{\\sin\\angle PAC} \\cdot \\frac{\\sin\\angle CBQ}{\\sin\\angle QBA} \\cdot \\frac{\\sin\\angle ACR}{\\sin\\angle RCB} = 1$$
+           </div>`
+  },
+  {
+    title: '⑤ 充要等价与结论达成',
+    body: `由于两项乘积之积恒等于 1（互为倒数）：<br>
+           <div class="formula-box">
+             $$M_{\\text{边}} \\cdot M_{\\text{角}} = 1$$
+           </div>
+           因此，乘积中一个等于 1 当且仅当另一个等于 1！<br>
+           <div style="background:#eff6ff;border:2px solid #2563eb;padding:10px 14px;border-radius:10px;margin-top:10px;text-align:center;">
+             <b style="color:#1d4ed8;font-size:15px;">$$AP, BQ, CR\\text{ 三线共点 } \\Longleftrightarrow AD, BE, CF\\text{ 三线共点}$$</b>
+           </div>
+           原命题得证！图形中展示了三组三线共点的完美对应。`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  // 关键：步骤切换后强制重新排版数学公式
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3000);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

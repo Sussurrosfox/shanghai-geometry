@@ -1,0 +1,31 @@
+---
+title: '练习 3：菱形外接圆与三点共线证明'
+chapter: 5
+problem: 3
+source-chapter: '05'
+source-file: '05/3.md'
+id: 'ch05-p03'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+已知菱形 ${ABCD}$ 中， $\angle A = {120}^{ \circ  }$ . 圆 $O$ 为 $\triangle {ABC}$ 的外接圆， $M$ 为其上一点，连接 ${MC}$ 交 ${AB}$ 于点 $E,{AM}$ 交 ${CB}$ 的延长线于点 $F$ . 证明: $D, E, F$ 三点共线.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图，连接 ${AC},{DF},{DE}$ . 因为点 $M$ 在圆 $O$ 上，所以 $\angle {AMC} = {60}^{ \circ  } = \angle {ABC} = \; \angle {ACB}$ ，则 $\triangle  {AMC} \backsim   \triangle  {ACF}$ ，于是 $\frac{MC}{MA} = \frac{CF}{CA} = \frac{CF}{CD}$ . 又因为 $\angle {AMC} = \angle {BAC}$ ，所以 $\triangle {AMC} \backsim  \triangle {EAC}$ ，则 $\frac{MC}{MA} = \frac{AC}{AE} = \frac{AD}{AE}$ ，所以 $\frac{CF}{CD} = \frac{AD}{AE}$ . 又 $\angle {BAD} = \angle {BCD} = \; {120}^{ \circ  }$ ，则 $\triangle  {CFD} \backsim   \triangle  {ADE}$ ，因此 $\angle {ADE} = \angle {DFB}$ . 因为 ${AD}//{BC}$ ，所以 $\angle {ADF} = \; \angle {DFB} = \angle {ADE}$ ，于是 $F, E, D$ 三点共线. 原问题得证.
+
+![](../images/154_279_222_556_315_0.jpg)
+:::
+
+

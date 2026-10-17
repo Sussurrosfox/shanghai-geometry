@@ -1,0 +1,60 @@
+---
+title: '练习 34：外接圆弧中点与内心垂直证明'
+chapter: 5
+problem: 34
+source-chapter: '05'
+source-file: '05/34.md'
+id: 'ch05-p34'
+tags:
+- 练习一（综合习题）
+- 中点
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span> <span class="problem-meta-badge badge-tag">中点</span>
+:::
+
+## 题目
+
+设 $M$ 是非等腰 $\triangle {ABC}$ 的外接圆圆弧 $\overset{\text{ ⏜ }}{BAC}$ 的中点, $I$ 是 $\triangle {ABC}$ 的内心, 点 $L$ 在边 ${BC}$ 上, ${AL}$ 为 $\angle {BAC}$ 的平分线, ${MI}$ 与 $\triangle {ABC}$ 的外接圆的第二个交点为 $K,\triangle {AKL}$ 的外接圆与直线 ${BC}$ 的第二个交点为 $P$ . 证明: $\angle {AIP} = {90}^{ \circ  }$ .
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,延长 ${AL}$ 与 $\triangle {ABC}$ 的外接圆交于点 $N$ ,则
+
+$$
+\angle {PKM} = \angle {PKA} + \angle {AKM}
+$$
+
+$$
+= \angle {PLA} + \angle {AKM}
+$$
+
+$$
+= \angle {NAC} + \angle {LCA} + \angle {AKM}
+$$
+
+$$
+= \angle {BAN} + \angle {LCA} + \angle {AKM}
+$$
+
+$$
+= \frac{1}{2}\overset{\text{ ⏜ }}{BN} + \frac{1}{2}\overset{\text{ ⏜ }}{AB} + \frac{1}{2}\overset{\text{ ⏜ }}{AM}
+$$
+
+$$
+= \frac{1}{2}\overset{\text{ ⏜ }}{MKN} = {90}^{ \circ  }\text{ . }
+$$
+
+又 $\angle {MKN} = {90}^{ \circ  }$ ,所以, $P, K, N$ 三点共线.
+
+由 $\angle {LNB} = \angle {ANB}$ 及 $\angle {NBL} = \angle {NAC} = \angle {NAB}$ 知 $\triangle {NBL} \backsim  \triangle {NAB}$ ,故 $N{I}^2 = N{B}^2 = {NL} \cdot  {NA} = {NK} \cdot  {NP}$ 结合 $\angle {INK} = \angle {INP}$ 知 $\triangle {IKN} \backsim  \triangle {PIN}$ , 所以 $\angle {PIN} = \angle {IKN} = {90}^{ \circ  }$ ,即 $\angle {AIP} = {90}^{ \circ  }$ . 原问题得证.
+
+![](../images/169_264_195_487_468_0.jpg)
+:::
+
+

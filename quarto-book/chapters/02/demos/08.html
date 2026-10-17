@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 7：凸四边形与内部点的相似比例证明 — 分步交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.3px; }
+  header p { font-size: 13.5px; color: #64748b; margin-top: 6px; line-height: 1.6; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 590px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; display: block; }
+  .panel {
+    flex: 1 1 390px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; max-height: 62vh; }
+  .step-list::-webkit-scrollbar { width: 5px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s ease;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; color: #1e293b; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 9px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 2px 10px rgba(37,99,235,.08); }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 13.5px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:11px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .formula-highlight {
+    display: inline-block; background: rgba(37,99,235,0.08); padding: 2px 6px;
+    border-radius: 6px; font-weight: 600; color: #1d4ed8;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 7：凸四边形与内部点的相似比例证明</h1>
+    <p>已知凸四边形 $ABCD$ 内部点 $M$ 满足 $MA = MC$，$ \angle AMB = \angle MAD + \angle MCD$，$ \angle CMD = \angle MCB + \angle MAB$。<br>
+       求证：$AB \cdot CM = BC \cdot MD$</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="0 0 640 530" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">快捷键：键盘 <kbd>←</kbd> <kbd>→</kbd> 切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何精确坐标 ============ */
+// 严格满足 MA = MC, ∠AMB = ∠MAD + ∠MCD, ∠CMD = ∠MCB + ∠MAB
+const A = { x: 146.00, y: 320.00 };
+const B = { x: 296.80, y: 447.60 };
+const C = { x: 494.00, y: 320.00 };
+const D = { x: 292.41, y:  71.73 };
+const M = { x: 320.00, y: 233.00 };
+
+/* ============ 矢量几何基础运算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+/* ============ SVG 渲染底层工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=1.8, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+
+function dot(p, color, r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.6}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", serif', 'font-style': 'italic',
+    'font-weight': bold ? '700' : '400'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 等长标记 */
+function tickMark(p, q, color='#dc2626', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2}, parent);
+}
+
+/* 高亮线段（底层发光 + 表层主线） */
+function highlightSeg(p, q, color, parent, w=4){
+  line(p, q, {stroke:color, 'stroke-width':w+6, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+/* 自适应劣角弧绘制（严格沿劣角方向，支持扇形半透明填充） */
+function angleArc(v, p1, p2, r=22, attrs={}, parent, fill=false){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += Math.PI * 2;
+  while (diff > Math.PI) diff -= Math.PI * 2;
+  const sweep = diff >= 0 ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  const d = fill
+    ? `M ${v.x} ${v.y} L ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y} Z`
+    : `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`;
+  return el('path', {
+    d,
+    fill: fill ? (attrs.fill || 'rgba(37,99,235,0.15)') : 'none',
+    stroke: attrs.stroke || '#dc2626',
+    'stroke-width': attrs['stroke-width'] || 2,
+    ...attrs
+  }, parent);
+}
+
+/* 角标签（在角平分线位置放置文字） */
+function angleLabel(v, p1, p2, text, r=32, color='#2563eb', parent, size=13){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += Math.PI * 2;
+  while (diff > Math.PI) diff -= Math.PI * 2;
+  const midAngle = a1 + diff / 2;
+  const pos = { x: v.x + r * Math.cos(midAngle), y: v.y + r * Math.sin(midAngle) };
+  const t = el('text', {
+    x: pos.x, y: pos.y, 'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", serif', 'font-style': 'italic',
+    'font-weight': '600'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+/* 右上角 HUD 状态卡片（绝不侵入四边形几何图形区） */
+function drawHudCard(title, subtitle, color, parent){
+  const card = el('g', { class: 'hud-card' }, parent);
+  el('rect', {
+    x: 372, y: 16, width: 252, height: 48, rx: 8,
+    fill: '#ffffff', stroke: color, 'stroke-width': 1.6,
+    filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'
+  }, card);
+  el('circle', { cx: 390, cy: 40, r: 4.5, fill: color }, card);
+  const t1 = el('text', {
+    x: 404, y: 32, 'font-size': 13, fill: '#0f172a',
+    'dominant-baseline': 'central', 'font-weight': '700'
+  }, card);
+  t1.textContent = title;
+  if (subtitle){
+    const t2 = el('text', {
+      x: 404, y: 49, 'font-size': 11.5, fill: '#64748b',
+      'dominant-baseline': 'central'
+    }, card);
+    t2.textContent = subtitle;
+  }
+}
+
+/* ============ 分层容器 ============ */
+const gBase = el('g', { id: 'gBase' }, stage);
+const gStep = el('g', { id: 'gStep' }, stage);
+const gPts  = el('g', { id: 'gPts' }, stage);
+
+/* ============ 基础底图 ============ */
+function drawBase(){
+  gBase.innerHTML = '';
+  // 凸四边形 ABCD 外边框
+  polygon([A, B, C, D], { stroke: '#334155', 'stroke-width': 2.2, fill: '#f8fafc', 'fill-opacity': 0.7 }, gBase);
+  // 对角线 AC（底色细虚线）
+  line(A, C, { stroke: '#94a3b8', 'stroke-width': 1.4, 'stroke-dasharray': '5 4' }, gBase);
+  // 连接线 MA, MB, MC, MD
+  line(M, A, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+  line(M, B, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+  line(M, C, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+  line(M, D, { stroke: '#64748b', 'stroke-width': 1.5 }, gBase);
+}
+
+/* ============ 点与标签绘制 ============ */
+function drawPoints(stepIndex){
+  gPts.innerHTML = '';
+  // 点 A, B, C, D, M
+  dot(A, '#1e293b', 4.5, gPts);
+  dot(B, '#1e293b', 4.5, gPts);
+  dot(C, '#1e293b', 4.5, gPts);
+  dot(D, '#1e293b', 4.5, gPts);
+  dot(M, '#dc2626', 5, gPts);
+
+  // 基础标签避让微调
+  label(A, 'A', -20, 0, '#0f172a', gPts);
+  label(B, 'B', 0, 22, '#0f172a', gPts);
+  label(C, 'C', 20, 0, '#0f172a', gPts);
+  label(M, 'M', 18, -10, '#dc2626', gPts);
+
+  // D 与 D' 标签在不同步骤的呈现
+  if (stepIndex === 2 || stepIndex === 3) {
+    dot(D, '#7c3aed', 5.5, gPts);
+    label(D, "D'(D)", 0, -20, '#7c3aed', gPts);
+  } else if (stepIndex === 4) {
+    dot(D, '#059669', 5.5, gPts);
+    label(D, "D' ≡ D", 0, -20, '#059669', gPts);
+  } else {
+    label(D, 'D', 0, -18, '#0f172a', gPts);
+  }
+}
+
+/* ============ 颜色体系 ============ */
+const BLUE   = '#2563eb';
+const GREEN  = '#059669';
+const RED    = '#dc2626';
+const PURPLE = '#7c3aed';
+const CYAN   = '#0891b2';
+const ORANGE = '#ea580c';
+
+/* ============ 动态步骤层渲染 ============ */
+function renderStep(s){
+  gStep.innerHTML = '';
+  drawPoints(s);
+
+  switch(s){
+    case 0: { // ⓪ 已知条件与初始构型
+      // 高亮 MA = MC
+      highlightSeg(M, A, RED, gStep, 3.5);
+      highlightSeg(M, C, RED, gStep, 3.5);
+      tickMark(M, A, RED, gStep);
+      tickMark(M, C, RED, gStep);
+
+      // 右上角 HUD 状态卡片
+      drawHudCard('已知条件：MA = MC', 'M 位于 △ACD 内部', RED, gStep);
+      break;
+    }
+
+    case 1: { // ① 周角代换导出对角关系
+      // ∠ABC = ∠AMD (蓝色对角)
+      angleArc(B, A, C, 26, { stroke: BLUE, fill: 'rgba(37,99,235,0.18)', 'stroke-width': 2.2 }, gStep, true);
+      angleArc(M, A, D, 28, { stroke: BLUE, fill: 'rgba(37,99,235,0.18)', 'stroke-width': 2.2 }, gStep, true);
+      angleLabel(B, A, C, '∠ABC', 40, BLUE, gStep, 13);
+      angleLabel(M, A, D, '∠AMD', 44, BLUE, gStep, 13);
+
+      // ∠ADC = ∠BMC (橙色对角)
+      angleArc(D, A, C, 28, { stroke: ORANGE, fill: 'rgba(234,88,12,0.18)', 'stroke-width': 2.2 }, gStep, true);
+      angleArc(M, B, C, 28, { stroke: ORANGE, fill: 'rgba(234,88,12,0.18)', 'stroke-width': 2.2 }, gStep, true);
+      angleLabel(D, A, C, '∠ADC', 42, ORANGE, gStep, 13);
+      angleLabel(M, B, C, '∠BMC', 42, ORANGE, gStep, 13);
+
+      drawHudCard('周角转换结果', '∠ABC = ∠AMD 且 ∠ADC = ∠BMC', BLUE, gStep);
+      break;
+    }
+
+    case 2: { // ② 构造辅助相似 △AMD' ∽ △CBA
+      // 高亮两个相似三角形区域
+      polygon([A, M, D], { fill: 'rgba(124,58,237,0.18)', stroke: PURPLE, 'stroke-width': 2.2 }, gStep);
+      polygon([C, B, A], { fill: 'rgba(37,99,235,0.16)', stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+
+      // 对应角 1: ∠AMD' = ∠ABC (蓝色)
+      angleArc(M, A, D, 26, { stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+      angleArc(B, A, C, 26, { stroke: BLUE, 'stroke-width': 2.2 }, gStep);
+
+      // 对应角 2: ∠MAD' = ∠ACB (绿色)
+      angleArc(A, M, D, 34, { stroke: GREEN, 'stroke-width': 2.2, fill: 'rgba(5,150,105,0.18)' }, gStep, true);
+      angleArc(C, A, B, 34, { stroke: GREEN, 'stroke-width': 2.2, fill: 'rgba(5,150,105,0.18)' }, gStep, true);
+      angleLabel(A, M, D, "∠MAD'", 50, GREEN, gStep, 12.5);
+      angleLabel(C, A, B, '∠ACB', 48, GREEN, gStep, 12.5);
+
+      drawHudCard("第一对相似 △AMD' ∽ △CBA", 'AA相似：两组对应角分别相等', PURPLE, gStep);
+      break;
+    }
+
+    case 3: { // ③ 导出第二对相似 △D'AC ∽ △MCB
+      // 高亮 △D'AC 与 △MCB
+      polygon([D, A, C], { fill: 'rgba(5,150,105,0.18)', stroke: GREEN, 'stroke-width': 2.2 }, gStep);
+      polygon([M, C, B], { fill: 'rgba(234,88,12,0.18)', stroke: ORANGE, 'stroke-width': 2.2 }, gStep);
+
+      // 夹角相等: ∠D'AC = ∠MCB (红色醒目角弧)
+      angleArc(A, D, C, 30, { stroke: RED, fill: 'rgba(220,38,38,0.2)', 'stroke-width': 2.2 }, gStep, true);
+      angleArc(C, M, B, 30, { stroke: RED, fill: 'rgba(220,38,38,0.2)', 'stroke-width': 2.2 }, gStep, true);
+      angleLabel(A, D, C, "∠D'AC", 48, RED, gStep, 13);
+      angleLabel(C, M, B, '∠MCB', 48, RED, gStep, 13);
+
+      drawHudCard("第二对相似 △D'AC ∽ △MCB", 'SAS两边成比例且夹角相等', GREEN, gStep);
+      break;
+    }
+
+    case 4: { // ④ 同一法确定点 D' 与 D 重合
+      // 显示 ∠AD'C = ∠CMB = ∠ADC
+      angleArc(D, A, C, 28, { stroke: GREEN, fill: 'rgba(5,150,105,0.22)', 'stroke-width': 2.5 }, gStep, true);
+      angleArc(M, C, B, 28, { stroke: GREEN, fill: 'rgba(5,150,105,0.22)', 'stroke-width': 2.5 }, gStep, true);
+      angleLabel(D, A, C, '∠ADC', 45, GREEN, gStep, 13);
+
+      // 相似三角形 △AMD 与 △CBA 外框强化
+      polygon([A, M, D], { stroke: PURPLE, 'stroke-width': 2.8, fill: 'rgba(124,58,237,0.12)' }, gStep);
+      polygon([C, B, A], { stroke: BLUE, 'stroke-width': 2.8, fill: 'rgba(37,99,235,0.12)' }, gStep);
+
+      drawHudCard("同一法重合：D' ≡ D", '∠AD\'C = ∠ADC ⟹ △AMD ∽ △CBA', GREEN, gStep);
+      break;
+    }
+
+    case 5: { // ⑤ 比例变形得出最终结论
+      // 高亮目标乘积的四条线段
+      // AB 与 CM (宝蓝)
+      highlightSeg(A, B, BLUE, gStep, 5);
+      highlightSeg(C, M, BLUE, gStep, 5);
+      // BC 与 MD (鲜红)
+      highlightSeg(B, C, RED, gStep, 5);
+      highlightSeg(M, D, RED, gStep, 5);
+
+      // 边长标识
+      label(mid(A,B), 'AB', -16, 12, BLUE, gStep, 14);
+      label(mid(C,M), 'CM', 18, -14, BLUE, gStep, 14);
+      label(mid(B,C), 'BC', 18, 14, RED, gStep, 14);
+      label(mid(M,D), 'MD', -18, -8, RED, gStep, 14);
+
+      drawHudCard("结论：AB · CM = BC · MD", '由 AM/CB = MD/AB 与 MA = MC 得', BLUE, gStep);
+      break;
+    }
+  }
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+}
+
+/* ============ 步骤图文讲解 ============ */
+const steps = [
+  {
+    title: '⓪ 已知条件与初始构型',
+    body: `在凸四边形 $ABCD$ 内部有一点 $M$，满足等长条件 <span class="formula-highlight">$MA = MC$</span>。<br>
+           点 $M$ 位于 $\\triangle ACD$ 内部，满足两个角恒等式：<br>
+           1. $\\angle AMB = \\angle MAD + \\angle MCD$<br>
+           2. $\\angle CMD = \\angle MCB + \\angle MAB$<br>
+           <div class="formula-box">求证目标：<span class="formula-highlight">$AB \\cdot CM = BC \\cdot MD$</span></div>`
+  },
+  {
+    title: '① 周角代换导出对角关系',
+    body: `考察四边形 $ABCM$ 的内角和为 $360^\\circ$：<br>
+           $\\angle MCB + \\angle MAB = 360^\\circ - \\angle AMC - \\angle ABC$。<br>
+           代入已知条件 $\\angle CMD = \\angle MCB + \\angle MAB$，得：<br>
+           $\\angle CMD = 360^\\circ - \\angle AMC - \\angle ABC \\implies \\angle ABC = 360^\\circ - \\angle AMC - \\angle CMD$。<br>
+           围绕点 $M$ 周角有 $\\angle AMD + \\angle CMD + \\angle AMC = 360^\\circ$，立得：<br>
+           <div class="formula-box" style="color:#2563eb;font-weight:700;">$\\angle ABC = \\angle AMD$</div>
+           同理考察四边形 $ADCM$ 内角和与围绕点 $M$ 的周角，可得：<br>
+           <div class="formula-box" style="color:#ea580c;font-weight:700;">$\\angle ADC = \\angle BMC$</div>`
+  },
+  {
+    title: "② 构造辅助相似 △AMD' ∽ △CBA",
+    body: `采用<b>同一法</b>证明：<br>
+           在射线 $MD$ 上取点 $D'$，使得 $\\angle MAD' = \\angle ACB$。<br>
+           结合第 ① 步已证明的 $\\angle AMD' = \\angle AMD = \\angle ABC$，在 $\\triangle AMD'$ 与 $\\triangle CBA$ 中，两组对应角分别相等：<br>
+           <div class="formula-box" style="color:#7c3aed;font-weight:700;">$\\triangle AMD' \\sim \\triangle CBA \\quad \\text{(AA 相似)}$</div>`
+  },
+  {
+    title: "③ 导出第二对相似 △D'AC ∽ △MCB",
+    body: `由 $\\triangle AMD' \\sim \\triangle CBA$ 得对应角相等：$\\angle D'AM = \\angle ACB$。<br>
+           由于射线 $AC$ 位于两角内部：<br>
+           $\\angle D'AC = \\angle D'AM + \\angle MAC = \\angle ACB + \\angle MCA = \\angle MCB$。<br>
+           又由相似比 $\\dfrac{D'A}{AC} = \\dfrac{AM}{CB}$，代入已知条件 $AM = CM$：<br>
+           $\\dfrac{D'A}{AC} = \\dfrac{CM}{CB} \\iff \\dfrac{D'A}{CM} = \\dfrac{AC}{CB}$。<br>
+           两边成比例且夹角相等（SAS），得第二对相似：<br>
+           <div class="formula-box" style="color:#059669;font-weight:700;">$\\triangle D'AC \\sim \\triangle MCB$</div>`
+  },
+  {
+    title: "④ 同一法确定点 D' 与 D 重合",
+    body: `由相似 $\\triangle D'AC \\sim \\triangle MCB$ 的对应角相等，得：<br>
+           $\\angle AD'C = \\angle CMB$。<br>
+           结合第 ① 步已导出的 $\\angle CMB = \\angle ADC$，立得：<br>
+           <div class="formula-box">$\\angle AD'C = \\angle ADC$</div>
+           因点 $D'$ 位于射线 $MD$ 上，且点 $D'$ 与 $D$ 对线段 $AC$ 的张角相同且位于同侧，故点 $D'$ 必与 $D$ 重合（$D' \\equiv D$）！<br>
+           由此正式确立核心相似：<br>
+           <div class="formula-box" style="color:#dc2626;font-weight:700;">$\\triangle AMD \\sim \\triangle CBA$</div>`
+  },
+  {
+    title: '⑤ 比例变形得出最终结论',
+    body: `由核心相似 $\\triangle AMD \\sim \\triangle CBA$，对应边成比例：<br>
+           $\\dfrac{AM}{CB} = \\dfrac{MD}{AB} \\implies AB \\cdot AM = BC \\cdot MD$。<br>
+           最后利用已知条件 $AM = CM$ 代换，立即得出：<br>
+           <div class="formula-box" style="font-weight:bold;color:#dc2626;font-size:17px;border-color:#dc2626;background:#fef2f2;">
+             $AB \\cdot CM = BC \\cdot MD$
+           </div>
+           命题获证！`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i === 0 ? '✦' : i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  if (typeof renderMath === 'function') {
+    renderMath();
+  }
+  if (typeof renderMath === "function") renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3000);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+// 初始渲染
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

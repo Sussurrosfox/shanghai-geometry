@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 6：等腰三角形底边割线比例定理 — 分步证明交互演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 20px 16px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 16px; }
+  header h1 { font-size: 23px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+  header .sub-desc {
+    font-size: 14px; color: #475569; margin-top: 6px; line-height: 1.6;
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .main {
+    display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap;
+  }
+  .canvas-card {
+    flex: 1 1 580px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,0.07); padding: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; border: 1px solid #e2e8f0;
+  }
+  .canvas-legend {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 8px 10px; font-size: 12px; color: #64748b; border-bottom: 1px dashed #e2e8f0;
+    margin-bottom: 6px;
+  }
+  .legend-items { display: flex; gap: 14px; }
+  .legend-tag { display: inline-flex; align-items: center; gap: 5px; }
+  .legend-tag span.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  svg {
+    width: 100%; height: auto; max-height: 74vh;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.02));
+  }
+  .panel {
+    flex: 1 1 380px; background: #ffffff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,0.07); padding: 20px;
+    display: flex; flex-direction: column; border: 1px solid #e2e8f0;
+  }
+  .panel-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;
+  }
+  .panel-header h2 { font-size: 16px; font-weight: 700; color: #0f172a; }
+  .step-count { font-size: 13px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 12px; }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; padding-right: 4px; }
+  .step-list::-webkit-scrollbar { width: 5px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 11px 14px;
+    margin-bottom: 9px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+  }
+  .step-item:hover { border-color: #94a3b8; background: #f8fafc; }
+  .step-item .title {
+    font-weight: 600; font-size: 14px; display: flex; gap: 9px; align-items: center;
+    color: #1e293b;
+  }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body {
+    font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 9px;
+    display: none; padding-top: 8px; border-top: 1px dashed #e2e8f0;
+  }
+  .step-item.active {
+    border-color: #2563eb; background: #f0f7ff;
+    box-shadow: 0 2px 10px rgba(37,99,235,0.08);
+  }
+  .step-item.active .badge { background: #2563eb; color: #ffffff; }
+  .step-item.active .body { display: block; }
+  .step-item.done { border-color: #cbd5e1; }
+  .step-item.done .badge { background: #93c5fd; color: #ffffff; }
+  
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all 0.15s; font-family: inherit;
+  }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1.2; box-shadow: 0 2px 6px rgba(37,99,235,0.25); }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:1px 5px; font-size:11px; }
+
+  /* 公式排版增强 */
+  .math {
+    font-family: "Times New Roman", "STIX Two Math", serif;
+    font-style: italic;
+    font-size: 1.05em;
+    padding: 0 2px;
+  }
+  .fraction {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0 4px;
+    font-family: "Times New Roman", "STIX Two Math", serif;
+    font-style: italic;
+    font-size: 1.02em;
+    line-height: 1.1;
+  }
+  .fraction .num {
+    border-bottom: 1.4px solid #1e293b;
+    padding-bottom: 2px;
+  }
+  .fraction .den {
+    padding-top: 2px;
+  }
+  .formula-card {
+    background: #ffffff;
+    border-left: 3.5px solid #2563eb;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14.5px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    border-top: 1px solid #f1f5f9;
+    border-right: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .highlight-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- KaTeX 全局自愈渲染函数（支持动态步骤与几何宏扩展） -->
+  <script>
+    window.renderMath = function(target) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(target || document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          macros: {
+            '\\parallel': '\\mathbin{/\\!/}',
+            '\\bigtriangleup': '\\triangle',
+            '\\ang': '\\angle',
+            '\\angmsd': '\\angle'
+          },
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          throwOnError: false,
+          strict: false
+        });
+      }
+    };
+  </script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>等腰三角形底边割线比例定理（例 6）</h1>
+    <p class="sub-desc">
+      <b>已知</b>：等腰 <span class="math">△ABC</span> 中，<span class="math">CA = CB</span>，点 <span class="math">M</span> 为底边 <span class="math">AB</span> 上一点。过点 <span class="math">M</span> 的割线交 <span class="math">CA</span> 的延长线于点 <span class="math">A<sub>1</sub></span>，交 <span class="math">CB</span> 于点 <span class="math">B<sub>1</sub></span>。<br>
+      <b>求证</b>：<span class="fraction"><span class="num">A<sub>1</sub>A</span><span class="den">A<sub>1</sub>M</span></span> = <span class="fraction"><span class="num">B<sub>1</sub>B</span><span class="den">B<sub>1</sub>M</span></span>
+    </p>
+  </header>
+
+  <div class="main">
+    <div class="canvas-card">
+      <div class="canvas-legend">
+        <div class="legend-items">
+          <div class="legend-tag"><span class="dot" style="background:#2563eb;"></span> 原始割线 / 相似形</div>
+          <div class="legend-tag"><span class="dot" style="background:#7c3aed;"></span> 轴对称线 / 相似形</div>
+          <div class="legend-tag"><span class="dot" style="background:#dc2626;"></span> 角平分线</div>
+          <div class="legend-tag"><span class="dot" style="background:#059669;"></span> 等腰边 / 外角</div>
+        </div>
+        <div>坐标解算：解析几何零误差</div>
+      </div>
+      <!-- SVG 画布：viewBox 经精密包围盒计算，四周留白舒适不截断 -->
+      <svg id="stage" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>证明步骤拆解</h2>
+        <span class="step-count" id="stepIndicator">步骤 1 / 6</span>
+      </div>
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">使用鼠标点击步骤或按键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何解算体系（解析几何高精度计算） ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+
+function lineIntersect(p1, d1, p2, d2){
+  const det = d1.x*(-d2.y) - (-d2.x)*d1.y;
+  if (Math.abs(det) < 1e-9) return null;
+  const t = ((p2.x-p1.x)*(-d2.y) - (-d2.x)*(p2.y-p1.y)) / det;
+  return add(p1, mul(d1, t));
+}
+
+/* --- 精密基准点与解析解算 --- */
+// 等腰三角形 ABC (CA = CB)，底边 AB 水平
+const A = { x: 190.0, y: 290.0 };
+const B = { x: 470.0, y: 290.0 };
+const C = { x: 330.0, y: 80.0 };
+
+// M 为 AB 上非中点（参数 t = 0.38）
+const M = { x: A.x + 0.38 * (B.x - A.x), y: 290.0 }; // (296.4, 290.0)
+
+// B1 为 CB 线段上点（参数 u = 0.65）
+const B1 = { x: C.x + 0.65 * (B.x - C.x), y: C.y + 0.65 * (B.y - C.y) }; // (421.0, 216.5)
+
+// A1: 割线 MB1 与 CA 的交点（在 CA 的延长线上）
+const A1 = lineIntersect(C, sub(A, C), M, sub(B1, M)); // (121.0, 393.4)
+
+// 轴对称构造：关于底边 AB (y = 290.0) 对称
+// 点 B1 关于水平线 y = 290 的对称点
+const B1_sym = { x: B1.x, y: 2 * A.y - B1.y }; // (421.0, 363.5)
+const d_sym = sub(B1_sym, M);
+
+// A2: 对称直线与 CA 的交点（在线段 CA 上）
+const A2 = lineIntersect(C, sub(A, C), M, d_sym); // (220.0, 245.0)
+
+// B2: 对称直线与 CB 的交点（在 CB 的延长线上）
+const B2 = lineIntersect(C, sub(B, C), M, d_sym); // (582.5, 458.8)
+
+/* ============ SVG 渲染底层工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function line(p, q, attrs = {}, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+
+function segDashed(p, q, color, w=2, dash='6 4', parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':dash, fill:'none'}, parent);
+}
+
+function dot(p, color='#0f172a', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#ffffff', 'stroke-width':1.8}, parent);
+}
+
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+
+// 防遮挡标签系统：内置白色描边防覆盖
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx,
+    y: p.y + dy,
+    'font-size': size,
+    fill: color,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", "Cambria Math", serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '500',
+    'paint-order': 'stroke fill',
+    stroke: '#ffffff',
+    'stroke-width': '4.5px',
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+
+// 优美高亮线段（底层发光晕层 + 顶层亮线）
+function highlightSeg(p, q, color, parent, w=3.5, haloW=9){
+  line(p, q, {stroke:color, 'stroke-width':haloW, 'stroke-linecap':'round', opacity:0.25}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+
+// 精确自适应劣角弧绘制函数（两点向顶点夹角 <= 180°）
+function angleArc(v, p1, p2, r=22, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  const a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let diff = a2 - a1;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  const sweep = diff > 0 ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a1 + diff), y: v.y + r * Math.sin(a1 + diff) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: attrs.stroke || '#dc2626', 'stroke-width': attrs['stroke-width'] || 2, ...attrs
+  }, parent);
+}
+
+// 双角弧绘制
+function doubleAngleArc(v, p1, p2, r=20, gap=4.5, attrs={}, parent){
+  angleArc(v, p1, p2, r, attrs, parent);
+  angleArc(v, p1, p2, r + gap, attrs, parent);
+}
+
+// 等长刻度线（在中点附近画道杠）
+function tickMark(p, q, color='#059669', parent, offset=0){
+  const m = mid(p,q), d = norm(sub(q,p)), n = perp(d);
+  const c = add(m, mul(d, offset));
+  line(add(c, mul(n,6)), add(c, mul(n,-6)), {stroke:color, 'stroke-width':2.2, 'stroke-linecap':'round'}, parent);
+}
+
+// 双等长刻度
+function doubleTick(p, q, color='#059669', parent){
+  tickMark(p, q, color, parent, -3.5);
+  tickMark(p, q, color, parent, 3.5);
+}
+
+/* ============ 三层渲染架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage); // 静态底层（原始几何骨架）
+const gStep = el('g', {id: 'gStep'}, stage); // 动态步骤层（每步切换先清空）
+const gPts  = el('g', {id: 'gPts'}, stage);  // 顶层点与防遮挡标签
+
+// 颜色常量库
+const BLUE   = '#2563eb', // 割线与主三角形相似
+      GREEN  = '#059669', // 等腰条件与外角
+      RED    = '#dc2626', // 角平分线与关键结论
+      PURPLE = '#7c3aed', // 轴对称与对应相似形
+      ORANGE = '#ea580c', // 对顶角与关键传递
+      SLATE  = '#334155'; // 基础几何轮廓
+
+// 底层静态绘制：仅绘制题设给定的基本构架
+function drawBase(){
+  gBase.innerHTML = '';
+  
+  // 1. 底边 AB 直线（微带两端延伸以体现直线对称轴属性）
+  line(add(A, mul(norm(sub(A, B)), 25)), add(B, mul(norm(sub(B, A)), 25)), {
+    stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '5 3'
+  }, gBase);
+  line(A, B, {stroke: SLATE, 'stroke-width': 2.4, 'stroke-linecap': 'round'}, gBase);
+
+  // 2. CA 及其向 A1 延伸的直线
+  line(C, A1, {stroke: SLATE, 'stroke-width': 2, 'stroke-linecap': 'round'}, gBase);
+
+  // 3. CB 边
+  line(C, B, {stroke: SLATE, 'stroke-width': 2.4, 'stroke-linecap': 'round'}, gBase);
+
+  // 4. 原始割线 A1-M-B1
+  line(A1, B1, {stroke: BLUE, 'stroke-width': 2.4, 'stroke-linecap': 'round'}, gBase);
+}
+
+// 顶层点与标签渲染
+function drawPoints(step){
+  gPts.innerHTML = '';
+
+  // 基础点：全程显示
+  const basePoints = [
+    { p: C, name: 'C', dx: 0, dy: -18, c: SLATE },
+    { p: A, name: 'A', dx: -22, dy: -13, c: SLATE },
+    { p: B, name: 'B', dx: 22, dy: -13, c: SLATE },
+    { p: M, name: 'M', dx: -4, dy: -20, c: '#0f172a' },
+    { p: A1, name: 'A₁', dx: -24, dy: 14, c: BLUE },
+    { p: B1, name: 'B₁', dx: 22, dy: -10, c: BLUE }
+  ];
+
+  basePoints.forEach(pt => {
+    dot(pt.p, pt.c, 4.5, gPts);
+    label(pt.p, pt.name, pt.dx, pt.dy, pt.c, gPts);
+  });
+
+  // Step 1 及之后引入的对称点 A2, B2
+  if (step >= 1) {
+    dot(A2, PURPLE, 4.5, gPts);
+    label(A2, 'A₂', -22, -10, PURPLE, gPts);
+
+    dot(B2, PURPLE, 4.5, gPts);
+    label(B2, 'B₂', 22, 14, PURPLE, gPts);
+  }
+}
+
+// 动态步骤层渲染
+function renderStep(s){
+  gStep.innerHTML = ''; // 核心：切换前先清空动态图元，实现用完即擦除
+  drawPoints(s);
+
+  switch(s){
+    case 0: {
+      // 步骤 0：展示已知条件与等腰特性
+      // CA = CB 等长双刻度标记
+      doubleTick(C, A, GREEN, gStep);
+      doubleTick(C, B, GREEN, gStep);
+      // 底角弧线 ∠CAB 与 ∠CBA
+      angleArc(A, C, B, 26, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      angleArc(B, A, C, 26, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      // 强调割线 A1-B1
+      highlightSeg(A1, B1, BLUE, gStep, 3, 8);
+      break;
+    }
+
+    case 1: {
+      // 步骤 1：构造轴对称直线 A2-M-B2 与 CB 延长线
+      // 延长线 B-B2
+      line(B, B2, {stroke: '#94a3b8', 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      // 对称直线 A2-B2（穿过 M）
+      segDashed(A2, B2, PURPLE, 2.4, '6 4', gStep);
+      // 对称角弧 ∠A1-M-A 与 ∠A2-M-A
+      angleArc(M, A, A1, 28, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      angleArc(M, A2, A, 28, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      // 对称轴 AB 提示微晕
+      highlightSeg(A, B, '#64748b', gStep, 2, 6);
+      break;
+    }
+
+    case 2: {
+      // 步骤 2：底角外角相等与轴对称角
+      // 保持辅助线
+      line(B, B2, {stroke: '#94a3b8', 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      segDashed(A2, B2, PURPLE, 2.2, '6 4', gStep);
+
+      // 高亮两底角的外角 ∠A1-A-M 与 ∠B2-B-M（绿色双弧）
+      doubleAngleArc(A, M, A1, 24, 5, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+      doubleAngleArc(B, B2, M, 24, 5, {stroke: GREEN, 'stroke-width': 2.2}, gStep);
+
+      // 轴对称角 ∠A1-M-A 与 ∠A2-M-A
+      angleArc(M, A, A1, 28, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      angleArc(M, A2, A, 28, {stroke: PURPLE, 'stroke-width': 2.2}, gStep);
+      break;
+    }
+
+    case 3: {
+      // 步骤 3：对顶角传递得到 ∠A1-M-A = ∠B2-M-B
+      // 保持辅助线
+      line(B, B2, {stroke: '#94a3b8', 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      segDashed(A2, B2, PURPLE, 2.2, '6 4', gStep);
+
+      // 高亮对顶角 ∠A2-M-A 与 ∠B2-M-B（橙色单弧）
+      angleArc(M, A2, A, 26, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      angleArc(M, B, B2, 26, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+
+      // 突出等角目标对：∠A1-M-A 与 ∠B2-M-B（带有外层发光圈）
+      angleArc(M, A, A1, 33, {stroke: ORANGE, 'stroke-width': 2.5}, gStep);
+      angleArc(M, B, B2, 33, {stroke: ORANGE, 'stroke-width': 2.5}, gStep);
+      break;
+    }
+
+    case 4: {
+      // 步骤 4：相似三角形 △A1-A-M ~ △B2-B-M 与第一组比例
+      // 保持辅助线
+      line(B, B2, {stroke: '#94a3b8', 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      segDashed(A2, B2, PURPLE, 2.2, '6 4', gStep);
+
+      // 半透明面域填充高亮两个相似三角形
+      polygon([A1, A, M], {fill: BLUE, opacity: 0.18, stroke: BLUE, 'stroke-width': 2}, gStep);
+      polygon([B2, B, M], {fill: PURPLE, opacity: 0.18, stroke: PURPLE, 'stroke-width': 2}, gStep);
+
+      // 高亮对应边
+      highlightSeg(A1, A, BLUE, gStep, 3.5, 8);
+      highlightSeg(A1, M, BLUE, gStep, 3.5, 8);
+      highlightSeg(B2, B, PURPLE, gStep, 3.5, 8);
+      highlightSeg(B2, M, PURPLE, gStep, 3.5, 8);
+
+      // 保留两组判定相似的关键角弧
+      doubleAngleArc(A, M, A1, 24, 4.5, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      doubleAngleArc(B, B2, M, 24, 4.5, {stroke: GREEN, 'stroke-width': 2}, gStep);
+      angleArc(M, A, A1, 30, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      angleArc(M, B, B2, 30, {stroke: ORANGE, 'stroke-width': 2.2}, gStep);
+      break;
+    }
+
+    case 5: {
+      // 步骤 5：角平分线定理与原命题完全得证
+      // 保持辅助线
+      line(B, B2, {stroke: '#94a3b8', 'stroke-width': 2, 'stroke-dasharray': '5 4'}, gStep);
+      segDashed(A2, B2, PURPLE, 2.2, '6 4', gStep);
+
+      // 高亮关注三角形 △B1-M-B2
+      polygon([B1, M, B2], {fill: GREEN, opacity: 0.12, stroke: '#10b981', 'stroke-width': 1.8}, gStep);
+
+      // 强高亮角平分线 MB
+      highlightSeg(M, B, RED, gStep, 4, 10);
+
+      // 角平分线分割出的等角弧 ∠B1-M-B 与 ∠B2-M-B（红色双弧）
+      angleArc(M, B1, B, 30, {stroke: RED, 'stroke-width': 2.2}, gStep);
+      angleArc(M, B, B2, 30, {stroke: RED, 'stroke-width': 2.2}, gStep);
+
+      // 高亮相关比例线段：底边分段 B1B, B2B 及两邻边 MB1, MB2
+      highlightSeg(B1, B, GREEN, gStep, 3, 7);
+      highlightSeg(B, B2, PURPLE, gStep, 3, 7);
+      highlightSeg(M, B1, BLUE, gStep, 3, 7);
+      highlightSeg(M, B2, PURPLE, gStep, 3, 7);
+      break;
+    }
+  }
+  if (typeof window.renderMath === 'function') {
+    window.renderMath();
+  }
+}
+
+/* ============ 步骤详细解说词 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `在 $\\triangle ABC$ 中，已知 $CA = CB$（等腰三角形）。<br>
+           点 $M$ 为底边 $AB$ 上任意一点，过点 $M$ 引割线与 $CA$ 延长线交于点 $A_1$，与边 $CB$ 交于点 $B_1$。<br>
+           <b>目标</b>：证明两线段比值相等：
+           <div class="formula-card">
+             $$\\frac{A_1 A}{A_1 M} = \\frac{B_1 B}{B_1 M}$$
+           </div>`
+  },
+  {
+    title: '① 构造关于底边 AB 的对称直线',
+    body: `作割线 $A_1 B_1$ 关于底边直线 $AB$ 的<b>对称直线</b>。<br>
+           • 因点 $M \\in AB$ 在对称轴上，对称直线<b>必过点 $M$</b>；<br>
+           • 设该对称直线与边 $CA$ 交于点 $A_2$，与 $CB$ 的延长线交于点 $B_2$。<br>
+           由轴对称性质，直线与对称轴的夹角相等：
+           <div class="formula-card">
+             $$\\angle A_1 M A = \\angle A_2 M A$$
+           </div>`
+  },
+  {
+    title: '② 底角外角相等与轴对称角',
+    body: `1. <b>外角相等</b>：因为 $CA = CB$，所以底角 $\\angle CAB = \\angle CBA$。<br>
+           根据共线与邻补角性质，底边外角必相等：
+           <div class="formula-card">
+             $$\\angle A_1 A M = 180^\\circ - \\angle CAB = 180^\\circ - \\angle CBA = \\angle B_2 B M$$
+           </div>
+           2. <b>轴对称角</b>：由对称性保持角度：
+           <div class="formula-card">
+             $$\\angle A_1 M A = \\angle A_2 M A$$
+           </div>`
+  },
+  {
+    title: '③ 对顶角传递得 ∠A₁MA = ∠B₂MB',
+    body: `观察交于点 $M$ 的直线 $A_2 B_2$ 与直线 $AB$：<br>
+           • $\\angle A_2 M A$ 与 $\\angle B_2 M B$ 为一对<b>对顶角</b>，故：
+           <div class="formula-card">
+             $$\\angle A_2 M A = \\angle B_2 M B$$
+           </div>
+           结合上一步对称角 $\\angle A_1 M A = \\angle A_2 M A$，由等量代换立即得到核心等角：
+           <div class="formula-card" style="border-left-color:#ea580c; background:#fff7ed;">
+             <span style="color:#ea580c; font-weight:700;">$$\\angle A_1 M A = \\angle B_2 M B$$</span>
+           </div>`
+  },
+  {
+    title: '④ 相似三角形判定导出第一组比例',
+    body: `在 $\\triangle A_1 A M$ 与 $\\triangle B_2 B M$ 中：<br>
+           1. $\\angle A_1 A M = \\angle B_2 B M$（已证底角外角相等）；<br>
+           2. $\\angle A_1 M A = \\angle B_2 M B$（已证传递角相等）。<br>
+           两角对应相等，判定两三角形相似：
+           <div class="formula-card" style="border-left-color:#2563eb;">
+             $$\\triangle A_1 A M \\sim \\triangle B_2 B M$$
+           </div>
+           由相似三角形对应边成比例，得出：
+           <div class="formula-card" style="border-left-color:#7c3aed; background:#faf5ff;">
+             $$\\frac{A_1 A}{A_1 M} = \\frac{B_2 B}{B_2 M}$$
+           </div>`
+  },
+  {
+    title: '⑤ 内角平分线定理与结论得证',
+    body: `考察 $\\triangle B_1 M B_2$：<br>
+           • 对顶角 $\\angle B_1 M B = \\angle A_1 M A$，结合 $\\angle A_1 M A = \\angle B_2 M B$，得：
+           <div class="formula-card">
+             $$\\angle B_1 M B = \\angle B_2 M B$$
+           </div>
+           即 $MB$ 是 $\\triangle B_1 M B_2$ 的<b>内角平分线</b>！<br>
+           由内角平分线定理：
+           <div class="formula-card" style="border-left-color:#dc2626;">
+             $$\\frac{B_2 B}{B_2 M} = \\frac{B_1 B}{B_1 M}$$
+           </div>
+           联立第 ④ 步结论，等量代换即得：
+           <div class="formula-card" style="border-left-color:#059669; background:#ecfdf5; font-size:16px;">
+             <b>$$\\frac{A_1 A}{A_1 M} = \\frac{B_1 B}{B_1 M}$$</b> &nbsp;（原题得证 ∎）
+           </div>`
+  }
+];
+
+/* ============ 交互控制系统 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+const stepIndicator = document.getElementById('stepIndicator');
+
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `
+    <div class="title"><span class="badge">${i === 0 ? '✦' : i}</span>${s.title}</div>
+    <div class="body">${s.body}</div>
+  `;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  stepIndicator.textContent = `步骤 ${cur + 1} / ${steps.length}`;
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (typeof window.renderMath === "function") window.renderMath();
+}
+
+btnPrev.onclick = () => { stopAuto(); goTo(cur - 1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur + 1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 3200);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur - 1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur + 1); }
+});
+
+// 挂载全局 goTo 函数以兼容导出脚本与外部控制
+window.goTo = goTo;
+
+// 初始静态骨架与步骤定位
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+  // 监听动态步骤切换导致的 DOM 变动，自动重新渲染数学公式
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => {
+      if (typeof window.renderMath === 'function') window.renderMath();
+    }, 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'], characterData: true });
+});
+window.addEventListener('load', () => {
+  if (typeof window.renderMath === 'function') window.renderMath();
+});
+</script>
+</body>
+</html>

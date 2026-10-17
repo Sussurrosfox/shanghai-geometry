@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例 1：切线、割线与三角形内心判定 — 分步几何证明演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #eef2f7 0%, #f8fafc 100%);
+    min-height: 100vh;
+    color: #1e293b;
+    padding: 24px 16px;
+  }
+  .container { max-width: 1240px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
+  header p { font-size: 14px; color: #64748b; margin-top: 6px; }
+  .main { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; }
+  .canvas-card {
+    flex: 1 1 580px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  svg { width: 100%; height: auto; max-height: 76vh; }
+  .panel {
+    flex: 1 1 400px; background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15,23,42,.08); padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .step-list { flex: 1; overflow-y: auto; margin-bottom: 14px; max-height: 520px; padding-right: 4px; }
+  .step-list::-webkit-scrollbar { width: 6px; }
+  .step-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  .step-item {
+    border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 10px; cursor: pointer; transition: all .2s;
+  }
+  .step-item:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .step-item .title { font-weight: 600; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  .step-item .badge {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #e2e8f0; color: #475569; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+  }
+  .step-item .body { font-size: 13.5px; line-height: 1.75; color: #334155; margin-top: 8px; display: none; }
+  .step-item.active { border-color: #2563eb; background: #eff6ff; }
+  .step-item.active .badge { background: #2563eb; color: #fff; }
+  .step-item.active .body { display: block; }
+  .step-item.done .badge { background: #93c5fd; color: #fff; }
+  .controls { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+    cursor: pointer; font-weight: 600; transition: all .15s; font-family: inherit;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: #2563eb; color: #fff; flex: 1; }
+  .btn-primary:not(:disabled):hover { background: #1d4ed8; }
+  .btn-ghost { background: #f1f5f9; color: #334155; }
+  .btn-ghost:not(:disabled):hover { background: #e2e8f0; }
+  .progress { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; }
+  kbd { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:0 5px; font-size:12px; }
+  .math { font-family: "Times New Roman", "STIX Two Math", serif; font-style: italic; }
+  .math-block {
+    background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 10px;
+    margin: 6px 0; font-family: "Times New Roman", serif; font-size: 14px;
+  }
+</style>
+  <!-- KaTeX 数学公式渲染引擎 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\(', right: '\)', display: false},
+        {left: '\[', right: '\]', display: true}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle'
+      },
+      throwOnError: false
+    });
+  }
+}
+
+</script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>例 1：切线、割线与三角形内心判定</h1>
+    <p><b>已知</b>：点 <span class="math">P</span> 为圆 <span class="math">O</span> 外一点，<span class="math">PA, PB</span> 切圆于 <span class="math">A, B</span>。<span class="math">PO</span> 交 <span class="math">AB</span> 于 <span class="math">M</span>，交圆于 <span class="math">I</span>。过 <span class="math">M</span> 作弦 <span class="math">CD</span>。&nbsp;&nbsp;<b>求证</b>：<span class="math">I</span> 为 <span class="math">△PCD</span> 的内心。</p>
+  </header>
+  <div class="main">
+    <div class="canvas-card">
+      <svg id="stage" viewBox="80 75 540 410" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="panel">
+      <div class="step-list" id="stepList"></div>
+      <div class="controls">
+        <button class="btn-ghost" id="btnPrev">◀ 上一步</button>
+        <button class="btn-primary" id="btnNext">下一步 ▶</button>
+        <button class="btn-ghost" id="btnAuto">▶ 自动</button>
+        <button class="btn-ghost" id="btnReset">重置</button>
+      </div>
+      <div class="progress">也可用键盘 <kbd>←</kbd> <kbd>→</kbd> 快速切换步骤</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 几何计算 ============ */
+const sub = (p,q) => ({x:p.x-q.x, y:p.y-q.y});
+const add = (p,q) => ({x:p.x+q.x, y:p.y+q.y});
+const mul = (p,k) => ({x:p.x*k, y:p.y*k});
+const mid = (p,q) => ({x:(p.x+q.x)/2, y:(p.y+q.y)/2});
+const len = p => Math.hypot(p.x, p.y);
+const dist = (p,q) => len(sub(p,q));
+const norm = p => { const l = len(p); return l === 0 ? {x:0, y:0} : {x:p.x/l, y:p.y/l}; };
+const perp = d => ({x:-d.y, y:d.x});
+const rot = (p, rad) => ({x: p.x*Math.cos(rad) - p.y*Math.sin(rad), y: p.x*Math.sin(rad) + p.y*Math.cos(rad)});
+const rotAround = (p, c, rad) => add(c, rot(sub(p,c), rad));
+
+/* 基础常数与点位（经过严格代数几何解算与校验） */
+const O = { x: 420.00, y: 280.00 };
+const P = { x: 150.00, y: 280.00 };
+const I = { x: 280.00, y: 280.00 };
+const E = { x: 560.00, y: 280.00 };
+const M = { x: 347.41, y: 280.00 };
+const A = { x: 347.41, y: 160.29 };
+const B = { x: 347.41, y: 399.71 };
+const C = { x: 447.19, y: 142.67 };
+const D = { x: 297.79, y: 348.30 };
+const R = 140.00;
+const inradius = 54.53; // △PCD 内切圆半径
+
+/* ============ SVG 绘图工具 ============ */
+const NS = "http://www.w3.org/2000/svg";
+const stage = document.getElementById('stage');
+function el(tag, attrs = {}, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function line(p, q, attrs, parent){
+  return el('line', {x1:p.x, y1:p.y, x2:q.x, y2:q.y, ...attrs}, parent);
+}
+function segDashed(p, q, color, w=2, parent){
+  return line(p, q, {stroke:color, 'stroke-width':w, 'stroke-dasharray':'6 4', fill:'none'}, parent);
+}
+function circle(c, r, attrs = {}, parent){
+  return el('circle', {cx:c.x, cy:c.y, r, fill:'none', ...attrs}, parent);
+}
+function dot(p, color='#1e293b', r=4.5, parent){
+  return el('circle', {cx:p.x, cy:p.y, r, fill:color, stroke:'#fff', 'stroke-width':1.8}, parent);
+}
+function polygon(pts, attrs = {}, parent){
+  return el('polygon', {points: pts.map(p=>`${p.x},${p.y}`).join(' '), ...attrs}, parent);
+}
+function label(p, text, dx=0, dy=0, color='#0f172a', parent, size=16, bold=true){
+  const t = el('text', {
+    x: p.x + dx, y: p.y + dy,
+    'font-size': size, fill: color,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-family': '"Times New Roman", STIXGeneral, serif',
+    'font-style': 'italic',
+    'font-weight': bold ? '700' : '400',
+    style: 'paint-order: stroke fill; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round;'
+  }, parent);
+  t.textContent = text;
+  return t;
+}
+/* 直角标记：顶点 v，两边指向 p1、p2 */
+function rightAngleMark(v, p1, p2, s=12, color='#dc2626', parent){
+  const u1 = norm(sub(p1,v)), u2 = norm(sub(p2,v));
+  const a = add(v, mul(u1,s)), b = add(add(v, mul(u1,s)), mul(u2,s)), c = add(v, mul(u2,s));
+  return el('polyline', {points:`${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y}`,
+    fill:'none', stroke:color, 'stroke-width':1.8}, parent);
+}
+/* 高亮线段 */
+function highlightSeg(p, q, color, parent, w=3.5){
+  line(p, q, {stroke:color, 'stroke-width':w+5, 'stroke-linecap':'round', opacity:.18}, parent);
+  line(p, q, {stroke:color, 'stroke-width':w, 'stroke-linecap':'round'}, parent);
+}
+/* 绘制角弧线：顶点 v，两边指向 p1 和 p2 */
+function angleArc(v, p1, p2, r=20, attrs={}, parent){
+  const a1 = Math.atan2(p1.y - v.y, p1.x - v.x);
+  let a2 = Math.atan2(p2.y - v.y, p2.x - v.x);
+  let da = a2 - a1;
+  while (da < 0) da += Math.PI * 2;
+  const sweep = da <= Math.PI ? 1 : 0;
+  const s = { x: v.x + r * Math.cos(a1), y: v.y + r * Math.sin(a1) };
+  const e = { x: v.x + r * Math.cos(a2), y: v.y + r * Math.sin(a2) };
+  return el('path', {
+    d: `M ${s.x} ${s.y} A ${r} ${r} 0 0 ${sweep} ${e.x} ${e.y}`,
+    fill: 'none', stroke: '#dc2626', 'stroke-width': 1.8, ...attrs
+  }, parent);
+}
+
+/* ============ 分层架构 ============ */
+const gBase = el('g', {id: 'gBase'}, stage);      // 底层：静态构型（全程保留）
+const gStep = el('g', {id: 'gStep'}, stage);      // 动态步骤层（切换前清空，只画本步元素）
+const gPts  = el('g', {id: 'gPts'}, stage);       // 顶层：点与白底防遮挡标签
+
+function drawBase(){
+  gBase.innerHTML = '';
+  // 基础圆 O
+  circle(O, R, { stroke: '#64748b', 'stroke-width': 1.8 }, gBase);
+  // 切线 PA, PB
+  line(P, A, { stroke: '#334155', 'stroke-width': 1.8 }, gBase);
+  line(P, B, { stroke: '#334155', 'stroke-width': 1.8 }, gBase);
+  // 割线 PO (从 P 延伸至圆心 O)
+  line(P, O, { stroke: '#334155', 'stroke-width': 1.8 }, gBase);
+  // 切点弦 AB
+  line(A, B, { stroke: '#334155', 'stroke-width': 1.8 }, gBase);
+  // 弦 CD (过 M)
+  line(C, D, { stroke: '#334155', 'stroke-width': 2.0 }, gBase);
+  // 三角形 PCD 的其余两条边 PC, PD
+  line(P, C, { stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3' }, gBase);
+  line(P, D, { stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray':'4 3' }, gBase);
+}
+
+function drawPoints(showE = false, highlightI = false){
+  gPts.innerHTML = '';
+  // 点绘制
+  dot(O, '#475569', 4, gPts);
+  dot(P, '#1e293b', 4.5, gPts);
+  dot(A, '#1e293b', 4.5, gPts);
+  dot(B, '#1e293b', 4.5, gPts);
+  dot(M, '#1e293b', 4.5, gPts);
+  dot(C, '#1e293b', 4.5, gPts);
+  dot(D, '#1e293b', 4.5, gPts);
+
+  // 点 I
+  if (highlightI) {
+    el('circle', { cx: I.x, cy: I.y, r: 9, fill: 'none', stroke: '#e11d48', 'stroke-width': 2.2, opacity: 0.8 }, gPts);
+    dot(I, '#e11d48', 5, gPts);
+  } else {
+    dot(I, '#2563eb', 4.5, gPts);
+  }
+
+  // 点 E (按需显隐)
+  if (showE) {
+    dot(E, '#7c3aed', 4.5, gPts);
+    label(E, 'E', 18, 0, '#7c3aed', gPts);
+  }
+
+  // 标签绘制（白底防遮挡描边）
+  label(P, 'P', -20, 0, '#0f172a', gPts);
+  label(O, 'O', 14, 16, '#0f172a', gPts);
+  label(I, 'I', -12, 18, highlightI ? '#e11d48' : '#2563eb', gPts);
+  label(M, 'M', 14, -14, '#0f172a', gPts);
+  label(A, 'A', -4, -18, '#0f172a', gPts);
+  label(B, 'B', 4, 18, '#0f172a', gPts);
+  label(C, 'C', 18, -12, '#0f172a', gPts);
+  label(D, 'D', -20, 16, '#0f172a', gPts);
+}
+
+/* ============ 各步骤画面渲染 ============ */
+const BLUE = '#2563eb', GREEN = '#059669', RED = '#dc2626',
+      PURPLE = '#7c3aed', CYAN = '#0891b2', ORANGE = '#ea580c', SKY = '#0284c7';
+
+function renderStep(s){
+  gStep.innerHTML = '';   // 关键：每步先清空动态步骤层，辅助线用完即擦除
+
+  switch(s){
+    case 0: { // 步骤 0：已知条件与几何构型
+      drawPoints(false, false);
+      // 高亮 △PCD 边框示意
+      highlightSeg(P, C, '#94a3b8', gStep, 2.2);
+      highlightSeg(C, D, '#94a3b8', gStep, 2.2);
+      highlightSeg(D, P, '#94a3b8', gStep, 2.2);
+      // 强调切线与待证目标点 I
+      el('circle', { cx: I.x, cy: I.y, r: 10, fill: 'none', stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '3 2' }, gStep);
+      break;
+    }
+    case 1: { // 步骤 1：切线射影定理 PM * PO = PA^2
+      drawPoints(false, false);
+      // 辅助线：半径 OA
+      segDashed(O, A, SKY, 2.2, gStep);
+      // 直角标记：PA ⊥ OA 于 A，AB ⊥ PO 于 M
+      rightAngleMark(A, P, O, 14, SKY, gStep);
+      rightAngleMark(M, A, O, 12, SKY, gStep);
+      // 高亮 Rt△PAO 与射影线段 PM, PO, PA
+      highlightSeg(P, A, SKY, gStep, 3.5);
+      highlightSeg(P, M, SKY, gStep, 3.5);
+      highlightSeg(M, O, '#93c5fd', gStep, 2.5);
+      break;
+    }
+    case 2: { // 步骤 2：延长直径构建调和点列 (P, M; I, E) = -1
+      drawPoints(true, false); // 此时显示直径端点 E
+      // 辅助线：PO 延长至 E
+      line(O, E, { stroke: PURPLE, 'stroke-width': 2.2 }, gStep);
+      // 高亮四个调和点 P, I, M, E
+      [P, I, M, E].forEach(pt => {
+        el('circle', { cx: pt.x, cy: pt.y, r: 8, fill: 'none', stroke: PURPLE, 'stroke-width': 2 }, gStep);
+      });
+      // 在上方绘制调和指示弧线或文字提示
+      break;
+    }
+    case 3: { // 步骤 3：连接 ID, ED 导出调和线束 D(P, M; I, E) = -1
+      drawPoints(true, false);
+      // 辅助延长线 OE
+      line(O, E, { stroke: '#cbd5e1', 'stroke-width': 1.6 }, gStep);
+      // 辅助线：ID, ED
+      line(I, D, { stroke: ORANGE, 'stroke-width': 2.2 }, gStep);
+      line(E, D, { stroke: ORANGE, 'stroke-width': 2.2 }, gStep);
+      // 直角标记：∠IDE = 90°
+      rightAngleMark(D, I, E, 13, ORANGE, gStep);
+      // 高亮四射线 DP, DI, DM(DC), DE
+      highlightSeg(D, P, '#fed7aa', gStep, 2.5);
+      highlightSeg(D, I, ORANGE, gStep, 3.0);
+      highlightSeg(D, M, '#fed7aa', gStep, 2.5);
+      highlightSeg(D, E, ORANGE, gStep, 3.0);
+      break;
+    }
+    case 4: { // 步骤 4：正交调和线束推出 DI 平分 ∠PDC
+      drawPoints(true, false);
+      // 弱化显示 ED 辅助线
+      segDashed(E, D, '#cbd5e1', 1.5, gStep);
+      // 高亮角平分线 DI
+      highlightSeg(D, I, RED, gStep, 3.8);
+      // 角弧标记：∠PDI 与 ∠CDI
+      angleArc(D, P, I, 28, { stroke: RED, 'stroke-width': 2.0 }, gStep);
+      angleArc(D, I, C, 34, { stroke: RED, 'stroke-width': 2.0 }, gStep);
+      break;
+    }
+    case 5: { // 步骤 5：同理对称性推出 CI 平分 ∠PCD
+      drawPoints(true, false);
+      // 擦除 D 处的 ED 辅助线，保留 DI 的弱化提示
+      line(I, D, { stroke: '#fca5a5', 'stroke-width': 1.8, 'stroke-dasharray':'4 3' }, gStep);
+      angleArc(D, P, I, 28, { stroke: '#fca5a5', 'stroke-width': 1.5 }, gStep);
+      angleArc(D, I, C, 34, { stroke: '#fca5a5', 'stroke-width': 1.5 }, gStep);
+
+      // 新增辅助线：CI, CE
+      line(I, C, { stroke: GREEN, 'stroke-width': 2.4 }, gStep);
+      line(E, C, { stroke: GREEN, 'stroke-width': 2.0 }, gStep);
+      // 直角标记：∠ICE = 90°
+      rightAngleMark(C, I, E, 13, GREEN, gStep);
+      // 角弧标记：∠PCI 与 ∠DCI
+      angleArc(C, P, I, 28, { stroke: GREEN, 'stroke-width': 2.0 }, gStep);
+      angleArc(C, I, D, 34, { stroke: GREEN, 'stroke-width': 2.0 }, gStep);
+      break;
+    }
+    case 6: { // 步骤 6：角平分线交汇判定内心，完成证明
+      drawPoints(false, true); // 突出显示内心 I
+      // 填充 △PCD 浅色半透明背景
+      polygon([P, C, D], { fill: '#38bdf8', 'fill-opacity': 0.12, stroke: '#0284c7', 'stroke-width': 2.0 }, gStep);
+      // 同时加粗高亮两条角平分线 DI (红) 与 CI (绿)，以及第三条平分线 PI (蓝)
+      line(D, I, { stroke: RED, 'stroke-width': 2.6 }, gStep);
+      line(C, I, { stroke: GREEN, 'stroke-width': 2.6 }, gStep);
+      line(P, I, { stroke: BLUE, 'stroke-width': 2.6 }, gStep);
+      // 角弧标记保留
+      angleArc(D, P, I, 26, { stroke: RED, 'stroke-width': 1.8 }, gStep);
+      angleArc(D, I, C, 32, { stroke: RED, 'stroke-width': 1.8 }, gStep);
+      angleArc(C, P, I, 26, { stroke: GREEN, 'stroke-width': 1.8 }, gStep);
+      angleArc(C, I, D, 32, { stroke: GREEN, 'stroke-width': 1.8 }, gStep);
+      // 绘制 △PCD 的内切圆（以 I 为圆心，虚线高亮）
+      circle(I, inradius, { stroke: '#e11d48', 'stroke-width': 2.2, 'stroke-dasharray': '6 4', fill: 'rgba(225, 29, 72, 0.05)' }, gStep);
+      // 内心文字标注
+      el('text', {
+        x: I.x - 16, y: I.y - 16, 'font-size': 12, fill: '#e11d48', 'font-weight': '700',
+        'text-anchor': 'end', 'dominant-baseline': 'central',
+        style: 'paint-order: stroke fill; stroke: #fff; stroke-width: 3.5px;'
+      }, gStep).textContent = '内心 I';
+      break;
+    }
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+}
+
+/* ============ 步骤文本 ============ */
+const steps = [
+  {
+    title: '已知条件与几何构型',
+    body: `点 <span class="math">P</span> 为圆 <span class="math">O</span> 外一点，从 <span class="math">P</span> 引两条切线 <span class="math">PA, PB</span>，切点为 <span class="math">A, B</span>。<br>
+连线 <span class="math">PO</span> 垂直平分切点弦 <span class="math">AB</span> 于点 <span class="math">M</span>，并与圆 <span class="math">O</span> 割于点 <span class="math">I</span>。<br>
+过点 <span class="math">M</span> 任作一条不同于 <span class="math">AB</span> 的割弦 <span class="math">CD</span>。<br>
+<b>求证目标</b>：点 <span class="math">I</span> 是 <span class="math">△PCD</span> 的内心。`
+  },
+  {
+    title: '① 切线直角与射影定理',
+    body: `连接圆半径 <span class="math" style="color:${SKY}">OA</span>。因 <span class="math">PA</span> 切圆于 <span class="math">A</span>，切线垂直于半径，故 <span class="math">OA ⊥ PA</span>，即 <span class="math">∠PAO = 90°</span>。<br>
+由对称性知割线 <span class="math">PO</span> 垂直平分弦 <span class="math">AB</span>，故 <span class="math">AM ⊥ PO</span>。<br>
+在直角三角形 <span class="math">Rt△PAO</span> 中，应用射影定理：
+<div class="math-block">PA² = PM · PO</div>
+同时圆心距满足关系：<span class="math">OM · OP = OA² = R²</span>。`
+  },
+  {
+    title: '② 延长直径构建调和点列',
+    body: `延长线段 <span class="math">PO</span> 交圆 <span class="math">O</span> 于另一点 <span class="math" style="color:${PURPLE}">E</span>，则线段 <span class="math">IE</span> 是圆 <span class="math">O</span> 的一条直径，<span class="math">O</span> 为其中心。<br>
+由圆幂定理（切割线定理），有 <span class="math">PA² = PI · PE</span>。<br>
+结合步骤 ① 可得：
+<div class="math-block">PM · PO = PI · PE</div>
+因为 <span class="math">O</span> 是 <span class="math">IE</span> 的中点，且 <span class="math">OM · OP = OI² = OE² = R²</span>。<br>
+根据调和分割的牛顿公式，点 <span class="math">P, M</span> 关于线段 <span class="math">IE</span> 调和共轭，即点列满足：
+<div class="math-block">(P, M; I, E) = -1 &nbsp; （即 PI / IM = PE / EM）</div>`
+  },
+  {
+    title: '③ 连接 ID, ED 导出正交调和线束',
+    body: `连接线段 <span class="math" style="color:${ORANGE}">ID</span> 与 <span class="math" style="color:${ORANGE}">ED</span>。<br>
+由于线段 <span class="math">IE</span> 为圆 <span class="math">O</span> 的直径，而点 <span class="math">D</span> 位于圆周上，由圆周角定理可知：直径所对的圆周角为直角，即：
+<div class="math-block">∠IDE = 90° &nbsp; (即 DI ⊥ DE)</div>
+以圆周上的点 <span class="math">D</span> 为透视中心投影直线 <span class="math">PE</span> 上的调和点列，得到以 <span class="math">D</span> 为顶点的<b>调和线束</b>：
+<div class="math-block">D(P, M; I, E) = -1</div>`
+  },
+  {
+    title: '④ 正交调和线束推出 DI 平分 ∠PDC',
+    body: `在调和线束 <span class="math">D(P, M; I, E) = -1</span> 中，共轭射线满足 <span class="math">DI ⊥ DE</span>。<br>
+<b>调和线束核心定理</b>：若调和线束的一对共轭射线相互垂直，则这对射线必为另一对共轭射线夹角的内、外角平分线！<br>
+因此射线 <span class="math" style="color:${RED}">DI</span> 平分射线 <span class="math">DP</span> 与 <span class="math">DM</span> 的夹角 <span class="math">∠PDM</span>。<br>
+因为点 <span class="math">C, M, D</span> 共线，射线 <span class="math">DM</span> 即为射线 <span class="math">DC</span>，所以：
+<div class="math-block">DI 平分 ∠PDC &nbsp; (即 ∠PDI = ∠CDI)</div>`
+  },
+  {
+    title: '⑤ 同理对称性推导 CI 平分 ∠PCD',
+    body: `同理，连接 <span class="math" style="color:${GREEN}">IC</span> 与 <span class="math" style="color:${GREEN}">EC</span>。<br>
+由于 <span class="math">IE</span> 为直径且 <span class="math">C</span> 在圆周上，故 <span class="math">∠ICE = 90°</span>（即 <span class="math">CI ⊥ CE</span>）。<br>
+从点 <span class="math">C</span> 投影调和点列 <span class="math">P, I, M, E</span>，得到调和线束：
+<div class="math-block">C(P, M; I, E) = -1 &nbsp; 且 &nbsp; CI ⊥ CE</div>
+同理可得射线 <span class="math" style="color:${GREEN}">CI</span> 平分 <span class="math">∠PCM</span>，即：
+<div class="math-block">CI 平分 ∠PCD &nbsp; (即 ∠PCI = ∠DCI)</div>`
+  },
+  {
+    title: '⑥ 角平分线交汇判定内心，结论得证',
+    body: `在 <span class="math">△PCD</span> 中：<br>
+由步骤 ④，<span class="math" style="color:${RED}">DI</span> 是内角 <span class="math">∠PDC</span> 的角平分线；<br>
+由步骤 ⑤，<span class="math" style="color:${GREEN}">CI</span> 是内角 <span class="math">∠PCD</span> 的角平分线。<br>
+三角形两内角平分线的交点即为该三角形的<b>内心</b>（Incenter）。<br>
+两条平分线均过点 <span class="math" style="color:#e11d48">I</span> 且相交于点 <span class="math" style="color:#e11d48">I</span>，故点 <span class="math">I</span> 必为 <span class="math">△PCD</span> 的内心。<br>
+同时第三条内角平分线 <span class="math" style="color:${BLUE}">PI</span> 亦汇交于 <span class="math">I</span>。<br>
+<b>原命题完整得证！</b>`
+  }
+];
+
+/* ============ 交互控制 ============ */
+let cur = 0, timer = null;
+const listEl = document.getElementById('stepList');
+steps.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'step-item';
+  d.innerHTML = `<div class="title"><span class="badge">${i===0?'✦':i}</span>${s.title}</div>
+                 <div class="body">${s.body}</div>`;
+  d.onclick = () => { stopAuto(); goTo(i); };
+  listEl.appendChild(d);
+});
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnAuto = document.getElementById('btnAuto');
+
+function goTo(i){
+  cur = Math.max(0, Math.min(steps.length-1, i));
+  [...listEl.children].forEach((d, k) => {
+    d.classList.toggle('active', k === cur);
+    d.classList.toggle('done', k < cur);
+  });
+  renderStep(cur);
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if (listEl.children[cur]) {
+    listEl.children[cur].scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  if (typeof renderMath === 'function') { renderMath(); }
+  if (typeof renderMath === "function") renderMath();
+}
+btnPrev.onclick = () => { stopAuto(); goTo(cur-1); };
+btnNext.onclick = () => { stopAuto(); goTo(cur+1); };
+document.getElementById('btnReset').onclick = () => { stopAuto(); goTo(0); };
+function stopAuto(){
+  if (timer){ clearInterval(timer); timer = null; btnAuto.textContent = '▶ 自动'; }
+}
+btnAuto.onclick = () => {
+  if (timer){ stopAuto(); return; }
+  btnAuto.textContent = '⏸ 暂停';
+  if (cur >= steps.length - 1) goTo(0);
+  timer = setInterval(() => {
+    if (cur >= steps.length - 1){ stopAuto(); return; }
+    goTo(cur + 1);
+  }, 2600);
+};
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft'){ stopAuto(); goTo(cur-1); }
+  if (e.key === 'ArrowRight'){ stopAuto(); goTo(cur+1); }
+});
+
+drawBase();
+goTo(parseInt(new URLSearchParams(location.search).get('step')) || 0);
+</script>
+
+<!-- KaTeX 动态渲染与自适应触发脚本 -->
+<script>
+function renderMath(target) {
+  if (typeof renderMathInElement === 'function') {
+    const el = (target && target.nodeType) ? target : document.body;
+    renderMathInElement(el, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      macros: {
+        '\parallel': '\mathbin{/\!/}',
+        '\parallelogram': '\mathbin{/\!/}',
+        '\bigtriangleup': '\triangle',
+        '\triangle': '\triangle'
+      },
+      throwOnError: false,
+      strict: false
+    });
+  }
+}
+window.renderMath = renderMath;
+window.addEventListener('DOMContentLoaded', () => {
+  renderMath();
+  let mathTimer = null;
+  const observer = new MutationObserver(() => {
+    if (mathTimer) clearTimeout(mathTimer);
+    mathTimer = setTimeout(() => renderMath(), 30);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+window.addEventListener('load', () => renderMath());
+</script>
+</body>
+</html>

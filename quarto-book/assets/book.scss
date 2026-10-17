@@ -1,0 +1,172 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !default;
+$font-family-serif: "Noto Serif CJK SC", "Songti SC", "SimSun", "STSong", serif !default;
+$font-family-base: $font-family-serif !default;
+
+$body-color: #2c3e50 !default;
+$body-bg: #fcfcfd !default;
+$link-color: #1a6896 !default;
+$link-hover-color: #0e4566 !default;
+
+$primary: #1b4965 !default;
+$secondary: #62b6cb !default;
+$success: #2a9d8f !default;
+$info: #457b9d !default;
+$warning: #e76f51 !default;
+
+/*-- scss:rules --*/
+body {
+  font-family: $font-family-serif;
+  line-height: 1.85;
+  font-size: 1.05rem;
+  color: #2d3748;
+}
+
+.page-columns .content {
+  max-width: 880px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-sans-serif;
+  color: #1a365d;
+  font-weight: 600;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+}
+
+h1.title {
+  color: #0f2b48;
+  font-size: 2.1rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.4em;
+  margin-bottom: 1em;
+}
+
+/* 题目元数据徽章条 */
+.problem-meta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.6rem 0.9rem;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-family: $font-family-sans-serif;
+  font-size: 0.9rem;
+}
+
+.problem-meta-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.badge-chapter {
+  background-color: #1b4965;
+  color: #ffffff;
+}
+
+.badge-difficulty {
+  background-color: #e76f51;
+  color: #ffffff;
+}
+
+.badge-tag {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+/* 演示链接按钮 */
+.demo-link-container {
+  margin: 1.5rem 0;
+}
+
+.demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  background-color: #2a9d8f;
+  color: #ffffff !important;
+  font-family: $font-family-sans-serif;
+  font-weight: 500;
+  border-radius: 6px;
+  text-decoration: none !important;
+  box-shadow: 0 2px 4px rgba(42, 157, 143, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.demo-link:hover {
+  background-color: #21867a;
+  box-shadow: 0 4px 8px rgba(42, 157, 143, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 内嵌 iframe */
+.demo-frame {
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  margin: 1.5rem 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.demo-frame iframe {
+  width: 100%;
+  height: 720px;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .demo-frame {
+    min-height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  .demo-frame iframe {
+    height: 100%;
+  }
+}
+
+/* 几何图样排版 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border-radius: 4px;
+}
+
+.figure-caption, .caption {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-top: 0.3rem;
+}
+
+/* 数学公式防溢出 */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+
+/* callout 优化 */
+.callout {
+  border-radius: 6px;
+  margin: 1.3rem 0;
+  border-left-width: 4px;
+}
+
+.callout-note {
+  border-left-color: #1b4965;
+}
+
+.callout-tip {
+  border-left-color: #2a9d8f;
+}

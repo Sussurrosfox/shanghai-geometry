@@ -1,0 +1,33 @@
+---
+title: '练习 28：内切圆切点连线与外接圆定角求解'
+chapter: 5
+problem: 28
+source-chapter: '05'
+source-file: '05/28.md'
+id: 'ch05-p28'
+tags:
+- 练习一（综合习题）
+difficulty: '竞赛'
+---
+
+::: {.problem-meta-bar}
+<span class="problem-meta-badge badge-chapter">练习一（综合习题）</span>
+<span class="problem-meta-badge badge-difficulty">竞赛难度</span>
+<span class="problem-meta-badge badge-tag">练习一（综合习题）</span>
+:::
+
+## 题目
+
+在 $\triangle {ABC}$ 中, ${AB} \neq  {AC}$ . 内切圆 $I$ 与边 ${BC}$ 切于点 $D$ ,直线 ${AI}$ 与 $\triangle {ABC}$ 的外接圆 $O$ 交于另一点 $M$ ,直线 ${DM}$ 与圆 $O$ 交于另一点 $P$ . 求 $\angle {API}$ 的大小.
+
+## 参考解答
+
+::: {.callout-important title="标准解答" collapse="false"}
+如图,不妨设 ${AB} < {AC}$ ,连接 ${BP},{BM},{MC},{DI},{AM},{PN}$ . 由熟知结论有 ${MB} = \; {MC} = {MI}$ . 又 $\angle {BPM} = \frac{1}{2}\angle {BAC} = \angle {MBC}$ ,则 $\triangle {DBM} \backsim  \triangle {BPM}$ ,故 $M{I}^2 = \; M{B}^2 = {MD} \cdot  {MP}$ ,于是 $\triangle {MPI} \backsim  \triangle {MID}$ ,从而 $\angle {MPI} = \angle {MID}$ .
+
+设 $N$ 为点 $M$ 的对径点. 由 ${ID}//{MN}$ ,知 $\angle {MID} = \angle {AMO}$ . 则 $\angle {API} = \; \angle {APM} - \angle {IPM} = \angle {APM} - \angle {AMN} = \angle {APM} - \angle {APN} = \angle {NPM} = {90}^{ \circ  }$ . 原问题得解.
+
+![](../images/166_306_189_387_419_0.jpg)
+:::
+
+
