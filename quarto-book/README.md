@@ -1,5 +1,9 @@
 # 上海中学竞赛课程：平面几何 (Quarto Book)
 
+* 🌐 **在线阅读网址（GitHub Pages）**：[https://sussurrosfox.github.io/shanghai-geometry/](https://sussurrosfox.github.io/shanghai-geometry/)
+* 📦 **开源代码仓库（GitHub）**：[https://github.com/Sussurrosfox/shanghai-geometry](https://github.com/Sussurrosfox/shanghai-geometry)
+* 💾 **离线完整交互版**：可在仓库 Release 或根目录下获取 `上海中学竞赛课程_平面几何_QuartoBook_离线版.zip`
+
 本项目遵循 `design.md` 设计规范与上海中学竞赛教材原著结构，将《上海中学竞赛课程：平面几何》第 01 至 08 单元（涵盖 7 个讲座专题与 1 个阶段综合习题模块，总计 95 道精选竞赛题目）全面制成现代化、交互式的 **Quarto Book**。
 
 ---
